@@ -6,4 +6,5 @@ void runExt(char * exec){
     pid_t pid = fork();
     printf("%d\n",pid);
     printf("GET %d\n",getpid());
+    execv()
 }
