@@ -3,7 +3,12 @@
 #ifndef NEOEGGSHELL_EXTERNAL_H
 #define NEOEGGSHELL_EXTERNAL_H
 #include <iostream>
-void runExt(char * exec);
+#include <cstdio>
+#include "unistd.h"
+#include <sys/types.h>
+#include <sys/wait.h>
+
+void runExt(char **exec);
 class external {
 
 };
