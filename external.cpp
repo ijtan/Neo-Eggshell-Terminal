@@ -1,5 +1,7 @@
 #include <cstdio>
 #include "unistd.h"
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "external.h"
 using namespace std;
 void runExt(char * exec){
@@ -16,9 +18,11 @@ void runExt(char * exec){
         puts("executing");
         char *arg[2];
         arg[0] = "/bin/ls";
-        cout << execl("/bin/ls","ls", NULL)<< ": execv\n";
+        cout << execlp("ls","ls", NULL)<< ": execv\n";
     }
+    int status;
+    puts("Waiting");
+    waitpid(-1, &status, 0);
     puts("Done");
     std::cout << pid  << " EXITING";
-    sleep(2);
 }
