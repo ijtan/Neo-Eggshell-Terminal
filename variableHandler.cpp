@@ -26,7 +26,6 @@ vector<string> getVars() {
 }
 
 char **parseVars(char **input) {
-    vector<int> indexes;
     int i = 0;
     while (input[i] != NULL) {
         string in(input[i]);
@@ -44,8 +43,9 @@ char **parseVars(char **input) {
         }
         string envName = in.substr(in.find('$') + 1, in.length());
         if (getenv(envName.c_str()) != NULL) {
-            string newEnv = in.substr(0, in.find('$')) + getenv(envName.c_str());
-            strcpy(input[i], newEnv.c_str());
+            string newEnv = in.substr(0, in.find('$'));
+            newEnv.append(getenv(envName.c_str()));
+            strncpy(input[i], newEnv.c_str(),newEnv.size());
         } else
             cout << "The environment for variable '" << envName.c_str() << "' was not found!" << endl;
         i++;

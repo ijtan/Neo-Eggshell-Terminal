@@ -29,12 +29,7 @@ int main() {
     linenoiseHistorySetMaxLen(MAX_HISTORY);
 
 
-
-    //TODO chedck that the following are valid and where they are to be used
-
-
     //start linenoise loop
-    //TODO change runExt to parsing, which will handle all inputs accordingly
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
         linenoiseHistoryAdd(line);
         string copy(line);
