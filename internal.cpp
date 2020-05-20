@@ -3,10 +3,11 @@
 using namespace std;
 vector<string> internalCommands;
 
-int internalHandler(string command, vector<string>argsV) {
+int internalHandler(string command, vector<string> argsV) {
     //will be used to check if the command is internal
     internalCommands.emplace_back("echo");
     internalCommands.emplace_back("showenv");
+    internalCommands.emplace_back("unset");
 
     for (auto &internalCommand : internalCommands) {
         if (internalCommand == command) {
@@ -19,6 +20,9 @@ int internalHandler(string command, vector<string>argsV) {
                 case 1:
                     printVars();
                     break;
+                case 2:
+                    unset(argsV);
+                    break;
             }
 
             return 0;
@@ -27,10 +31,10 @@ int internalHandler(string command, vector<string>argsV) {
     return 1;
 }
 
-void echo(vector<string>args) {
+void echo(vector<string> args) {
     int i = 0;
-    for(auto arg:args) {
-        if(i==0){
+    for (auto arg:args) {
+        if (i == 0) {
             i++;
             continue;
         }
@@ -38,4 +42,16 @@ void echo(vector<string>args) {
 
     }
     cout << endl;
+}
+void set(string Assign){
+    putenv("SomeVariable=SomeValue"); //replace with Assign
+
+}
+void unset(vector<string> args){
+    if(args.size()==1) { puts("Expected argument to unset"); return; }
+    if(args.size()>2) { puts("Expected only one argument"); return; }
+    if(getenv(args[1].c_str())==NULL){puts("Not Found!"); return;}
+    char *env = const_cast<char *>(args[1].c_str());
+    putenv(env); //replace with Assign
+
 }

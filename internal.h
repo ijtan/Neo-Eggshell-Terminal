@@ -14,8 +14,10 @@
 #include <string>
 #include <vector>
 #include "variableHandler.h"
-int internalHandler(std::string command, std::vector<std::string>argsV);
-void echo(std::vector<std::string>args);
+using namespace std;
+int internalHandler(string command, vector<string>argsV);
+void echo(vector<string>args);
+void unset(vector<string> args);
 #define MaxCmdLen 255
 #define MAX_INTERNAL_CMDS 100
 class internal {

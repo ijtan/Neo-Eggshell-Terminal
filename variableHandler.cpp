@@ -17,7 +17,11 @@ void initVars() {
 
 void printVars() {
     for (auto &&var:vars) {
-        cout << var << "=" << getenv(var.c_str()) << endl;
+        if(getenv(var.c_str()) == nullptr){
+            cout << var << "=NULL" << endl;
+        }
+        else
+            cout << var << "=" << getenv(var.c_str()) << endl;
     }
 }
 
