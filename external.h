@@ -8,8 +8,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <cstring>
-int runExt(char **args);
-std::string runExtRedir(char **args);
+#include <vector>
+int runExt(std::vector<std::string> argVector);
+std::string runExtRedir(std::vector<std::string> argVector);
 class external {
 
 };

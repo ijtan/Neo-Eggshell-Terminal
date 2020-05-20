@@ -5,11 +5,10 @@
 using namespace std;
 
 
-int parseLine(string line, char **input) {
+int parseLine(string line, vector<string> input) {
     //check for pipes
     //check for redirection
     //strtok was recommended, check what it does ! -> not here
-    string in(input[0]);
     int redir = 0;
     if (line.find('&') != string::npos) {
         // background running
@@ -21,7 +20,7 @@ int parseLine(string line, char **input) {
     }
     if (line.find('$') != string::npos) {
         // if var exists replace the word with the value and return value
-        parseVars(input);
+        input = parseVars(input);
     }
     if (line.find('>') != string::npos) {
         // redirect out
@@ -43,7 +42,7 @@ int parseLine(string line, char **input) {
         redir = 1;
     }
 
-    if (internalHandler(in,input) == 0)
+    if (internalHandler(input[0],input) == 0)
         return 0;
     if (redir == 0)
         runExt(input);

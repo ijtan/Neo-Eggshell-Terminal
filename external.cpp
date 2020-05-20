@@ -1,6 +1,14 @@
 #include "external.h"
 using namespace std;
-int runExt(char **args){
+int runExt(vector<string> argVector){
+    // set last token to NULL
+     char *args[argVector.size()+1];
+    int i = 0;
+    for(const auto& str:argVector){
+        args[i] = const_cast<char *>(str.c_str());
+        i++;
+    }
+    args[i]=(NULL);
     pid_t pid = fork();
     if(pid == 0) {
         int code = execvp(args[0],args);
@@ -21,7 +29,15 @@ int runExt(char **args){
     return 0;
 }
 
-string runExtRedir(char **args){
+string runExtRedir(vector<string> argVector){
+    // set last token to NULL
+    char **args;
+    int i = 0;
+    for(const auto& str:argVector){
+        args[i] = const_cast<char *>(str.c_str());
+        i++;
+    }
+    args[i]=(NULL);
     pid_t pid = fork();
     if(pid == 0) {
         int code = execvp(args[0],args);

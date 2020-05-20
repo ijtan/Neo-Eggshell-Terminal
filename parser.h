@@ -13,6 +13,7 @@
 #include <cstring>
 #include "internal.h"
 #include "variableHandler.h"
-int parseLine(std::string line, char **input);
+using namespace std;
+int parseLine(string line, vector<string> input);
 
 #endif //NEOEGGSHELL_PARSER_H

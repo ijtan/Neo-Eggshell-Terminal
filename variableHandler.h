@@ -18,7 +18,7 @@
 void printVars();
 void initVars();
 std::vector<std::string> getVars();
-char ** parseVars(char **input);
+std::vector<std::string>parseVars(std::vector<std::string> inputVector);
 
 class variableHandler {
 
