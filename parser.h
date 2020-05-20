@@ -12,10 +12,7 @@
 #include <sys/wait.h>
 #include <cstring>
 #include "internal.h"
+#include "variableHandler.h"
 int parseLine(std::string line, char **input);
-class parser {
-
-};
-
 
 #endif //NEOEGGSHELL_PARSER_H

@@ -8,9 +8,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <cstring>
-#include "linenoise.h"
-
 int runExt(char **args);
+std::string runExtRedir(char **args);
 class external {
 
 };

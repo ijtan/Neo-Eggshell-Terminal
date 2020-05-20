@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "external.h"
 #include "internal.h"
+#include "variableHandler.h"
 
 using namespace std;
 #define MaxCmdLen 100
@@ -30,15 +31,6 @@ int main() {
 
 
     //TODO chedck that the following are valid and where they are to be used
-    puts("\n\nPrinting required env variables");
-    printf("PATH : %s\n", getenv("PATH"));
-    printf("HOME : %s\n", getenv("HOME"));
-    printf("USER : %s\n", getenv("USER"));
-    printf("PWD : %s\n", getenv("PWD"));
-    printf("SHELL : %s\n", getenv("SHELL"));
-    printf("PROMPT : %s\n", getenv("PROMPT"));
-    printf("EXITCODE : %s\n", getenv("EXITCODE"));
-    printf("TERMINAL : %s\n\n\n", getenv("TERMINAL"));
 
 
     //start linenoise loop

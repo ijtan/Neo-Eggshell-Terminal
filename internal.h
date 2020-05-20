@@ -13,7 +13,8 @@
 #include <sys/wait.h>
 #include <string>
 #include <vector>
-int internalHandler(std::string command);
+int internalHandler(std::string command, char** args);
+void echo(char **args);
 #define MaxCmdLen 100
 #define MAX_INTERNAL_CMDS 100
 class internal {
