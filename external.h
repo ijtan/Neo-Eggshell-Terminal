@@ -7,8 +7,9 @@
 #include "unistd.h"
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <cstring>
 
-void runExt(char **exec);
+void runExt(char *exec);
 class external {
 
 };

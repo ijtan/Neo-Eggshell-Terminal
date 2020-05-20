@@ -1,9 +1,17 @@
 #include "external.h"
 using namespace std;
-void runExt(char **exec){
+void runExt(char *exec){
     pid_t pid = fork();
     if(pid == 0) {
-        cout << execlp(exec[0],exec[0],exec[1], NULL)<< ": execv\n";
+        char *argv[2];
+        argv[0] = exec;
+        argv[1] = NULL;
+        int code = execvp(exec,argv);
+        cout << code << ": execv\n"<<endl;
+        if(code == -1){
+            puts("Error encountered, exiting!");
+            exit(-1);
+        }
     }
 
     int status;
