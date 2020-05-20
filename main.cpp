@@ -6,30 +6,42 @@
 using namespace std;
 #define MaxCmdLen 100
 #define MAX_ARGS 255
+#define MAX_HISTORY 20
 
 int main() {
-    //TODO implement linenoise!
     cout << "Welcome to EggShell!" << endl;
 
-    //TODO chedck that the following are valid and where they are to be used
-    printf("PATH : %s\n", getenv("PATH"));
-    printf("HOME : %s\n", getenv("HOME"));
-    printf("ROOT : %s\n\n\n", getenv("ROOT"));
-    flush(cout);
-    //Take input
-
-
-
+    //init vars
     char *line,
             *token = NULL,
             *args[MAX_ARGS];
     int tokenIndex;
-    char *name = getenv("LOGNAME");
-    char *prompt = strcat(name, "> ");
+    char buff[100];
+    sprintf(buff, "PROMPT=%s@eggshell> ",getenv("USER"));
+    putenv(buff);
 
-    while ((line = linenoise(prompt)) != NULL) {
+    //init linenoise
+    linenoiseHistorySetMaxLen(MAX_HISTORY);
+
+
+
+    //TODO chedck that the following are valid and where they are to be used
+    puts("\n\nPrinting required env variables");
+    printf("PATH : %s\n", getenv("PATH"));
+    printf("HOME : %s\n", getenv("HOME"));
+    printf("USER : %s\n", getenv("USER"));
+    printf("PWD : %s\n", getenv("PWD"));
+    printf("SHELL : %s\n", getenv("SHELL"));
+    printf("PROMPT : %s\n", getenv("PROMPT"));
+    printf("EXITCODE : %s\n", getenv("EXITCODE"));
+    printf("TERMINAL : %s\n\n\n", getenv("TERMINAL"));
+
+
+    //start linenoise loop
+    //TODO change runExt to parsing, which will handle all inputs accordingly
+    while ((line = linenoise(getenv("PROMPT"))) != NULL) {
+        linenoiseHistoryAdd(line);
         token = strtok(line, " ");
-
         for (tokenIndex = 0; token != NULL && tokenIndex < MAX_ARGS - 1; tokenIndex++) {
             args[tokenIndex] = token;
             token = strtok(NULL, " ");
@@ -38,17 +50,16 @@ int main() {
         // set last token to NULL
         args[tokenIndex] = NULL;
 
-        while (tokenIndex-- > 0) {
-            printf("Arg %d = [%s]\n", tokenIndex, args[tokenIndex]);
-        }
-
-
         if (strcmp(args[0], "exit") == 0) {
-            free(line);
+            //TODO MAKE THIS INTERNAL AND WAY TO FREE ALL VARS
+            linenoiseFree(line);
             exit(2);
         }
         //call function which runs externals commands
         runExt(args);
+
+        linenoiseFree(line);
+
 
 
     }
@@ -59,14 +70,6 @@ int main() {
 //    int linenoiseHistorySave(const char *filename);
 //    int linenoiseHistoryLoad(const char *filename);
 
-
-
-    //Take Allow for multiple arguments and such, probably implementation with linenoise
-
-
-
-
-    //free the input
     //TODO check if new&delete can be used instead of malloc&free
     return 0;
 }

@@ -18,4 +18,7 @@ int classify(char *input){
     if (strstr(Input, "|") != NULL) {
         // pipe
     }
+    if (strstr(Input, "&&") != NULL) {
+        // pipe
+    }
 }
