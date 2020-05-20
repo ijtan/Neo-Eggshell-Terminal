@@ -2,34 +2,40 @@
 #include <stdlib.h>
 #include "linenoise.h"
 #include "external.h"
+
 using namespace std;
 #define MaxCmdLen 100
-int main()
-{
+#define MAX_ARGS 255
+
+int main() {
     //TODO implement linenoise!
-    cout<<"Welcome to EggShell!"<<endl;
+    cout << "Welcome to EggShell!" << endl;
 
     //TODO chedck that the following are valid and where they are to be used
     printf("PATH : %s\n", getenv("PATH"));
     printf("HOME : %s\n", getenv("HOME"));
     printf("ROOT : %s\n\n\n", getenv("ROOT"));
     flush(cout);
-
     //Take input
-    char *line = (char *) malloc(MaxCmdLen*sizeof(char));
+
+
+
+    char *line,
+        *token = NULL,
+        *args[MAX_ARGS];
+    int tokenIndex;
     char *name = getenv("LOGNAME");
-    char *prompt = strcat(name,"> ");
+    char *prompt = strcat(name, "> ");
 
-    while((line = linenoise(prompt)) != NULL) {
-        cout << "You wrote: "<< line << endl;
-
-        if(strcmp(line, "exit") == 0){
+    while ((line = linenoise(prompt)) != NULL) {
+        cout << "You wrote: " << line << endl;
+        token = strtok(line, " ");
+        if (strcmp(line, "exit") == 0) {
             free(line);
             exit(2);
         }
         //call function which runs externals commands
         runExt(line);
-
 
 
     }
