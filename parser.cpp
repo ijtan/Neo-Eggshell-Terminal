@@ -5,5 +5,17 @@
 int classify(char *input){
     //check for pipes
     //check for redirection
-    //strtok was recommended, check what it does !
+    //strtok was recommended, check what it does ! -> not here
+    if (strstr(Input, ">") != NULL) {
+        // redirect out
+    }
+    if (strstr(Input, "<") != NULL) {
+        // redirect in
+    }
+    if (strstr(Input, ">>") != NULL) {
+        // redirect append
+    }
+    if (strstr(Input, "|") != NULL) {
+        // pipe
+    }
 }
