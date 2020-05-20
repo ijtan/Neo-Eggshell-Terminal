@@ -14,7 +14,7 @@ int parseLine(string line, char **input) {
 
     if (internalHandler(in) != 0) {
         puts("External Command detected !");
-        runExt(line.c_str(), input);
+        runExt(input);
         cout << "LINE: " <<line<<endl;
     }
     if (line.find('>') != string::npos) {

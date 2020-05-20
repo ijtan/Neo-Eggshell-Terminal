@@ -45,8 +45,9 @@ int main() {
     //TODO change runExt to parsing, which will handle all inputs accordingly
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
         linenoiseHistoryAdd(line);
-        char*  lineCopy = strdup(line);
-        token = strtok(lineCopy, " ");
+        string copy(line);
+
+        token = strtok((char*)copy.c_str(), " ");
         for (tokenIndex = 0; token != NULL && tokenIndex < MAX_ARGS - 1; tokenIndex++) {
             args[tokenIndex] = token;
             token = strtok(NULL, " ");
@@ -57,14 +58,12 @@ int main() {
 
         if (strcmp(args[0], "exit") == 0) {
             //TODO MAKE THIS INTERNAL AND WAY TO FREE ALL VARS
-            linenoiseFree(line);
-            linenoiseFree(lineCopy);
-            exit(2);
+            free(line);
+            break;
         }
         //call function which runs externals commands
         parseLine(line, args);
-        linenoiseFree(line);
-        linenoiseFree(lineCopy);
+        free(line);
 
 
     }
@@ -75,6 +74,5 @@ int main() {
 //    int linenoiseHistorySave(const char *filename);
 //    int linenoiseHistoryLoad(const char *filename);
 
-    //TODO check if new&delete can be used instead of malloc&free
     return 0;
 }

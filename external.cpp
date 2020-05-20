@@ -1,21 +1,25 @@
 #include "external.h"
 using namespace std;
-int runExt(const char *line, char **args){
+int runExt(char **args){
     pid_t pid = fork();
     if(pid == 0) {
+        printf("pre exec");
         int code = execvp(args[0],args);
+        printf("post exec");
         if(code == -1){
             perror("Execution");
-            _exit(-1);
+            exit(-1);
         }
-        linenoiseHistoryAdd(line);
-        _exit(0);
+        exit(0);
     }
     int status;
+    printf("pre wait");
     waitpid(-1, &status, 0);
+    printf("post wait");
+
     if(WIFEXITED(status))
         cout << "exited status: " << WEXITSTATUS(status) << endl;
-    else if(WIFSIGNALED(status)){
+    if(WIFSIGNALED(status)){
         cout << "exited with signal: " << WTERMSIG(status) << endl;
     }
     return 0;

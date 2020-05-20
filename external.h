@@ -10,7 +10,7 @@
 #include <cstring>
 #include "linenoise.h"
 
-int runExt(const char *line, char **args);
+int runExt(char **args);
 class external {
 
 };
