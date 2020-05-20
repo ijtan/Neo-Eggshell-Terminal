@@ -1,21 +1,20 @@
 #include "internal.h"
 
 using namespace std;
-char **internals = (char**) malloc(MAX_INTERNAL_CMDS*MaxCmdLen*sizeof(char));
-
-int internalHandler(char *command){
-    internals[0] = "echo";
+vector<string> internalCommands;
+int internalHandler(string command){
     //will be used to check if the command is internal
+    internalCommands.emplace_back("echo");
 
-    for(int i = 0; i<MAX_INTERNAL_CMDS; i++ ) {
-        if(strcmp(internals[i],command)==0){
-            //handle internal -> execute
-            puts("Internal Command found!");
+    for(auto & internalCommand : internalCommands) {
+        if(internalCommand==(command)){
+            cout << "Internal command found: " <<command<<endl;
+            switch(&internalCommand-&internalCommands[0]){
+                case 0:
+                    cout << "echo has been reached!"<<endl;
+                    break;
+            }
             return 0;
         }
-    }
-    return 1;
-}
-void closeInternals(){
-    free(internals);
+    }return 1;
 }

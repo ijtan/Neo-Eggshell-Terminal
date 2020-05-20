@@ -4,13 +4,13 @@
 #define NEOEGGSHELL_EXTERNAL_H
 #include <iostream>
 #include <cstdio>
-#include "unistd.h"
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <cstring>
+#include "linenoise.h"
 
-
-int runExt(char **args);
+int runExt(const char *line, char **args);
 class external {
 
 };

@@ -5,31 +5,39 @@
 using namespace std;
 
 
-int parseLine(string line, char **input){
+int parseLine(string line, char **input) {
     //check for pipes
     //check for redirection
     //strtok was recommended, check what it does ! -> not here
+    string in(input[0]);
 
-    if(internalHandler(input[0]) != string::npos) {
-        if (line.find(">") != string::npos) {
-            // redirect out
-        }
-        if (line.find("<") != string::npos) {
-            // redirect in
-        }
-        if (line.find(">>") != string::npos) {
-            // redirect append
-        }
-        if (line.find("|") != string::npos) {
-            // pipe
-        }
-        if (line.find("&") != string::npos) {
-            // background running
-        }
-        return 1;
+
+    if (internalHandler(in) != 0) {
+        puts("External Command detected !");
+        runExt(line.c_str(), input);
+        cout << "LINE: " <<line<<endl;
     }
-    puts("External Command detected !");
-    runExt(input);
+    if (line.find('>') != string::npos) {
+        // redirect out
+        cout << "> detected" << endl;
+    }
+    if (line.find('<') != string::npos) {
+        // redirect in
+        cout << "< detected" << endl;
+    }
+    if (line.find(">>") != string::npos) {
+        // redirect append
+        cout << "append detected" << endl;
+    }
+    if (line.find('|') != string::npos) {
+        // pipe
+        cout << "pipe detected" << endl;
+    }
+    if (line.find('&') != string::npos) {
+        // background running
+        cout << "& detected" << endl;
+    }
+    cout << "no special characters!" << endl;
     return 0;
 
 }

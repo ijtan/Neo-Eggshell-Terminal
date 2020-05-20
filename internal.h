@@ -11,12 +11,11 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <cstring>
-
-int internalHandler(char *command);
+#include <string>
+#include <vector>
+int internalHandler(std::string command);
 #define MaxCmdLen 100
 #define MAX_INTERNAL_CMDS 100
-void closeInternals();
 class internal {
 
 };

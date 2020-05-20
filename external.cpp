@@ -1,6 +1,6 @@
 #include "external.h"
 using namespace std;
-int runExt(char **args){
+int runExt(const char *line, char **args){
     pid_t pid = fork();
     if(pid == 0) {
         int code = execvp(args[0],args);
@@ -8,6 +8,7 @@ int runExt(char **args){
             perror("Execution");
             _exit(-1);
         }
+        linenoiseHistoryAdd(line);
         _exit(0);
     }
     int status;
