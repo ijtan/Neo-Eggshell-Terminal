@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include <cstring>
 
-void runExt(char *exec);
+void runExt(char **args);
 class external {
 
 };

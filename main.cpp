@@ -21,21 +21,34 @@ int main() {
 
 
     char *line,
-        *token = NULL,
-        *args[MAX_ARGS];
+            *token = NULL,
+            *args[MAX_ARGS];
     int tokenIndex;
     char *name = getenv("LOGNAME");
     char *prompt = strcat(name, "> ");
 
     while ((line = linenoise(prompt)) != NULL) {
-        cout << "You wrote: " << line << endl;
         token = strtok(line, " ");
-        if (strcmp(line, "exit") == 0) {
+
+        for (tokenIndex = 0; token != NULL && tokenIndex < MAX_ARGS - 1; tokenIndex++) {
+            args[tokenIndex] = token;
+            token = strtok(NULL, " ");
+        }
+
+        // set last token to NULL
+        args[tokenIndex] = NULL;
+
+        while (tokenIndex-- > 0) {
+            printf("Arg %d = [%s]\n", tokenIndex, args[tokenIndex]);
+        }
+
+
+        if (strcmp(args[0], "exit") == 0) {
             free(line);
             exit(2);
         }
         //call function which runs externals commands
-        runExt(line);
+        runExt(args);
 
 
     }
