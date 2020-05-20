@@ -1,12 +1,16 @@
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include "linenoise.h"
+#include "parser.h"
 #include "external.h"
+#include "internal.h"
 
 using namespace std;
 #define MaxCmdLen 100
 #define MAX_ARGS 255
 #define MAX_HISTORY 20
+#define MAX_INTERNAL_CMDS 100
+
 
 int main() {
     cout << "Welcome to EggShell!" << endl;
@@ -56,8 +60,9 @@ int main() {
             exit(2);
         }
         //call function which runs externals commands
-        runExt(args);
 
+        string str(line, line + strlen(line));
+        parseLine(line, args);
         linenoiseFree(line);
 
 
@@ -71,5 +76,6 @@ int main() {
 //    int linenoiseHistoryLoad(const char *filename);
 
     //TODO check if new&delete can be used instead of malloc&free
+    closeInternals();
     return 0;
 }

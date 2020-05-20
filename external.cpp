@@ -12,5 +12,10 @@ int runExt(char **args){
     }
     int status;
     waitpid(-1, &status, 0);
+    if(WIFEXITED(status))
+        cout << "exited status: " << WEXITSTATUS(status) << endl;
+    else if(WIFSIGNALED(status)){
+        cout << "exited with signal: " << WTERMSIG(status) << endl;
+    }
     return 0;
 }
