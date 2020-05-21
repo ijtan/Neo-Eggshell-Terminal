@@ -22,14 +22,13 @@ int runExt(vector<string> argVector) {
     }
     int status;
     waitpid(pid, &status, 0);
-    if (WIFEXITED(status)!=0) {
-        char envStr[sizeof(WEXITSTATUS(status))+10];
-        sprintf(envStr,"EXITCODE=%d",(WEXITSTATUS(status)));
-        vector<string>env;
+    if (WIFEXITED(status) != 0) {
+        char envStr[sizeof(WEXITSTATUS(status)) + 10];
+        sprintf(envStr, "EXITCODE=%d", (WEXITSTATUS(status)));
+        vector<string> env;
         env.emplace_back(envStr);
         set(env);
-    }
-    else
+    } else
         return 0;
     if (WIFSIGNALED(status)) {
         cout << "exited with signal: " << WTERMSIG(status) << endl;
@@ -63,29 +62,32 @@ int runExtRedir(vector<string> argVector, char *buf, std::size_t size) {
 
     if (pid == 0) {
         close(fd[0]);
-        dup2(fd[1],STDOUT_FILENO);
+        dup2(fd[1], STDOUT_FILENO);
         close(fd[1]);
-        int code = execvp(args[0],args);
-        if(code == -1){
-           perror("Execution");
-         }
+        int code = execvp(args[0], args);
+        if (code == -1) {
+            perror("Execution");
+        }
     } else {
         int status;
         close(fd[1]);
-        int count = read(fd[0],buf,size-1);
-        if(count ==-1){
+        int count = read(fd[0], buf, size - 1);
+        if (count == -1) {
             perror("read");
             return -1;
         }
 
         buf[count] = '\0';
-        cout << "INTERNAL REDIR OUT: '" << buf<<"'; Size: "<<size << endl;
-        waitpid(pid, &status, 0);
-        if (WIFEXITED(status)!=0) {
-            char env[sizeof(WEXITSTATUS(status))+10];
-            sprintf(env,"EXITCODE=%d",WEXITSTATUS(status));
+        cout << "INTERNAL REDIR OUT: '" << buf << "'; Size: " << size << endl;
+        if (wait(&status) == -1) {
+            perror("wait");
+            return -1;
+        }
+        if (WIFEXITED(status)) {
+            char env[sizeof(WEXITSTATUS(status)) + 10];
+            sprintf(env, "EXITCODE=%d", WEXITSTATUS(status));
             putenv(env);
-        }else
+        } else
             return 0;
         if (WIFSIGNALED(status)) {
             cout << "exited with signal: " << WTERMSIG(status) << endl;

@@ -3,4 +3,4 @@ project(neoEggshell)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(neoEggshell ext/linenoise.c external.cpp parser.cpp internal.cpp main.cpp variableHandler.cpp rediraction.cpp)
+add_executable(neoEggshell ext/linenoise.c external.cpp parser.cpp internal.cpp main.cpp variableHandler.cpp redirection.h signalHandler.h)
