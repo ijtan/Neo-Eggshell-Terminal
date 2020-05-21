@@ -6,4 +6,5 @@
 #include <sys/wait.h>
 #include <cstring>
 #include <vector>
+void pipeTester();
 #endif //NEOEGGSHELL_REDIRACTION_H

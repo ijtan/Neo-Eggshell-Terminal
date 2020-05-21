@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include "linenoise.h"
 #include "parser.h"
+#include "rediraction.h"
 
 
 using namespace std;
@@ -11,7 +12,7 @@ using namespace std;
 
 int main() {
     cout << "Welcome to EggShell!" << endl;
-
+    pipeTester();
     //init vars
     char *line,
             *token = NULL;

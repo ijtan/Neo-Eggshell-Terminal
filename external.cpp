@@ -31,9 +31,9 @@ int runExt(vector<string> argVector) {
     return 0;
 }
 
-string runExtRedir(vector<string> argVector) {
+void runExtRedir(vector<string> argVector, char *buf) {
     // set last token to NULL
-    char **args;
+    char *args[255];
     int i = 0;
     for (const auto &str:argVector) {
         args[i] = const_cast<char *>(str.c_str());
@@ -45,45 +45,39 @@ string runExtRedir(vector<string> argVector) {
     int fd[2];
     if (pipe(fd) == -1) {
         perror("pipe");
-        return NULL;
+        return;
     };
     pid_t pid = fork();
     if (pid < 0) {
         perror("fork");
-        return NULL;
+        return;
     };
 
 
     if (pid == 0) {
-        //dup2(fd[1], STDOUT_FILENO);
         close(fd[0]);
+        dup2(fd[1],STDOUT_FILENO);
         close(fd[1]);
-        char msg[] = "HELLO\n";
-        write(STDOUT_FILENO, msg, sizeof(msg));
-        //int code = execvp(args[0],args);
-        //if(code == -1){
-        //   perror("Execution");
-        //    exit(-1);
-        // }
+        int code = execvp(args[0],args);
+        if(code == -1){
+           perror("Execution");
+            exit(-1);
+         }
         exit(0);
     } else {
         int status;
-        close(fd[0]);
-        char buf;
-        string output = "HEL";
-//        while (fgetc(fd[1]) != EOF) {
-//            if (buf != 0)
-//                output.push_back(buf);
-//            else
-//                break;
-//        }
         close(fd[1]);
+        int count = read(fd[0],buf,sizeof(buf)-1);
+        if(count ==-1){
+            perror("read");
+        }
+        buf[count] = '\0';
+        cout << "INTERNAL REDIR OUT: '" << buf<<"'" << endl;
         waitpid(pid, &status, 0);
         if (WIFEXITED(status))
             cout << "exited status: " << WEXITSTATUS(status) << endl;
         if (WIFSIGNALED(status)) {
             cout << "exited with signal: " << WTERMSIG(status) << endl;
         }
-        return output;
     }
 }

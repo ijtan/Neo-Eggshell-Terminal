@@ -45,8 +45,11 @@ int parseLine(string line, vector<string> input) {
     if (redir == 0)
         //
         runExt(input);
-    if (redir == 1)
-        cout << "REDIR OUT: " << runExtRedir(input) << endl;
+    if (redir == 1) {
+        char out[1024];
+        runExtRedir(input, out);
+        cout << "REDIR OUT: '" << out << "'" << endl;
+    }
     cout << "LINE: " << line << endl;
 
     return 0;
