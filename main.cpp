@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstdlib>
-#include "linenoise.h"
+#include "ext/linenoise.h"
 #include "parser.h"
 
 
