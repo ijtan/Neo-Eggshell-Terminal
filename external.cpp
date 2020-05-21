@@ -31,7 +31,7 @@ int runExt(vector<string> argVector) {
     return 0;
 }
 
-void runExtRedir(vector<string> argVector, char *buf) {
+void runExtRedir(vector<string> argVector, char *buf, std::size_t size) {
     // set last token to NULL
     char *args[255];
     int i = 0;
@@ -67,12 +67,13 @@ void runExtRedir(vector<string> argVector, char *buf) {
     } else {
         int status;
         close(fd[1]);
-        int count = read(fd[0],buf,sizeof(buf)-1);
+        int count = read(fd[0],buf,size-1);
         if(count ==-1){
             perror("read");
         }
+
         buf[count] = '\0';
-        cout << "INTERNAL REDIR OUT: '" << buf<<"'" << endl;
+        cout << "INTERNAL REDIR OUT: '" << buf<<"'; Size: "<<size << endl;
         waitpid(pid, &status, 0);
         if (WIFEXITED(status))
             cout << "exited status: " << WEXITSTATUS(status) << endl;

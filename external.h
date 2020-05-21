@@ -8,7 +8,7 @@
 #include <cstring>
 #include <vector>
 int runExt(std::vector<std::string> argVector);
-void runExtRedir(std::vector<std::string> argVector, char* buf) ;
+void runExtRedir(std::vector<std::string> argVector, char* buf, size_t size) ;
 class external {
 
 };
