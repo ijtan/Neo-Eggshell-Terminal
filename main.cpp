@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include "ext/linenoise.h"
 #include "parser.h"
+#include "signalHandler.h"
 
 
 
@@ -10,23 +11,33 @@ using namespace std;
 #define MAX_HISTORY 20
 //extern char**environ;
 
-int main(int argc, char*argv[]) {
-
-    cout << "Welcome to EggShell!" << endl;
-    //init vars
-    char envName[strlen(argv[0])+5];
-    sprintf(envName,"SHELL=%s",argv[0]);
-    vector<string>env;
+void initVars(vector<string> &env){
+    char buf[255];
+    char envName[255];
+    sprintf(envName, "PROMPT=%s@eggshell> ", getenv("USER"));
     env.push_back(envName);
     set(env);
+    env.clear();
+    readlink("/proc/self/exe", buf, sizeof(buf));
+    sprintf(envName,"SHELL=%s",buf);
+    env.push_back(envName);
+    set(env);
+    env.clear();
+
+
+
+}
+int main(int argc, char*argv[]) {
+    //signal(SIGINT, sigHandler);
+    cout << "Welcome to EggShell!" << endl;
+    //init vars
+
     char *line,
             *token = NULL;
-
-    vector<string> args;
     int tokenIndex;
-    char buff[100];
-    sprintf(buff, "PROMPT=%s@eggshell> ", getenv("USER"));
-    putenv(buff);
+    vector<string> args;
+    vector<string> env;
+    initVars(env);
 
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
@@ -48,9 +59,16 @@ int main(int argc, char*argv[]) {
         }
 
         //call function which runs externals commands
-        parseLine(line, args);
-        free(line);
-        args.clear();
+        if(args[0]!="exit") {
+            parseLine(line, args);
+            free(line);
+            args.clear();
+        }
+        else{
+            free(line);
+            args.clear();
+            exit(0);
+        }
 
     }
 
