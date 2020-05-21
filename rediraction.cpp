@@ -5,41 +5,30 @@
 
 using namespace std;
 
-string truncOut(string name) {
-    return NULL;
-    FILE *out = freopen(name.c_str(),"w",stdout);
+void truncOut(string filename, string content) {
+    FILE *out = freopen(filename.c_str(),"w",stdout);
 }
 
-string append(string name) {
-    return NULL;
-    FILE *Appnder = freopen(name.c_str(),"w",stdout);
-}
+int append(char * lin, vector<string> &args) {
+    int n = args.size()-1;
+    string line(lin);
+    //[-2]          [-1]    [-0]
+    //EXEC/ARGS     >>      FILENAME.txt
+    if(args[n-1]!=">>"){
+        fputs("Redirect not where expected\n",stderr);
+        return -1;
+    }else {
 
-string input(string name) {
-    FILE *Appnder = freopen(name.c_str(),"r",stdin);
-    return NULL;
-
-}
-
-void pipeTester(){
-    int fd[2];
-    if (pipe(fd) == -1){
-        perror("pipe");
-        return;
+        freopen(args[n].c_str(), "a", stdout);
     }
-    pid_t pid = fork();
-    if(pid == -1){
-        perror("fork");
-    }else if (pid == 0){
-        close(fd[0]);
-        char mesg[] = "HELLO MAN I AM COMINGH";
-        write(fd[1],mesg,sizeof(mesg));
-        exit(0);
-    }else{
-        close(fd[1]);
-        char bufRead[255];
-        int ByteCount = read(fd[0],bufRead, sizeof(bufRead)-1);
-        bufRead[ByteCount] = '\0';
-        cout<<"recieved: "<<bufRead<<endl;
-    }
+        args.erase(args.end() - 1, args.end() + 1);
+        line = line.substr(0, line.find(">>"));
+        strcpy(lin,line.c_str());
+        return 0;
+}
+
+string input(string filename) {
+    FILE *reader = freopen(filename.c_str(),"r",stdin);
+    return NULL;
+
 }

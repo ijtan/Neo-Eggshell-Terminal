@@ -7,8 +7,9 @@
 #include <sys/wait.h>
 #include <cstring>
 #include <vector>
+#include "linenoise.h"
 int runExt(std::vector<std::string> argVector);
-void runExtRedir(std::vector<std::string> argVector, char* buf, size_t size) ;
+int runExtRedir(std::vector<std::string> argVector, char* buf, size_t size) ;
 class external {
 
 };

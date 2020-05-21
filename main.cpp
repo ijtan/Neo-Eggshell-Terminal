@@ -12,7 +12,6 @@ using namespace std;
 
 int main() {
     cout << "Welcome to EggShell!" << endl;
-    pipeTester();
     //init vars
     char *line,
             *token = NULL;
@@ -31,7 +30,11 @@ int main() {
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
         linenoiseHistoryAdd(line);
         string copy(line);
-
+        if(copy.empty()){
+            free(line);
+            args.clear();
+            continue;
+        }
         token = strtok((char *) copy.c_str(), " ");
         for (tokenIndex = 0; token != NULL && tokenIndex < MAX_ARGS - 1; tokenIndex++) {
             args.emplace_back(token);

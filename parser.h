@@ -13,6 +13,8 @@
 #include <cstring>
 #include "internal.h"
 #include "variableHandler.h"
+#include "external.h"
+#include "rediraction.h"
 using namespace std;
 int parseLine(string line, vector<string> input);
 

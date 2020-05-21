@@ -11,7 +11,6 @@ int internalHandler(string command, vector<string> argsV) {
 
     for (auto &internalCommand : internalCommands) {
         if (internalCommand == command) {
-            cout << "Internal command found: " << command << endl;
             switch (&internalCommand - &internalCommands[0]) {
                 //TODO MAKE THIS AN ENUM
                 case 0:
