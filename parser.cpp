@@ -6,9 +6,6 @@ using namespace std;
 
 
 int parseLine(string line, vector<string> input) {
-    //check for pipes
-    //check for redirection
-    //strtok was recommended, check what it does ! -> not here
     int redir = 0;
     if (line.find('&') != string::npos) {
         // background running
@@ -42,13 +39,15 @@ int parseLine(string line, vector<string> input) {
         redir = 1;
     }
 
-    if (internalHandler(input[0],input) == 0)
+    if (internalHandler(input[0], input) == 0)
+        //checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
         return 0;
     if (redir == 0)
+        //
         runExt(input);
     if (redir == 1)
-        cout << "REDIR OUT: "<<runExtRedir(input)<<endl;
-    cout << "LINE: " <<line<<endl;
+        cout << "REDIR OUT: " << runExtRedir(input) << endl;
+    cout << "LINE: " << line << endl;
 
     return 0;
 

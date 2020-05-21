@@ -18,7 +18,7 @@ int main() {
     vector<string> args;
     int tokenIndex;
     char buff[100];
-    sprintf(buff, "PROMPT=%s@eggshell> ",getenv("USER"));
+    sprintf(buff, "PROMPT=%s@eggshell> ", getenv("USER"));
     putenv(buff);
     initVars();
 
@@ -31,13 +31,13 @@ int main() {
         linenoiseHistoryAdd(line);
         string copy(line);
 
-        token = strtok((char*)copy.c_str(), " ");
+        token = strtok((char *) copy.c_str(), " ");
         for (tokenIndex = 0; token != NULL && tokenIndex < MAX_ARGS - 1; tokenIndex++) {
             args.emplace_back(token);
             token = strtok(NULL, " ");
         }
 
-        if (args[0]== "exit"){
+        if (args[0] == "exit") {
             //TODO MAKE THIS INTERNAL AND WAY TO FREE ALL VARS
             free(line);
             break;

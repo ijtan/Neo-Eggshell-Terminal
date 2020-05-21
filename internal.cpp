@@ -43,14 +43,25 @@ void echo(vector<string> args) {
     }
     cout << endl;
 }
-void set(string Assign){
+
+void set(string Assign) {
     putenv("SomeVariable=SomeValue"); //replace with Assign
 
 }
-void unset(vector<string> args){
-    if(args.size()==1) { puts("Expected argument to unset"); return; }
-    if(args.size()>2) { puts("Expected only one argument"); return; }
-    if(getenv(args[1].c_str())==NULL){puts("Not Found!"); return;}
+
+void unset(vector<string> args) {
+    if (args.size() == 1) {
+        puts("Expected argument to unset");
+        return;
+    }
+    if (args.size() > 2) {
+        puts("Expected only one argument");
+        return;
+    }
+    if (getenv(args[1].c_str()) == NULL) {
+        puts("Not Found!");
+        return;
+    }
     char *env = const_cast<char *>(args[1].c_str());
     putenv(env); //replace with Assign
 
