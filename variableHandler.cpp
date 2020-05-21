@@ -2,32 +2,10 @@
 
 using namespace std;
 
-vector<string> vars;
-
-void initVars() {
-    vars.emplace_back("PATH");
-    vars.emplace_back("HOME");
-    vars.emplace_back("USER");
-    vars.emplace_back("PWD");
-    vars.emplace_back("CWD");
-    vars.emplace_back("SHELL");
-    vars.emplace_back("PROMPT");
-    vars.emplace_back("EXITCODE");
-    vars.emplace_back("TERMINAL");
-}
-
 void printVars() {
-    for (auto &&var:vars) {
-        if(getenv(var.c_str()) == nullptr){
-            cout << var << "=NULL" << endl;
-        }
-        else
-            cout << var << "=" << getenv(var.c_str()) << endl;
+    for (char **env = environ; *env != NULL; env++) {
+        cout<<*env<<endl;
     }
-}
-
-vector<string> getVars() {
-    return vars;
 }
 
 vector<string>parseVars(vector<string> inputVector) {

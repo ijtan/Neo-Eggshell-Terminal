@@ -16,9 +16,9 @@ int runExt(vector<string> argVector) {
         int code = execvp(args[0], args);
         if (code == -1) {
             perror("Execution");
-            exit(-1);
+            _exit(-1);
         }
-        exit(0);
+        _exit(0);
     }
     int status;
     waitpid(pid, &status, 0);
@@ -68,9 +68,7 @@ int runExtRedir(vector<string> argVector, char *buf, std::size_t size) {
         int code = execvp(args[0],args);
         if(code == -1){
            perror("Execution");
-            exit(EXIT_FAILURE);
          }
-        exit(0);
     } else {
         int status;
         close(fd[1]);

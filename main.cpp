@@ -2,16 +2,16 @@
 #include <cstdlib>
 #include "linenoise.h"
 #include "parser.h"
-#include "rediraction.h"
-#include "internal.h"
+
 
 
 using namespace std;
 #define MAX_ARGS 100
 #define MAX_HISTORY 20
-
+//extern char**environ;
 
 int main(int argc, char*argv[]) {
+
     cout << "Welcome to EggShell!" << endl;
     //init vars
     char envName[strlen(argv[0])+5];
@@ -21,12 +21,12 @@ int main(int argc, char*argv[]) {
     set(env);
     char *line,
             *token = NULL;
+
     vector<string> args;
     int tokenIndex;
     char buff[100];
     sprintf(buff, "PROMPT=%s@eggshell> ", getenv("USER"));
     putenv(buff);
-    initVars();
 
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
@@ -47,14 +47,7 @@ int main(int argc, char*argv[]) {
             token = strtok(NULL, " ");
         }
 
-        if (args[0] == "exit") {
-            //TODO MAKE THIS INTERNAL AND WAY TO FREE ALL VARS
-            free(line);
-            freeInternalVars();
-            break;
-        }
         //call function which runs externals commands
-
         parseLine(line, args);
         free(line);
         args.clear();

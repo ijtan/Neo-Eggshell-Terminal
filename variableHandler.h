@@ -16,8 +16,6 @@
 #include "external.h"
 
 void printVars();
-void initVars();
-std::vector<std::string> getVars();
 std::vector<std::string>parseVars(std::vector<std::string> inputVector);
 
 class variableHandler {

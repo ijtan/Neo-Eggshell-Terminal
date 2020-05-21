@@ -21,8 +21,8 @@ int parseLine(string line, vector<string> input) {
         fpos_t pos;
         int fd;
         fd = dup(fileno(stdout));
-        FILE *tmp = append(ln,input);
-        if(tmp!=nullptr) {
+        FILE *tmpfile = append(ln,input);
+        if(tmpfile!=nullptr) {
             string newl(ln);
 
 

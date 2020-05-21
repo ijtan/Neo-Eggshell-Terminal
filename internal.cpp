@@ -3,8 +3,10 @@
 using namespace std;
 vector<string> internalCommands;
 
-struct internalVar{
-    char*ptr;string name;string value;
+struct internalVar {
+    char *ptr;
+    string name;
+    string value;
 };
 vector<internalVar> internalVars;
 
@@ -53,19 +55,19 @@ void echo(vector<string> args) {
 }
 
 int set(vector<string> args) {
-    if(args.size()!=1)
+    if (args.size() != 1)
         return -1;
     int eq = args[0].find('=');
-    if(eq==string::npos){
+    if (eq == string::npos) {
         return -1;
     }
-    string var = args[0].substr(0,eq);
-    string val = args[0].substr(eq+1,args[0].size()+1);
-    for(char ch:var){
-        if(!(isupper(ch)||!isalpha(ch)))
+    string var = args[0].substr(0, eq);
+    string val = args[0].substr(eq + 1, args[0].size() + 1);
+    for (char ch:var) {
+        if (!(isupper(ch) || !isalpha(ch)))
             return -1;
     }
-    if(getenv("var")!=NULL) {
+    if (getenv("var") != NULL) {
         int i = 0;
         for (auto Var:internalVars) {
             if (Var.name == var) {
@@ -78,7 +80,7 @@ int set(vector<string> args) {
     }
     char *env = static_cast<char *>(malloc(var.size() + val.size() + 10));
     sprintf(env, "%s=%s", var.c_str(), val.c_str());
-    internalVar newVar = {env,var,val};
+    internalVar newVar = {env, var, val};
     internalVars.push_back(newVar);
     putenv(newVar.ptr); //replace with Assign
     return 0;
@@ -97,7 +99,7 @@ void unset(vector<string> args) {
     if (getenv(args[1].c_str()) == NULL) {
         puts("Not Found!");
         return;
-    }else{
+    } else {
         int i = 0;
         for (auto Var:internalVars) {
             if (Var.name == args[1]) {
@@ -127,8 +129,8 @@ void changeDirs(vector<string> args) {
 }
 //check if dir exists
 
-void freeInternalVars(){
-    for(auto var:internalVars){
+void freeInternalVars() {
+    for (auto var:internalVars) {
         free(var.ptr);
     }
 }
