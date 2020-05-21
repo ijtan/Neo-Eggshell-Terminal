@@ -19,7 +19,7 @@ int runExt(vector<string> argVector){
         exit(0);
     }
     int status;
-    waitpid(-1, &status, 0);
+    waitpid(pid, &status, 0);
 
     if(WIFEXITED(status))
         cout << "exited status: " << WEXITSTATUS(status) << endl;
@@ -38,22 +38,47 @@ string runExtRedir(vector<string> argVector){
         i++;
     }
     args[i]=(NULL);
+
+
+    int fd[2];
+    if (pipe(fd) == -1){perror("pipe");return NULL;};
     pid_t pid = fork();
+    if (pid<0){perror("fork");return NULL;};
+
+
     if(pid == 0) {
-        int code = execvp(args[0],args);
-        if(code == -1){
-            perror("Execution");
-            exit(-1);
-        }
+        //siginterrupt(SIGALRM,10);
+        dup2(fd[1],STDOUT_FILENO);
+        close(fd[0]);
+        close(fd[1]);
+        char msg[] = "HELLO\n";
+        write(STDOUT_FILENO,msg,sizeof(msg));
+        //int code = execvp(args[0],args);
+        //if(code == -1){
+         //   perror("Execution");
+        //    exit(-1);
+       // }
         exit(0);
     }
-    int status;
-    waitpid(-1, &status, 0);
+    else{
+        int status;
+        close(fd[0]);
+        char buf;
+        string output;
 
-    if(WIFEXITED(status))
-        cout << "exited status: " << WEXITSTATUS(status) << endl;
-    if(WIFSIGNALED(status)){
-        cout << "exited with signal: " << WTERMSIG(status) << endl;
+        while(fgetc(fileno(fd[0]))){
+            if(buf!=0)
+                output.push_back(buf);
+            else
+                break;
+        }
+        close(fd[1]);
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status))
+            cout << "exited status: " << WEXITSTATUS(status) << endl;
+        if (WIFSIGNALED(status)) {
+            cout << "exited with signal: " << WTERMSIG(status) << endl;
+        }
+        return output;
     }
-    return 0;
 }
