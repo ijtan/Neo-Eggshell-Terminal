@@ -7,16 +7,32 @@ using namespace std;
 
 int parseLine(string line, vector<string> input) {
     int redir = 0;
+    if (line.find('=') != string::npos){
+        if(input.size()==1){
+            if(set(input)==0)
+                return 0;
+        }
+    }
     if (line.find(">>") != string::npos) {
         // redirect append
         cout << "append detected" << endl;
         char ln[line.size()];
         strcpy(ln,line.c_str());
-        if(append(ln,input)!=-1) {
+        fpos_t pos;
+        int fd;
+        fd = dup(fileno(stdout));
+        FILE *tmp = append(ln,input);
+        if(tmp!=nullptr) {
             string newl(ln);
+
+
             parseLine(newl, input);
-            fclose(stdout);
-            stdout = fdopen(STDOUT_FILENO, "w");
+
+            fflush(stdout);
+            dup2(fd,fileno(stdout));
+            close(fd);
+            fsetpos(stdout, &pos);
+            //http://c-faq.com/stdio/undofreopen.html
         }
         return 0;
     }
@@ -59,8 +75,6 @@ int parseLine(string line, vector<string> input) {
         if(runExtRedir(input, out, sizeof(out))==-1){return -1;}
         cout << "REDIR OUT: '\n" << out << "'" << endl;
     }
-    cout << "LINE: " << line << endl;
-
     return 0;
 
 }

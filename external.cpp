@@ -22,8 +22,13 @@ int runExt(vector<string> argVector) {
     }
     int status;
     waitpid(pid, &status, 0);
-    if (WIFEXITED(status)!=0)
-        cout << "exited status: " << WEXITSTATUS(status) << endl;
+    if (WIFEXITED(status)!=0) {
+        char envStr[sizeof(WEXITSTATUS(status))+10];
+        sprintf(envStr,"EXITCODE=%d",(WEXITSTATUS(status)));
+        vector<string>env;
+        env.emplace_back(envStr);
+        set(env);
+    }
     else
         return 0;
     if (WIFSIGNALED(status)) {
@@ -78,9 +83,11 @@ int runExtRedir(vector<string> argVector, char *buf, std::size_t size) {
         buf[count] = '\0';
         cout << "INTERNAL REDIR OUT: '" << buf<<"'; Size: "<<size << endl;
         waitpid(pid, &status, 0);
-        if (WIFEXITED(status)!=0)
-            cout << "exited status: " << WEXITSTATUS(status) << endl;
-        else
+        if (WIFEXITED(status)!=0) {
+            char env[sizeof(WEXITSTATUS(status))+10];
+            sprintf(env,"EXITCODE=%d",WEXITSTATUS(status));
+            putenv(env);
+        }else
             return 0;
         if (WIFSIGNALED(status)) {
             cout << "exited with signal: " << WTERMSIG(status) << endl;

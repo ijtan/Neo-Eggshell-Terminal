@@ -17,12 +17,11 @@
 using namespace std;
 int internalHandler(string command, vector<string>argsV);
 void echo(vector<string>args);
+int set(vector<string> args);
 void unset(vector<string> args);
-#define MaxCmdLen 255
-#define MAX_INTERNAL_CMDS 100
-class internal {
-
-};
+void changeDirs(vector<string> args);
+void freeInternalVars();
+class internal;
 
 
 #endif //NEOEGGSHELL_INTERNAL_H

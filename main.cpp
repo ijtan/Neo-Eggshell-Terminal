@@ -3,6 +3,7 @@
 #include "linenoise.h"
 #include "parser.h"
 #include "rediraction.h"
+#include "internal.h"
 
 
 using namespace std;
@@ -10,9 +11,14 @@ using namespace std;
 #define MAX_HISTORY 20
 
 
-int main() {
+int main(int argc, char*argv[]) {
     cout << "Welcome to EggShell!" << endl;
     //init vars
+    char envName[strlen(argv[0])+5];
+    sprintf(envName,"SHELL=%s",argv[0]);
+    vector<string>env;
+    env.push_back(envName);
+    set(env);
     char *line,
             *token = NULL;
     vector<string> args;
@@ -44,6 +50,7 @@ int main() {
         if (args[0] == "exit") {
             //TODO MAKE THIS INTERNAL AND WAY TO FREE ALL VARS
             free(line);
+            freeInternalVars();
             break;
         }
         //call function which runs externals commands

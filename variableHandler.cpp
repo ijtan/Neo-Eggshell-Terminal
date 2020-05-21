@@ -9,6 +9,7 @@ void initVars() {
     vars.emplace_back("HOME");
     vars.emplace_back("USER");
     vars.emplace_back("PWD");
+    vars.emplace_back("CWD");
     vars.emplace_back("SHELL");
     vars.emplace_back("PROMPT");
     vars.emplace_back("EXITCODE");
