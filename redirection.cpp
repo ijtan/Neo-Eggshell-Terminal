@@ -28,11 +28,11 @@ int openRed(int fd, char *path, int flg, mode_t md){
         return fd;
 }
 
-int truncOut(char* content) {
-    return openRed(STDOUT_FILENO, content, O_RDWR|O_CREAT|O_APPEND, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+int truncOut(char* filename) {
+    return openRed(STDOUT_FILENO, filename, O_RDWR|O_CREAT|O_APPEND, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 }
 
-int append(char* out) {
+int append(char* filename) {
 //    int n = args.size()-1;
 //    string line(lin);
 //    //[-2]          [-1]    [-0]
@@ -49,7 +49,7 @@ int append(char* out) {
 //        line = line.substr(0, line.find(">>"));
 //        strcpy(lin,line.c_str());
 //        return RET;
-    return openRed(STDOUT_FILENO, out, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+    return openRed(STDOUT_FILENO, filename, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 }
 
 int input(char* filename) {

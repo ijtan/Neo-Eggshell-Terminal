@@ -14,25 +14,79 @@ int runExt(vector<string>& argVector, int *conf) {
     }
     args[i] = (NULL);
 
-    if(conf[0]==1){
-
-    }
-    else if(conf[1]==1){
-
-    }
-
-    if(conf[2]==1){
-
-    }
-    if(conf[3]==1){
-
-    }
+    //0: >>
+    //1: >
+    //2: <
+    //3: |
+    //4: & -> background run
     int waitOpt=0;
+
     if(conf[4]==1)
          waitOpt=WNOHANG;
 
     pid_t pid = fork();
     if (pid == 0) {
+        if(conf[0]==1){
+            int count = 0;
+            int j = 0;
+            for(auto arg:args){
+                if(strcmp(arg,">>")==0)
+                    count++;
+                j++;
+            }
+            if(count>1){
+                cout<<"Multiple input specifiers found! Aborting..."<<endl;
+                return -1;
+            }
+            if(j!=i-2){
+                cout<<"Input specifier position invalid! Aborting..."<<endl;
+                return -1;
+            }
+            append(args[i-1]);
+        }
+        else if(conf[1]==1){
+            int count = 0;
+            int j = 0;
+            for(auto arg:args){
+                if(strcmp(arg,"<")==0)
+                    count++;
+                j++;
+            }
+            if(count>1){
+                cout<<"Multiple input specifiers found! Aborting..."<<endl;
+                return -1;
+            }
+            if(j!=1){
+                cout<<"Input specifier position invalid! Aborting..."<<endl;
+                return -1;
+            }
+            input(args[0]);
+        }
+
+        if(conf[2]==1){
+            int count = 0;
+            int j = 0;
+            for(auto arg:args){
+                if(strcmp(arg,">")==0)
+                    count++;
+                j++;
+            }
+            if(count>1){
+                cout<<"Multiple input specifiers found! Aborting..."<<endl;
+                return -1;
+            }
+            if(j!=i-2){
+                cout<<"Input specifier position invalid! Aborting..."<<endl;
+                return -1;
+            }
+            truncOut(args[i-1]);
+        }
+        if(conf[3]==1){
+
+        }
+
+
+
         signal(SIGINT, sigHandler);
         int code = execvp(args[0], args);
         if (code == -1) {

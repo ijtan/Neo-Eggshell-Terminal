@@ -12,8 +12,8 @@
 void pipeTester();
 
 using namespace std;
-void  truncOut(string filename, string content);
-FILE *append(char * lin, vector<string> &args);
-string input(string filename);
+int truncOut(char* filename);
+int input(char* filename);
+int append(char* filename);
 void sourceRun(string filename);
 #endif //NEOEGGSHELL_REDIRECTION_H
