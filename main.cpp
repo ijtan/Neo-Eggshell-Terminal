@@ -28,7 +28,7 @@ void initVars(vector<string> &env){
 
 }
 int main(int argc, char*argv[]) {
-    //signal(SIGINT, sigHandler);
+    signal(SIGINT, sigHandler);
     cout << "Welcome to EggShell!" << endl;
     //init vars
 
@@ -67,7 +67,7 @@ int main(int argc, char*argv[]) {
         else{
             free(line);
             args.clear();
-            exit(0);
+            exit(EXIT_SUCCESS);
         }
 
     }

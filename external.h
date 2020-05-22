@@ -9,8 +9,11 @@
 #include <vector>
 #include "ext/linenoise.h"
 #include "internal.h"
-int runExt(std::vector<std::string> argVector);
-int runExtRedir(std::vector<std::string> argVector, char* buf, size_t size) ;
+#include "signalHandler.h"
+using namespace std;
+extern vector<pid_t> StpProcs;
+int runExt(vector<string>& argVector, int *conf);
+int statusChecker(int status, pid_t pid);
 class external;
 
 

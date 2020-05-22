@@ -9,5 +9,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <cstring>
+#include "external.h"
 void sigHandler(int signum);
+std::vector<pid_t> getProcs();
 #endif //NEOEGGSHELL_SIGNALHANDLER_H

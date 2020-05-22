@@ -6,7 +6,13 @@ using namespace std;
 
 
 int parseLine(string line, vector<string> input) {
-    int redir = 0;
+    int RedirectConfig[5];
+    //0: >>
+    //1: >
+    //2: <
+    //3: |
+    //4: & -> background run
+
     if (line.find('=') != string::npos){
         if(input.size()==1){
             if(set(input)==0)
@@ -39,15 +45,21 @@ int parseLine(string line, vector<string> input) {
     else if (line.find('>') != string::npos) {
         // redirect out
         cout << "> detected" << endl;
+        RedirectConfig[1] = 1;
     }
     if (line.find('<') != string::npos) {
         // redirect in
         cout << "< detected" << endl;
-        redir = 1;
+        RedirectConfig[2] = 1;
     }
     if (line.find('&') != string::npos) {
         // background running
-        cout << "& detected" << endl;
+        if(input[input.size()-1]=="&"){
+            input.erase(input.end());
+            cout << "& detected" << endl;
+            RedirectConfig[4]=1;
+        }
+
     }
     if (line.find('"') != string::npos) {
         // quotes for combining args
@@ -61,20 +73,13 @@ int parseLine(string line, vector<string> input) {
     if (line.find('|') != string::npos) {
         // pipe
         cout << "pipe detected" << endl;
-        redir = 1;
+        RedirectConfig[3] = 1;
     }
 
     if (internalHandler(input[0], input) == 0)
         //checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
         return 0;
-    if (redir == 0)
-        //
-        if(runExt(input)==-1){return -1;};
-    if (redir == 1) {
-        char out[1024];
-        if(runExtRedir(input, out, sizeof(out))==-1){return -1;}
-        cout << "REDIR OUT: '\n" << out << "'" << endl;
-    }
+    if(runExt(input, RedirectConfig)==-1){return -1;};
     return 0;
 
 }

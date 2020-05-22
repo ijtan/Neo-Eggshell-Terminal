@@ -16,6 +16,7 @@ int internalHandler(string command, vector<string> argsV) {
     internalCommands.emplace_back("showenv");
     internalCommands.emplace_back("unset");
     internalCommands.emplace_back("cd");
+    internalCommands.emplace_back("listprocs");
 
     for (auto &internalCommand : internalCommands) {
         if (internalCommand == command) {
@@ -32,6 +33,15 @@ int internalHandler(string command, vector<string> argsV) {
                     break;
                 case 3:
                     changeDirs(argsV);
+                    break;
+                case 4:
+                    if(getProcs().size()==0)
+                        cout<<"No Suspended Processes"<<endl;
+                    else {
+                        cout << "Listing All suspended Processes" << endl;
+                        for (auto pr:getProcs())
+                            cout << pr << endl;
+                    }
                     break;
             }
 
@@ -122,7 +132,9 @@ void changeDirs(vector<string> args) {
     if (chdir(args[1].c_str()) == 0) {
         char env[args[1].size() + 5];
         sprintf(env, "CWD=%s", args[1].c_str());
-        putenv(env);
+        vector<string>envV;
+        envV.push_back(env);
+        set(envV);
         return;
     }
     perror("cd");
