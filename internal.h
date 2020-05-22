@@ -15,12 +15,15 @@
 #include <vector>
 #include "variableHandler.h"
 #include "signalHandler.h"
+#include "redirection.h"
+
 using namespace std;
 int internalHandler(string command, vector<string>argsV);
 void echo(vector<string>args);
 int set(vector<string> args);
 void unset(vector<string> args);
 void changeDirs(vector<string> args);
+void sourceStart(vector<string> args);
 class internal;
 
 

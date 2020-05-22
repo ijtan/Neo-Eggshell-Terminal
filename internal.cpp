@@ -4,8 +4,8 @@ using namespace std;
 vector<string> internalCommands;
 
 struct internalVar {
-    char *ptr;
     string name;
+    string str;
     string value;
 };
 vector<internalVar> internalVars;
@@ -17,6 +17,7 @@ int internalHandler(string command, vector<string> argsV) {
     internalCommands.emplace_back("unset");
     internalCommands.emplace_back("cd");
     internalCommands.emplace_back("listprocs");
+    internalCommands.emplace_back("source");
 
     for (auto &internalCommand : internalCommands) {
         if (internalCommand == command) {
@@ -43,6 +44,9 @@ int internalHandler(string command, vector<string> argsV) {
                             cout << pr.name<<"\t\t"<<pr.pid << endl;
                     }
                     break;
+                case 5:
+                    sourceStart(argsV);
+                    break;
             }
 
             return 0;
@@ -63,7 +67,6 @@ void echo(vector<string> args) {
     }
     cout << endl;
 }
-
 int set(vector<string> args) {
     if (args.size() != 1)
         return -1;
@@ -81,18 +84,17 @@ int set(vector<string> args) {
         int i = 0;
         for (auto Var:internalVars) {
             if (Var.name == var) {
-                free(Var.ptr);
                 internalVars.erase(internalVars.begin() + i);
                 break;
             }
             i++;
         }
     }
-    char *env = static_cast<char *>(malloc(var.size() + val.size() + 10));
+    char env[var.size() + val.size() + 10];
     sprintf(env, "%s=%s", var.c_str(), val.c_str());
-    internalVar newVar = {env, var, val};
+    internalVar newVar = {var,env, val};
     internalVars.push_back(newVar);
-    putenv(newVar.ptr); //replace with Assign
+    putenv(newVar.str.c); //replace with Assign
     return 0;
 
 }
@@ -133,4 +135,11 @@ void changeDirs(vector<string> args) {
         return;
     }
     perror("cd");
+}
+void sourceStart(vector<string> args){
+    if(args.size() != 2) {
+        puts("1 arguments expected: filename");
+        return;
+    }
+    sourceRun(args[1]);
 }

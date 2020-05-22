@@ -1,10 +1,25 @@
 #include "parser.h"
+#include "reparse.h"
 
 //given input, this class will determine some attributes of input such as pipes, redirects etc
 // then the respective handler is called
 using namespace std;
-
-
+#define MAX_ARGS 100
+int tokenize(char*line, char* copy, vector<string> &args){
+    char *token=NULL;
+    int tokenIndex;
+    if (strlen(line)==0) {
+        free(line);
+        args.clear();
+        return -1;
+    }
+    token = strtok((char *) copy, " ");
+    for (tokenIndex = 0; token != NULL && tokenIndex < MAX_ARGS - 1; tokenIndex++) {
+        args.emplace_back(token);
+        token = strtok(NULL, " ");
+    }
+    return 0;
+}
 int parseLine(string line, vector<string> input) {
     int RedirectConfig[5];
     //0: >>
@@ -152,4 +167,8 @@ int parseLine(string line, vector<string> input) {
     if (runExt(input, RedirectConfig) == -1) { return -1; };
     return 0;
 
+}
+
+int reParse(string line, vector<string> input){
+    parseLine(line, input);
 }

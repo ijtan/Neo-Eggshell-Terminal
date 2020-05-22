@@ -5,33 +5,13 @@
 #include "parser.h"
 #include "signalHandler.h"
 
-
-
-using namespace std;
-#define MAX_ARGS 100
 #define MAX_HISTORY 25
+#define MAX_ENV_VARS 1000
 //extern char**environ;
-
-int tokenize(char*line, char* copy, vector<string> &args){
-    char *token=NULL;
-    int tokenIndex;
-    if (strlen(line)==0) {
-        free(line);
-        args.clear();
-        return -1;
-    }
-    token = strtok((char *) copy, " ");
-    for (tokenIndex = 0; token != NULL && tokenIndex < MAX_ARGS - 1; tokenIndex++) {
-        args.emplace_back(token);
-        token = strtok(NULL, " ");
-    }
-    return 0;
-}
 void lineReadInit() {
     char *line;
     vector<string> args;
     vector<string> env;
-
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
     if(getenv("PROMPT")==NULL or getenv("SHELL")==NULL)
@@ -64,6 +44,9 @@ void lineReadInit() {
         }
     }
 }
+
+
+using namespace std;
 
 
 int main(int argc, char*argv[]) {

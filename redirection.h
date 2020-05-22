@@ -8,10 +8,12 @@
 #include <vector>
 #include <iostream>
 #include "external.h"
+#include "reparse.h"
 void pipeTester();
 
 using namespace std;
 void  truncOut(string filename, string content);
 FILE *append(char * lin, vector<string> &args);
 string input(string filename);
+void sourceRun(string filename);
 #endif //NEOEGGSHELL_REDIRECTION_H

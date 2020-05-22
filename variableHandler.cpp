@@ -53,5 +53,14 @@ void initVars(vector<string> &env){
         set(env);
         env.clear();
     }
+    if(getenv("TERMINAL")==NULL){
+        if(isatty(STDIN_FILENO)){
+            sprintf(envName,"TERMINAL=%s",ttyname(STDIN_FILENO));
+            env.push_back(envName);
+            set(env);
+            env.clear();
+        }
+
+    }
 
 }

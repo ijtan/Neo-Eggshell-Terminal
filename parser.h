@@ -17,5 +17,6 @@
 #include "redirection.h"
 using namespace std;
 int parseLine(string line, vector<string> input);
+int tokenize(char*line, char* copy, vector<string> &args);
 
 #endif //NEOEGGSHELL_PARSER_H
