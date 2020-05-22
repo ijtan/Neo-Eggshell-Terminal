@@ -12,29 +12,6 @@ using namespace std;
 #define MAX_HISTORY 25
 //extern char**environ;
 
-void initVars(vector<string> &env){
-    char buf[255];
-    char envName[255];
-    sprintf(envName, "PROMPT=%s@eggshell> ", getenv("USER"));
-    env.push_back(envName);
-    set(env);
-    env.clear();
-    readlink("/proc/self/exe", buf, sizeof(buf));
-    sprintf(envName,"SHELL=%s",buf);
-    env.push_back(envName);
-    set(env);
-    env.clear();
-    if(getenv("CWD")==NULL){
-        getcwd(buf,sizeof(buf));
-        sprintf(envName,"CWD=%s",buf);
-        env.push_back(envName);
-        set(env);
-        env.clear();
-    }
-
-
-
-}
 int tokenize(char*line, char* copy, vector<string> &args){
     char *token=NULL;
     int tokenIndex;

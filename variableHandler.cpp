@@ -46,6 +46,12 @@ void initVars(vector<string> &env){
     env.push_back(envName);
     set(env);
     env.clear();
-
+    if(getenv("CWD")==NULL){
+        getcwd(buf,sizeof(buf));
+        sprintf(envName,"CWD=%s",buf);
+        env.push_back(envName);
+        set(env);
+        env.clear();
+    }
 
 }
