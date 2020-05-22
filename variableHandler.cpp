@@ -35,28 +35,36 @@ vector<string>parseVars(vector<string> inputVector) {
     return inputVector;
 }
 void initVars(vector<string> &env){
-    char buf[255];
-    char envName[255];
-    sprintf(envName, "PROMPT=%s@eggshell> ", getenv("USER"));
-    env.push_back(envName);
+    env.clear();
+
+    char prmpt[255];
+    char usr[255];
+    strncpy(usr,getenv("USER"),sizeof(usr));
+    sprintf(prmpt, "PROMPT=%s@eggshell> ",usr);
+    env.emplace_back(prmpt);
     set(env);
     env.clear();
+
+    char shll[255];
+    char buf[255] = "";
     readlink("/proc/self/exe", buf, sizeof(buf));
-    sprintf(envName,"SHELL=%s",buf);
-    env.push_back(envName);
+    sprintf(shll,"SHELL=%s",buf);
+    env.push_back(shll);
     set(env);
     env.clear();
+    char cwd[255];
     if(getenv("CWD")==NULL){
         getcwd(buf,sizeof(buf));
-        sprintf(envName,"CWD=%s",buf);
-        env.push_back(envName);
+        sprintf(cwd,"CWD=%s",buf);
+        env.push_back(cwd);
         set(env);
         env.clear();
     }
+    char trmnl[255];
     if(getenv("TERMINAL")==NULL){
         if(isatty(STDIN_FILENO)){
-            sprintf(envName,"TERMINAL=%s",ttyname(STDIN_FILENO));
-            env.push_back(envName);
+            sprintf(trmnl,"TERMINAL=%s",ttyname(STDIN_FILENO));
+            env.push_back(trmnl);
             set(env);
             env.clear();
         }

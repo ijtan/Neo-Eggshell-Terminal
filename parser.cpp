@@ -21,7 +21,7 @@ int tokenize(char*line, char* copy, vector<string> &args){
     return 0;
 }
 int parseLine(string line, vector<string> input) {
-    int RedirectConfig[5];
+    int RedirectConfig[5] = {0};
     //0: >>
     //1: >
     //2: <
@@ -169,6 +169,6 @@ int parseLine(string line, vector<string> input) {
 
 }
 
-int reParse(string line, vector<string> input){
-    parseLine(line, input);
+int reParse(string line, vector<string> &input){
+    return parseLine(move(line), move(input));
 }

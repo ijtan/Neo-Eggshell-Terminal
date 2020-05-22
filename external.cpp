@@ -27,11 +27,9 @@ int runExt(vector<string>& argVector, int *conf) {
     if(conf[3]==1){
 
     }
-    int waitOpt;
+    int waitOpt=0;
     if(conf[4]==1)
          waitOpt=WNOHANG;
-    else
-        waitOpt=0;
 
     pid_t pid = fork();
     if (pid == 0) {

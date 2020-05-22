@@ -25,9 +25,7 @@ void lineReadInit() {
     vector<string> env;
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
-    if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL)
-        initVars(env);
-    string prompt = getenv("PROMPT");
+    initVars(env);
     //start linenoise loop
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
 
@@ -45,7 +43,6 @@ void lineReadInit() {
 
         if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL) {
             initVars(env);
-            prompt = getenv("PROMPT");
         }
     }
 }
