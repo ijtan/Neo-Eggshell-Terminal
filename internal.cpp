@@ -16,6 +16,7 @@ int internalHandler(string command, vector<string> argsV) {
     internalCommands.emplace_back("showenv");
     internalCommands.emplace_back("unset");
     internalCommands.emplace_back("cd");
+    internalCommands.emplace_back("listprocs");
 
     for (auto &internalCommand : internalCommands) {
         if (internalCommand == command) {
@@ -32,6 +33,15 @@ int internalHandler(string command, vector<string> argsV) {
                     break;
                 case 3:
                     changeDirs(argsV);
+                    break;
+                case 4:
+                    if(getProcs().size()==0)
+                        cout<<"No Suspended Processes"<<endl;
+                    else {
+                        cout << "Listing All suspended Processes" << endl;
+                        for (auto pr:getProcs())
+                            cout << pr.name<<"\t\t"<<pr.pid << endl;
+                    }
                     break;
             }
 
@@ -100,17 +110,9 @@ void unset(vector<string> args) {
         puts("Not Found!");
         return;
     } else {
-        int i = 0;
-        for (auto Var:internalVars) {
-            if (Var.name == args[1]) {
-                char *env = const_cast<char *>(args[1].c_str());
-                putenv(env);
-                internalVars.erase(internalVars.begin() + i);
-                free(Var.ptr);
-                break;
-            }
-            i++;
-        }
+        char tmp[args[1].size()];
+        sprintf(tmp,"%s",args[1].c_str());
+        putenv(tmp);
     }
 }
 
@@ -120,9 +122,14 @@ void changeDirs(vector<string> args) {
         return;
     }
     if (chdir(args[1].c_str()) == 0) {
-        char env[args[1].size() + 5];
-        sprintf(env, "CWD=%s", args[1].c_str());
-        putenv(env);
+        vector<string>env;
+        char envName[255];
+        char buf[255];
+        getcwd(buf,sizeof(buf));
+        sprintf(envName,"CWD=%s",buf);
+        env.push_back(envName);
+        set(env);
+        env.clear();
         return;
     }
     perror("cd");

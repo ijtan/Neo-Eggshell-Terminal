@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include "variableHandler.h"
+#include "signalHandler.h"
 using namespace std;
 int internalHandler(string command, vector<string>argsV);
 void echo(vector<string>args);

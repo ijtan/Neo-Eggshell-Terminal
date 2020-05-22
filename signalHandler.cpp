@@ -15,9 +15,21 @@
 //together with their process id (pid).
 //(d) Add the internal command bg to resume a suspended process in the background.
 
-
+using namespace std;
 void sigHandler(int signum){
     char print[255];
     snprintf(print,sizeof(print), "Caught Signal %s\n",sys_siglist[signum]);
     write(STDOUT_FILENO,print,strnlen(print,sizeof(print)));
+
+    if(signum==18){
+        kill(StpProcs[0].pid,18);
+        StpProcs.erase(StpProcs.begin());
+    }
+}
+vector<proc2> getProcs(){
+    vector<proc2> ret;
+    for(auto pr:StpProcs){
+        proc2{pr.pid,pr.name};
+    }
+    return ret;
 }
