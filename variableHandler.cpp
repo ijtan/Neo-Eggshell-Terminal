@@ -34,3 +34,18 @@ vector<string>parseVars(vector<string> inputVector) {
     }
     return inputVector;
 }
+void initVars(vector<string> &env){
+    char buf[255];
+    char envName[255];
+    sprintf(envName, "PROMPT=%s@eggshell> ", getenv("USER"));
+    env.push_back(envName);
+    set(env);
+    env.clear();
+    readlink("/proc/self/exe", buf, sizeof(buf));
+    sprintf(envName,"SHELL=%s",buf);
+    env.push_back(envName);
+    set(env);
+    env.clear();
+
+
+}

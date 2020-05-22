@@ -20,7 +20,6 @@ void echo(vector<string>args);
 int set(vector<string> args);
 void unset(vector<string> args);
 void changeDirs(vector<string> args);
-void freeInternalVars();
 class internal;
 
 

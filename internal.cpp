@@ -127,10 +127,3 @@ void changeDirs(vector<string> args) {
     }
     perror("cd");
 }
-//check if dir exists
-
-void freeInternalVars() {
-    for (auto var:internalVars) {
-        free(var.ptr);
-    }
-}

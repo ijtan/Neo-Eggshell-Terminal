@@ -11,22 +11,7 @@ using namespace std;
 #define MAX_HISTORY 20
 //extern char**environ;
 
-void initVars(vector<string> &env){
-    char buf[255];
-    char envName[255];
-    sprintf(envName, "PROMPT=%s@eggshell> ", getenv("USER"));
-    env.push_back(envName);
-    set(env);
-    env.clear();
-    readlink("/proc/self/exe", buf, sizeof(buf));
-    sprintf(envName,"SHELL=%s",buf);
-    env.push_back(envName);
-    set(env);
-    env.clear();
 
-
-
-}
 int main(int argc, char*argv[]) {
     //signal(SIGINT, sigHandler);
     cout << "Welcome to EggShell!" << endl;

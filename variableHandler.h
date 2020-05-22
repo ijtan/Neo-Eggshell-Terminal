@@ -16,8 +16,9 @@
 #include "external.h"
 
 void printVars();
-std::vector<std::string>parseVars(std::vector<std::string> inputVector);
-
+using namespace std;
+vector<string>parseVars(vector<string> inputVector);
+void initVars(vector<string> &env);
 class variableHandler {
 
 };
