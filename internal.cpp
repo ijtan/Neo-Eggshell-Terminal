@@ -5,7 +5,7 @@ vector<string> internalCommands;
 
 struct internalVar {
     string name;
-    string str;
+    char *str;
     string value;
 };
 vector<internalVar> internalVars;
@@ -90,11 +90,12 @@ int set(vector<string> args) {
             i++;
         }
     }
-    char env[var.size() + val.size() + 10];
+    char *env = (char*) malloc (var.size() + val.size() + 10);
     sprintf(env, "%s=%s", var.c_str(), val.c_str());
+
     internalVar newVar = {var,env, val};
     internalVars.push_back(newVar);
-    putenv(newVar.str.c); //replace with Assign
+    putenv(env); //replace with Assign
     return 0;
 //
 }
@@ -142,4 +143,9 @@ void sourceStart(vector<string> args){
         return;
     }
     sourceRun(args[1]);
+}
+void freeVars(){
+    for(const auto& var:internalVars){
+        free(var.str);
+    }
 }

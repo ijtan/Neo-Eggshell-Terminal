@@ -35,6 +35,7 @@ void lineReadInit() {
         } else {
             free(line);
             args.clear();
+            freeVars();
             exit(EXIT_SUCCESS);
 
         }

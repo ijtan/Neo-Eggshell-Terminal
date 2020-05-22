@@ -24,6 +24,7 @@ int set(vector<string> args);
 void unset(vector<string> args);
 void changeDirs(vector<string> args);
 void sourceStart(vector<string> args);
+void freeVars();
 class internal;
 
 
