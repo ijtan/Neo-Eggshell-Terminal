@@ -10,10 +10,17 @@
 #include "ext/linenoise.h"
 #include "internal.h"
 #include "signalHandler.h"
+
 using namespace std;
-extern vector<pid_t> StpProcs;
+
+struct proc{
+    pid_t pid;
+    string name;
+};
+
+extern vector<proc> StpProcs;
 int runExt(vector<string>& argVector, int *conf);
-int statusChecker(int status, pid_t pid);
+int statusChecker(int status, pid_t pid,string name);
 class external;
 
 

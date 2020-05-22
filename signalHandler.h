@@ -11,5 +11,9 @@
 #include <cstring>
 #include "external.h"
 void sigHandler(int signum);
-std::vector<pid_t> getProcs();
+struct proc2{
+    pid_t pid;
+    std::string name;
+};
+std::vector<proc2> getProcs();
 #endif //NEOEGGSHELL_SIGNALHANDLER_H

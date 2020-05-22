@@ -1,7 +1,9 @@
 #include "external.h"
 
+#include <utility>
+
 using namespace std;
-vector<pid_t> StpProcs;
+vector<proc> StpProcs;
 int runExt(vector<string>& argVector, int *conf) {
     // set last token to NULL
     char *args[argVector.size() + 1];
@@ -44,17 +46,17 @@ int runExt(vector<string>& argVector, int *conf) {
     int status;
     waitpid(pid, &status, waitOpt);
     if (waitOpt == 0)
-        return statusChecker(status,pid);
+        return statusChecker(status,pid,argVector[0]);
     else
         return 0;
 }
 
 
-int statusChecker(int status, pid_t pid){
+int statusChecker(int status, pid_t pid, string name){
     if (WIFSIGNALED(status)) {
         cout << "Signal Code " << WTERMSIG(status) <<":"<<sys_siglist[WTERMSIG(status)]<< endl;
         if(WTERMSIG(status) == 19)
-            StpProcs.push_back(pid);
+            StpProcs.push_back(proc{pid, move(name)});
 
         return -1;
     }

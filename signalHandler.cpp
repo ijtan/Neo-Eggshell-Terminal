@@ -22,10 +22,14 @@ void sigHandler(int signum){
     write(STDOUT_FILENO,print,strnlen(print,sizeof(print)));
 
     if(signum==18){
-        kill(StpProcs[0],18);
+        kill(StpProcs[0].pid,18);
         StpProcs.erase(StpProcs.begin());
     }
 }
-vector<pid_t> getProcs(){
-    return StpProcs;
+vector<proc2> getProcs(){
+    vector<proc2> ret;
+    for(auto pr:StpProcs){
+        proc2{pr.pid,pr.name};
+    }
+    return ret;
 }

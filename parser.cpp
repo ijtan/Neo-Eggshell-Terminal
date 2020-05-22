@@ -13,9 +13,9 @@ int parseLine(string line, vector<string> input) {
     //3: |
     //4: & -> background run
 
-    if (line.find('=') != string::npos){
-        if(input.size()==1){
-            if(set(input)==0)
+    if (line.find('=') != string::npos) {
+        if (input.size() == 1) {
+            if (set(input) == 0)
                 return 0;
         }
     }
@@ -23,26 +23,25 @@ int parseLine(string line, vector<string> input) {
         // redirect append
         cout << "append detected" << endl;
         char ln[line.size()];
-        strcpy(ln,line.c_str());
+        strcpy(ln, line.c_str());
         fpos_t pos;
         int fd;
         fd = dup(fileno(stdout));
-        FILE *tmpfile = append(ln,input);
-        if(tmpfile!=nullptr) {
+        FILE *tmpfile = append(ln, input);
+        if (tmpfile != nullptr) {
             string newl(ln);
 
 
             parseLine(newl, input);
 
             fflush(stdout);
-            dup2(fd,fileno(stdout));
+            dup2(fd, fileno(stdout));
             close(fd);
             fsetpos(stdout, &pos);
             //http://c-faq.com/stdio/undofreopen.html
         }
         return 0;
-    }
-    else if (line.find('>') != string::npos) {
+    } else if (line.find('>') != string::npos) {
         // redirect out
         cout << "> detected" << endl;
         RedirectConfig[1] = 1;
@@ -54,16 +53,87 @@ int parseLine(string line, vector<string> input) {
     }
     if (line.find('&') != string::npos) {
         // background running
-        if(input[input.size()-1]=="&"){
+        if (input[input.size() - 1] == "&") {
             input.erase(input.end());
             cout << "& detected" << endl;
-            RedirectConfig[4]=1;
+            RedirectConfig[4] = 1;
         }
 
     }
     if (line.find('"') != string::npos) {
         // quotes for combining args
-        cout << "\" detected" << endl;
+
+        int i = 0,count = 0;
+        for (const auto& arg:input) {
+            if (arg.find('\"') != string::npos)
+                for(char i : arg)
+                    if(i == '\"')
+                        count++;
+        }
+        if (count == 0){
+            cerr<<"\" error"<<endl;
+        }
+        string more;
+        if (count % 2 != 0) {
+            cout << "+>";
+            char buf = '\0';
+
+            //cin.rdbuf()->in_avail() is supposed to check if stdin is empty
+            //https://tinyurl.com/yby36dak
+            int esc = 0;
+            while(count % 2 != 0 || esc==0) {
+                esc = 0;
+                more.push_back(buf);
+                buf = getc(stdin);
+                if (buf == '\n') {
+                    cout << "+>";
+                    esc=1;
+                    buf = ' ';
+                }
+                if (buf == '\"')
+                    count++;
+            }
+            more.push_back(buf);
+            input.push_back(more);
+            line.append(more);
+        }
+        while(count>0) {
+            int posA = 0, posB = 0;
+            int startArg, endArg;
+            startArg = endArg = -1;
+            for (auto arg:input) {
+                posA = arg.find('\"');
+                if (posA == 0) {
+                    startArg = i;
+                    break;
+                }
+                i++;
+            }
+            i = 0;
+            for (auto arg:input) {
+                posB = arg.find('\"');
+                if (posB == arg.size() - 1) {
+                    endArg = i;
+                    break;
+                }
+                i++;
+            }
+            string newStr;
+            if (startArg != -1 && endArg != -1 && startArg<=endArg) {
+                input[startArg] = input[startArg].substr(1);
+                input[endArg] = input[endArg].substr(0,input[endArg].size()-1);
+                for(int i = startArg; i<=endArg;i++){
+                    newStr.append(input[i]);
+                }
+                input.erase(input.begin() + startArg, input.begin() + endArg+1);
+                input.push_back(newStr);
+                count -= 2;
+            }
+            else
+                break;
+        }
+        for(auto in:input)
+            cout<<"["<<in<<"]"<<endl;
     }
 
     if (line.find('$') != string::npos) {
@@ -79,7 +149,7 @@ int parseLine(string line, vector<string> input) {
     if (internalHandler(input[0], input) == 0)
         //checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
         return 0;
-    if(runExt(input, RedirectConfig)==-1){return -1;};
+    if (runExt(input, RedirectConfig) == -1) { return -1; };
     return 0;
 
 }
