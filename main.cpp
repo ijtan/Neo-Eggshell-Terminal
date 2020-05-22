@@ -8,13 +8,24 @@
 #define MAX_HISTORY 25
 #define MAX_ENV_VARS 1000
 //extern char**environ;
+
+char *line;
+vector<string> args;
+
+void exitRoutine() {
+    free(line);
+    freeVars();
+    args.clear();
+}
+
 void lineReadInit() {
-    char *line;
-    vector<string> args;
+
+    atexit(exitRoutine);
+
     vector<string> env;
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
-    if(getenv("PROMPT")==NULL or getenv("SHELL")==NULL)
+    if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL)
         initVars(env);
     string prompt = getenv("PROMPT");
     //start linenoise loop
@@ -22,24 +33,17 @@ void lineReadInit() {
 
         linenoiseHistoryAdd(line);
         char copy[sizeof(line)];
-        strcpy(copy,line);
-        if(tokenize(line, copy, args)==-1){ continue;};
+        strcpy(copy, line);
+        if (tokenize(line, copy, args) == -1) { continue; };
         //string copy(line);
 
 
         //call function which runs externals commands
-        if (args[0] != "exit") {
-            parseLine(line, args);
-            free(line);
-            args.clear();
-        } else {
-            free(line);
-            args.clear();
-            freeVars();
-            exit(EXIT_SUCCESS);
+        parseLine(line, args);
+        free(line);
+        args.clear();
 
-        }
-        if(getenv("PROMPT")==NULL or getenv("SHELL")==NULL) {
+        if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL) {
             initVars(env);
             prompt = getenv("PROMPT");
         }
@@ -50,7 +54,7 @@ void lineReadInit() {
 using namespace std;
 
 
-int main(int argc, char*argv[]) {
+int main(int argc, char *argv[]) {
     signal(SIGINT, sigHandler);
     cout << "Welcome to EggShell!" << endl;
     //init vars

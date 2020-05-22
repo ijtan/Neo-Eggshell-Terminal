@@ -18,6 +18,7 @@ int internalHandler(string command, vector<string> argsV) {
     internalCommands.emplace_back("cd");
     internalCommands.emplace_back("listprocs");
     internalCommands.emplace_back("source");
+    internalCommands.emplace_back("exit");
 
     for (auto &internalCommand : internalCommands) {
         if (internalCommand == command) {
@@ -47,6 +48,8 @@ int internalHandler(string command, vector<string> argsV) {
                 case 5:
                     sourceStart(argsV);
                     break;
+            case 6:
+                    exit(EXIT_SUCCESS);
             }
 
             return 0;
