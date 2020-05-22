@@ -96,7 +96,7 @@ int set(vector<string> args) {
     internalVars.push_back(newVar);
     putenv(newVar.str.c); //replace with Assign
     return 0;
-
+//
 }
 
 void unset(vector<string> args) {
