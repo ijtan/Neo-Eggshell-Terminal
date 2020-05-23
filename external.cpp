@@ -39,7 +39,6 @@ int runExt(vector<string> &argVector, int *conf) {
             if (strncmp(args[pos], "|", 1) == 0) {
                 pipeCount++;
                 cout<<"pipe foudn"<<endl;
-                cout<<"args 2 added: "<<args2[pipeCount][i]<<endl;
                 args2[pipeCount][i] = NULL;
 
                 continue;
