@@ -33,27 +33,11 @@ int truncOut(char* filename) {
 }
 
 int append(char* filename) {
-//    int n = args.size()-1;
-//    string line(lin);
-//    //[-2]          [-1]    [-0]
-//    //EXEC/ARGS     >>      FILENAME.txt
-//    FILE *RET;
-//    if(args[n-1]!=">>"){
-//        fputs("Redirect not where expected\n",stderr);
-//        return nullptr;
-//    }else {
-//
-//        RET = freopen(args[n].c_str(), "a", stdout);
-//    }
-//        args.erase(args.end() - 1, args.end() + 1);
-//        line = line.substr(0, line.find(">>"));
-//        strcpy(lin,line.c_str());
-//        return RET;
+
     return openRed(STDOUT_FILENO, filename, O_RDWR|O_CREAT|O_APPEND, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 }
 
 int input(char* filename) {
-    char Input[10000];
     return openRed(STDIN_FILENO, filename, O_RDONLY,S_IRUSR);
 
 }
@@ -79,7 +63,6 @@ void sourceRun(string filename){
             char copy[sizeof(command)+10000] = "";
             strncpy(copy,command,sizeof(copy));
             if(tokenize(command, copy, args)==-1){ continue;};
-            cout<<"Executing: ["<<command<<"]"<<endl;
             reParse(command,args);
             args.clear();
             memset(command,'\0',strlen(command)*sizeof(char)); // seems to reset the command thingy

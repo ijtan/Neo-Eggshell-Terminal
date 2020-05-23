@@ -6,20 +6,19 @@
 #include "signalHandler.h"
 
 #define MAX_HISTORY 25
-#define MAX_ENV_VARS 1000
 //extern char**environ;
 
 char *line;
 vector<string> args;
-
 void exitRoutine() {
+    cout<<"Goodbye!"<<endl;
     free(line);
     freeVars();
-    printVarVec();
     args.clear();
 }
 
 void lineReadInit() {
+
 
     atexit(exitRoutine);
 
@@ -29,7 +28,7 @@ void lineReadInit() {
     initVars(env);
     //start linenoise loop
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
-        printVarVec();
+
         linenoiseHistoryAdd(line);
         char copy[sizeof(line)];
         strcpy(copy, line);

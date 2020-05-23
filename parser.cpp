@@ -141,11 +141,7 @@ int parseLine(string line, vector<string> input) {
         cout << "pipe detected" << endl;
         RedirectConfig[3] = 1;
     }
-
-    if (internalHandler(input[0], input) == 0)
-        //checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
-        return 0;
-   return runExt(input, RedirectConfig);
+    return runExt(input, RedirectConfig);
 
 }
 

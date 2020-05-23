@@ -1,8 +1,9 @@
 #include "internal.h"
+#include <memory>
 
 using namespace std;
 extern vector<proc> StpProcs;
-vector<string> internalCommands;
+vector <string> internalCommands;
 
 struct internalVar {
     string name;
@@ -27,16 +28,16 @@ int internalHandler(string command, vector<string> argsV) {
                 //TODO MAKE THIS AN ENUM
                 case 0:
                     echo(argsV);
-                    break;
+                    return 0;
                 case 1:
                     printVars();
-                    break;
+                    return 0;
                 case 2:
                     unset(argsV);
-                    break;
+                    return 0;
                 case 3:
                     changeDirs(argsV);
-                    break;
+                    return 0;
                 case 4:
 
                     if(StpProcs.empty())
@@ -46,15 +47,16 @@ int internalHandler(string command, vector<string> argsV) {
                         for (const auto& pr:StpProcs)
                             cout << pr.name<<"\t\t"<<pr.pid << endl;
                     }
-                    break;
+                    return 0;
                 case 5:
                     sourceStart(argsV);
-                    break;
+                    return 0;
             case 6:
-                    exit(EXIT_SUCCESS);
+                    pid_t parentID = getppid();
+                    kill(parentID,SIGINT);
+                    return 0;
             }
-
-            return 0;
+            return 1;
         }
     }
     return 1;
@@ -103,7 +105,7 @@ int set(vector<string> args) {
     sprintf(env, "%s=%s", var.c_str(), val.c_str());
 
     internalVar newVar = {var,env, val};
-    internalVars.push_back(newVar);
+    internalVars.emplace_back(newVar);
     putenv(env); //replace with Assign
     return 0;
 //

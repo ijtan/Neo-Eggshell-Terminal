@@ -16,23 +16,26 @@
 //(d) Add the internal command bg to resume a suspended process in the background.
 
 using namespace std;
-void sigHandler(int signum){
-    extern vector<proc> StpProcs;
-    char print[255];
-    snprintf(print,sizeof(print), "Caught Signal %s\n",sys_siglist[signum]);
-    write(STDOUT_FILENO,print,strnlen(print,sizeof(print)));
 
-    if(signum==18){
-        kill(StpProcs[0].pid,18);
+void sigHandler(int signum) {
+    if (signum == SIGINT)
+        exit(0);
+    char print[255];
+    snprintf(print, sizeof(print), "Caught Signal %s\n", sys_siglist[signum]);
+    write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
+
+    if (signum == 18) {
+        extern vector<proc> StpProcs;
+
+        kill(StpProcs[0].pid, 18);
         StpProcs.erase(StpProcs.begin());
     }
-    if(signum!=SIGINT) {
-        if (kill(getpid(), SIGINT) == 0) {
-            snprintf(print, sizeof(print), "Killed process successfully!");
-            write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
-        } else {
-            snprintf(print, sizeof(print), "Process could not be killed!");
-            write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
-        }
+    if (kill(getpid(), SIGINT) == 0) {
+        snprintf(print, sizeof(print), "Killed process successfully!");
+        write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
+    } else {
+        snprintf(print, sizeof(print), "Process could not be killed!");
+        write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
+
     }
 }
