@@ -1,5 +1,6 @@
 #ifndef NEOEGGSHELL_EXTERNAL_H
 #define NEOEGGSHELL_EXTERNAL_H
+
 #include <iostream>
 #include <cstdio>
 #include <unistd.h>
@@ -11,16 +12,18 @@
 #include "internal.h"
 #include "signalHandler.h"
 
+
 using namespace std;
 
-struct proc{
+struct proc {
     pid_t pid;
     string name;
 };
 
+int runExt(vector<string> &argVector, int *conf);
 
-int runExt(vector<string>& argVector, int *conf);
-int statusChecker(int status, pid_t pid,string name);
+int statusChecker(int status, pid_t pid, string name);
+
 class external;
 
 

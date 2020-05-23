@@ -16,6 +16,7 @@
 #include "variableHandler.h"
 #include "signalHandler.h"
 #include "redirection.h"
+#include "externalStpProcs.h"
 
 using namespace std;
 int internalHandler(string command, vector<string>argsV);
@@ -24,7 +25,10 @@ int set(vector<string> args);
 void unset(vector<string> args);
 void changeDirs(vector<string> args);
 void sourceStart(vector<string> args);
+
 void freeVars();
+void printVarVec();
+
 class internal;
 
 

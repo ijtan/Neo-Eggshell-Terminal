@@ -16,7 +16,8 @@
 //(d) Add the internal command bg to resume a suspended process in the background.
 
 using namespace std;
-void sigHandler(int signum, pid_t pid){
+void sigHandler(int signum){
+    extern vector<proc> StpProcs;
     char print[255];
     snprintf(print,sizeof(print), "Caught Signal %s\n",sys_siglist[signum]);
     write(STDOUT_FILENO,print,strnlen(print,sizeof(print)));
@@ -25,11 +26,13 @@ void sigHandler(int signum, pid_t pid){
         kill(StpProcs[0].pid,18);
         StpProcs.erase(StpProcs.begin());
     }
-    if(kill(pid, SIGINT) == 0){
-        snprintf(print, sizeof(print), "Killed process successfully!");
-        write(STDOUT_FILENO,print,strnlen(print,sizeof(print)));
-    }else{
-        snprintf(print, sizeof(print), "Process could not be killed!");
-        write(STDOUT_FILENO,print,strnlen(print,sizeof(print)));
+    if(signum!=SIGINT) {
+        if (kill(getpid(), SIGINT) == 0) {
+            snprintf(print, sizeof(print), "Killed process successfully!");
+            write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
+        } else {
+            snprintf(print, sizeof(print), "Process could not be killed!");
+            write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
+        }
     }
 }

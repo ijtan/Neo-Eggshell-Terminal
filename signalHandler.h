@@ -10,5 +10,6 @@
 #include <unistd.h>
 #include <cstring>
 #include "external.h"
-void sigHandler(int signum, pid_t pid);
+#include "externalStpProcs.h"
+void sigHandler(int signum);
 #endif //NEOEGGSHELL_SIGNALHANDLER_H

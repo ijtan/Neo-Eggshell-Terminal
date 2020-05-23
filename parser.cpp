@@ -16,7 +16,7 @@ int tokenize(char *line, char *copy, vector<string> &args) {
     }
     token = strtok((char *) copy, " ");
     for (tokenIndex = 0; token != NULL && tokenIndex < MAX_ARGS - 1; tokenIndex++) {
-        args.emplace_back(token);
+        args.push_back(token);
         token = strtok(NULL, " ");
     }
     return 0;
@@ -145,8 +145,7 @@ int parseLine(string line, vector<string> input) {
     if (internalHandler(input[0], input) == 0)
         //checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
         return 0;
-    if (runExt(input, RedirectConfig) == -1) { return -1; };
-    return 0;
+   return runExt(input, RedirectConfig);
 
 }
 

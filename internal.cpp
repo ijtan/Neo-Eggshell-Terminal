@@ -1,6 +1,7 @@
 #include "internal.h"
 
 using namespace std;
+extern vector<proc> StpProcs;
 vector<string> internalCommands;
 
 struct internalVar {
@@ -37,11 +38,12 @@ int internalHandler(string command, vector<string> argsV) {
                     changeDirs(argsV);
                     break;
                 case 4:
-                    if(getProcs().size()==0)
+
+                    if(StpProcs.empty())
                         cout<<"No Suspended Processes"<<endl;
                     else {
                         cout << "Listing All suspended Processes" << endl;
-                        for (auto pr:getProcs())
+                        for (const auto& pr:StpProcs)
                             cout << pr.name<<"\t\t"<<pr.pid << endl;
                     }
                     break;
@@ -83,17 +85,21 @@ int set(vector<string> args) {
         if (!(isupper(ch) || !isalpha(ch)))
             return -1;
     }
-    if (getenv("var") != NULL) {
+    if (getenv(var.c_str()) != NULL) {
+        if(val==getenv(var.c_str())){
+            return 0;
+        }
         int i = 0;
         for (auto Var:internalVars) {
             if (Var.name == var) {
+                free(Var.str);
                 internalVars.erase(internalVars.begin() + i);
                 break;
             }
             i++;
         }
     }
-    char *env = (char*) malloc (var.size() + val.size() + 10);
+    char *env = (char*) calloc (var.size() + val.size()+10,sizeof(char));
     sprintf(env, "%s=%s", var.c_str(), val.c_str());
 
     internalVar newVar = {var,env, val};
@@ -150,5 +156,12 @@ void sourceStart(vector<string> args){
 void freeVars(){
     for(const auto& var:internalVars){
         free(var.str);
+    }
+    internalVars.clear();
+}
+void printVarVec(){
+    cout<<"VARVEC"<<endl;
+    for(const auto& var:internalVars){
+        cout<<"Name: "<<var.name<<"; ptr: "<<var.str<<"; ptr&: "<<&var.str<<"; val:"<<var.value<<endl;
     }
 }

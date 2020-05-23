@@ -15,6 +15,7 @@ vector<string> args;
 void exitRoutine() {
     free(line);
     freeVars();
+    printVarVec();
     args.clear();
 }
 
@@ -28,7 +29,7 @@ void lineReadInit() {
     initVars(env);
     //start linenoise loop
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
-
+        printVarVec();
         linenoiseHistoryAdd(line);
         char copy[sizeof(line)];
         strcpy(copy, line);
@@ -37,10 +38,13 @@ void lineReadInit() {
 
 
         //call function which runs externals commands
-        parseLine(line, args);
-        free(line);
+        char copy2[sizeof(line)];
+        strcpy(copy2, line);
+        int pl = (parseLine(copy2, args));
+        linenoiseFree(line);
         args.clear();
-
+        if (pl == -5)
+            _exit(-5);
         if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL) {
             initVars(env);
         }
