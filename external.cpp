@@ -79,7 +79,11 @@ int runExt(vector<string>& argVector, int *conf) {
                 cout<<"Input specifier position invalid! Aborting..."<<endl;
                 return -1;
             }
+            cout<<"openeing redir"<<endl;
             truncOut(args[i-1]);
+            cout<<"opened redir"<<endl;
+            args[i-1] = NULL;
+            cout<<"chopped"<<endl;
         }
         if(conf[3]==1){
 

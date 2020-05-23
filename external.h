@@ -18,7 +18,7 @@ struct proc{
     string name;
 };
 
-extern vector<proc> StpProcs;
+
 int runExt(vector<string>& argVector, int *conf);
 int statusChecker(int status, pid_t pid,string name);
 class external;
