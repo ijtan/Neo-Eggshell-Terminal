@@ -38,10 +38,14 @@ int runExt(vector<string> &argVector, int *conf) {
         for (int pos = 0; args[pos] != NULL && pos < 16; pos++) {
             if (strncmp(args[pos], "|", 1) == 0) {
                 pipeCount++;
+                cout<<"pipe foudn"<<endl;
+                cout<<"args 2 added: "<<args2[pipeCount][i]<<endl;
                 args2[pipeCount][i] = NULL;
+
                 continue;
             }
             args2[pipeCount][i] = args[pos];
+            cout<<"new args2: "<<args2[pipeCount][i]<<endl;
         }
         //REFERENCE - CPS1012 - Redirection and Pipes (Sys Prog) Part 2 by Keith Bugeja
 
@@ -50,6 +54,9 @@ int runExt(vector<string> &argVector, int *conf) {
         int fd[pipeCount * 2],
                 *currFD = fd,
                 *prevFD = NULL;
+
+        cout<<"pipe count is:"<<pipeCount<<endl;
+        pipeCount=0;
         for (int part = 0; part < pipeCount + 1; part++) {
             prevFD = currFD - 2;
 
@@ -58,25 +65,25 @@ int runExt(vector<string> &argVector, int *conf) {
 
 
             cout << "forking" << endl;
-
             pid_t PipepPid = fork();
-            cout << "forked" << endl;
-
             if (PipepPid == -1) {
                 perror("Pipe fork");
                 return -5;
             } else if (PipepPid == 0) {
-                for(int cnt = 0; args2[cnt-1]!=NULL&&cnt>pipeCount+1; cnt++){
+
+                cout << "got forked: "<<getpid()<<" by: "<<getppid() << endl;
+
+
+                cout << "starting copying" << endl;
+                for (int cnt = 0; args2[cnt - 1] != NULL && cnt > pipeCount + 1; cnt++) {
                     cout << "copying" << endl;
-                    cout << args[cnt]<<endl;
-                    cout<<"=    "<<endl;
-                    cout<<args2[part][cnt] << endl;
-                    args[cnt]=args2[part][cnt];
+                    cout << args[cnt] << endl;
+                    cout << "=    " << endl;
+                    cout << args2[part][cnt] << endl;
+
+                    strcpy(args[cnt], args2[part][cnt]);
                 }
-                return -5; //---------------------------------
-                cout << "done" << endl;
-
-
+                cout << "done copying" << endl;
 
 
                 if (part < pipeCount) {
@@ -84,17 +91,18 @@ int runExt(vector<string> &argVector, int *conf) {
                     dup2(currFD[1], STDOUT_FILENO);
                     close(currFD[1]); // not needed since is redirected to stdout
                 }
+
+
+                if (part > 0) {
+                    close(prevFD[1]);
+                    dup2(prevFD[0], STDIN_FILENO);
+                    close(prevFD[0]);
+                }
+                currFD += 2;
+
             }
-
-
-            if (part > 0) {
-                close(prevFD[1]);
-                dup2(prevFD[0], STDIN_FILENO);
-                close(prevFD[0]);
-            }
-            currFD += 2;
-
         }
+
 
 
         ////always return -5 since all executions follow from this one
@@ -142,6 +150,8 @@ int runExt(vector<string> &argVector, int *conf) {
 
 //cutting the first 2 characters
 //cout << "zrgno" <<argno<< endl;
+
+
             input(args[0]);
             if (argno == 4) {
                 args[0] = args[2];
@@ -218,12 +228,11 @@ int runExt(vector<string> &argVector, int *conf) {
                     push_back(tmp);
         }
 
-
-        if (
-                internalHandler(argsVec[0], argsVec
-                ) == 0)
+        cout << "checking if internals " << endl;
+        if (internalHandler(argsVec[0], argsVec) == 0)
 //checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
             return -5;
+        cout << "execing " << endl;
         int code = execvp(args[0], args);
         if (code == -1) {
             perror("Execution");
@@ -232,12 +241,9 @@ int runExt(vector<string> &argVector, int *conf) {
     }
 
     int status;
-    waitpid(pid, &status, waitOpt
-    );
+    waitpid(pid, &status, waitOpt);
     if (waitOpt == 0)
-        return
-                statusChecker(status, pid, argVector[0]
-                );
+        return statusChecker(status, pid, argVector[0]);
     else
         return 0;
 }
