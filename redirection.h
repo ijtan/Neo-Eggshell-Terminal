@@ -16,4 +16,7 @@ int truncOut(char* filename);
 int input(char* filename);
 int append(char* filename);
 void sourceRun(string filename);
+
+char ** initPipes(int *conf, vector<string> argV);
+int InitialzeRedir(int* conf, vector<string> argV) ;
 #endif //NEOEGGSHELL_REDIRECTION_H

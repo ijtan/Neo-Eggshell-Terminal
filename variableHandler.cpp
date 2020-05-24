@@ -10,7 +10,7 @@ void printVars() {
 
 vector<string> parseVars(vector<string> inputVector) {
     int i = 0;
-    for (auto in:inputVector) {
+    for (auto in : inputVector) {
         if (in.find('$') == string::npos) {
             i++;
             continue;
@@ -47,7 +47,6 @@ void initVars(vector<string> &env) {
         env.clear();
     }
     if (getenv("SHELL") == NULL) {
-
         char shll[255];
         char buf[255] = "";
         readlink("/proc/self/exe", buf, sizeof(buf));
@@ -66,17 +65,14 @@ void initVars(vector<string> &env) {
         set(env);
         env.clear();
     }
-    if (getenv("CWD") == NULL) {
+
+    if (getenv("TERMINAL") == NULL) {
         char trmnl[255];
-        if (getenv("TERMINAL") == NULL) {
-            if (isatty(STDIN_FILENO)) {
-                sprintf(trmnl, "TERMINAL=%s", ttyname(STDIN_FILENO));
-                env.push_back(trmnl);
-                set(env);
-                env.clear();
-            }
+        if (isatty(STDIN_FILENO)) {
+            sprintf(trmnl, "TERMINAL=%s", ttyname(STDIN_FILENO));
+            env.push_back(trmnl);
+            set(env);
+            env.clear();
         }
-
     }
-
 }

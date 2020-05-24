@@ -1,6 +1,5 @@
 #include "external.h"
 
-
 using namespace std;
 vector<proc> StpProcs;
 
@@ -9,7 +8,7 @@ int runExt(vector<string> &argVector, int *conf) {
 
     char *args[argVector.size() + 1];
     int i = 0;
-    for (const auto &str:argVector) {
+    for (const auto &str : argVector) {
         args[i] = const_cast<char *>(str.c_str());
         i++;
 
@@ -28,225 +27,41 @@ int runExt(vector<string> &argVector, int *conf) {
 
     pid_t pid = fork();
     signal(SIGINT, sigHandler);
-
-    if (conf[3] == 1) {
-        cout << "init" << endl;
-
-        //start piping
-        int pipeCount = 0;
-        char *args2[16][1024];
-        int pos = 0;
-        int i = -1;
-        for(int i = 0;args[i] != NULL && i<16; i++) {
-            if (strncmp(args[pos], "|", 1) == 0) {
-                cout<<"pipe foudn"<<endl;
-                args2[pipeCount][pos] = NULL;
-                pipeCount++;
-                pos=0;
-                continue;
-            }
-            args2[pipeCount][pos]= args[i];
-            cout<<"new args2: "<<args2[pipeCount][pos]<<endl;
-            pos++;
-        }
-        //REFERENCE - CPS1012 - Redirection and Pipes (Sys Prog) Part 2 by Keith Bugeja
-
-        cout << "pipes init" << endl;
-
-        int fd[pipeCount * 2],
-                *currFD = fd,
-                *prevFD = NULL;
-
-        cout<<"pipe count is:"<<pipeCount<<endl;
-        pipeCount=0;
-        pid_t callerPID = getpid();
-        for (int part = 0; part < pipeCount + 1; part++) {
-                cout<<"starting part"<<part<<endl;
-
-            prevFD = currFD - 2;
-
-            if (part < pipeCount)
-                pipe(currFD);
-
-            cout<<"forking: "<<part<<endl;
-            pid_t PipepPid = fork();
-
-            if (PipepPid == -1) {
-                perror("Pipe fork");
+    if (pid == 0) {
+        if (conf[3] == 1)
+            if (strcmp(*initPipes(conf, argVector), "-5") == 0)
                 return -5;
-            } else if(pid>0)
-                continue;
-            else if (PipepPid == 0) {
-                cout << "created: "<<getpid()<<" in part: "<<part << endl;
-
-                cout << "got forked: "<<getpid()<<" by: "<<getppid() << endl;
-
-
-                cout << "starting copying" << endl;
-                args[part] = {0};
-                for (int cnt = 0; args2[part][cnt] != NULL && cnt < pipeCount + 1; cnt++) {
-                    cout << "copying" << endl;
-                    cout << args[cnt] << "=" << args2[part][cnt] << endl;
-                    strcpy(args[cnt], args2[part][cnt]);
-                    cout << "next is:"<< args2[part][cnt+1] << endl;
-                }
-                
-
-
-                if (part < pipeCount) {
-                    close(currFD[0]); // not needed since nothing will be passing to it;
-                    dup2(currFD[1], STDOUT_FILENO);
-                    close(currFD[1]); // not needed since is redirected to stdout
-                }
-
-
-                if (part > 0) {
-                    close(prevFD[1]);
-                    dup2(prevFD[0], STDIN_FILENO);
-                    close(prevFD[0]);
-                }
-                currFD += 2;
-                break;
-            }
-        }
-
-        if (pid == 0) {
-        cout << "pipes done" << endl;
-        cout<<"my args: ("<<getpid()<<"):"<<endl;
-        for(auto arg:args)
-            cout<<"-"<<arg<<"\n"<<endl;
-        }
-
-
+        InitialzeRedir(conf, argVector);
     }
 
-    if (pid == 0) {
-        if (conf[2] == 1) {
-            int count = 0;
-            int j = 0;
-            int argno = 0;
+    string tmp(args[0]);
+    vector<string> argsVec;
+    for (auto a : args) {
+        if (a == NULL)
+            break;
+        string tmp(a);
+        cout << "internal check arg: " << tmp << endl;
+        argsVec.push_back(tmp);
+    }
 
-            for (auto arg:args) {
-                if (arg != NULL &&
-                    strlen(arg)
-                    == 1 &&
-                    strncmp(arg,
-                            "<", 1) == 0) {
-                    count++;
-                    j = argno;
-                }
-                argno++;
-            }
-
-            if (count > 1) {
-                cout << "Multiple input specifiers found! Aborting..." <<
-                     endl;
-                return -5;
-            }
-
-            if (j != 1) {
-                cout << "Input specifier position invalid! Aborting..." <<
-                     endl;
-                return -5;
-            }
-            if (argno < 3) {
-                cout << "Command to redirect not specified" <<
-                     endl;
-                return -5;
-            }
-
-//cutting the first 2 characters
-//cout << "zrgno" <<argno<< endl;
-
-
-            input(args[0]);
-            if (argno == 4) {
-                args[0] = args[2];
-                args[1] = NULL;
-            } else {
-                int k = 0;
-            //cout << "moving" << endl;
-                while (args[k + 2] != NULL && k < argno) {
-            //cout << "moved: " << args[k + 2] << "--into--" << args[k] << endl;
-                    strcpy(args[k], args[k + 2]
-                    );
-            //args[k] = args[k + 2];
-                    k++;
-                }
-                args[k - 2] = NULL;
-            }
-
-        }
-
-
-        if (conf[0] == 1 || conf[1] == 1) {
-            char cmp[5] = ">>";
-            int len = 2;
-            if (conf[1] == 1) {
-                strcpy(cmp,">");
-                len = 1;
-            }
-
-
-            int count = 0;
-            int j = 0;
-            int argno = 0;
-            for (auto arg:args) {
-                if (arg != NULL && strlen(arg)==len && strncmp(arg, cmp, len)== 0) {
-                    count++;
-                    j = argno;
-                }
-                argno++;
-            }
-            if (count > 1) {
-                cout << "Multiple input specifiers found! Aborting..." <<
-                     endl;
-                return -5;
-            }
-            if (j != argno - 3) {
-                cout << "Output specifier position invalid! Aborting..." <<
-                     endl;
-                return -5;
-            }
-            if (conf[1] == 1)
-                truncOut(args[argno - 2]);
-            else
-                append(args[argno - 2]);
-            args[argno - 3] = NULL;
-        }
-
-
-        string tmp(args[0]);
-        vector<string> argsVec;
-        for (
-            auto a
-                :args) {
-            if (a == NULL)
-                break;
-            string tmp(a);
-            argsVec.push_back(tmp);
-        }
-
-        cout << "checking if internals " << endl;
-        if (internalHandler(argsVec[0], argsVec) == 0)
-//checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
-            return -5;
-        cout << "execing " << endl;
-        int code = execvp(args[0], args);
-        if (code == -1) {
-            perror("Execution");
-            return -5;
-        }
+    cout << "checking if internals " << endl;
+    if (internalHandler(argsVec[0], argsVec) == 0)
+        //checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
+        return -5;
+    cout << "execing " << endl;
+    int code = execvp(args[0], args);
+    if (code == -1) {
+        perror("Execution");
+        return -5;
     }
 
     int status;
     waitpid(pid, &status, waitOpt);
-    if (waitOpt == 0)
+    if(waitOpt == 0)
         return statusChecker(status, pid, argVector[0]);
     else
         return 0;
 }
-
 
 int statusChecker(int status, pid_t pid, string name) {
     if (WIFSIGNALED(status)) {
@@ -269,7 +84,7 @@ int statusChecker(int status, pid_t pid, string name) {
 
 vector<proc2> getStpProcs() {
     vector<proc2> procs2;
-    for (auto prc:StpProcs) {
+    for (auto prc : StpProcs) {
         proc2 tmp{prc.pid, prc.name};
         procs2.push_back(tmp);
     }
