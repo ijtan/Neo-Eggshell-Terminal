@@ -24,7 +24,7 @@ int internalHandler(string command, vector<string> argsV) {
 
     for (auto &internalCommand : internalCommands) {
         if (internalCommand == command) {
-            switch (&internalCommand - &internalCommands[0]) {
+            switch (&internalCommand - &internalCommands[0]) { //basicaly indexof
                 //TODO MAKE THIS AN ENUM
                 case 0:
                     echo(argsV);

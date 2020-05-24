@@ -21,7 +21,7 @@ struct proc {
 };
 
 int runExt(vector<string> &argVector, int *conf);
-
+//void vec2ptr(char**args, vector<string> &innie);
 int statusChecker(int status, pid_t pid, string name);
 
 class external;

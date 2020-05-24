@@ -7,7 +7,7 @@
 
 using namespace std;
 //REFERENCE: explanation videos
-int openRed(int fd, char* path, int flg, mode_t md) {
+int openRed(int fd, const char* path, int flg, mode_t md) {
     //open a new file descriptor at given path
     int FDOpen = open(path, flg, md);
 
@@ -28,16 +28,16 @@ int openRed(int fd, char* path, int flg, mode_t md) {
         return fd;
 }
 
-int truncOut(char* filename) {
-    return openRed(STDOUT_FILENO, filename, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+int truncOut(string filename) {
+    return openRed(STDOUT_FILENO, filename.c_str(), O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 }
 
-int append(char* filename) {
-    return openRed(STDOUT_FILENO, filename, O_RDWR | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+int append(string filename) {
+    return openRed(STDOUT_FILENO, filename.c_str(), O_RDWR | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 }
 
-int input(char* filename) {
-    return openRed(STDIN_FILENO, filename, O_RDONLY, S_IRUSR);
+int input(string filename) {
+    return openRed(STDIN_FILENO, filename.c_str(), O_RDONLY, S_IRUSR);
 }
 
 void sourceRun(string filename) {
@@ -75,16 +75,15 @@ void sourceRun(string filename) {
     sourceRead.close();
 }
 
-int InitialzeRedir(int* conf, char** args, int size) {
+int InitialzeRedir(int* conf, vector<string>& args) {
     if (conf[2] == 1) {
         int count = 0;
         int j = 0;
         int argno = 0;
 
-        for (int i = 0; i < size; i++) {
-            if (args[i] != NULL &&
-                strlen(args[i]) == 1 &&
-                strncmp(args[i], "<", 1) == 0) {
+        for (auto arg : args) {
+            if (args.empty() &&
+                args.size() == 1 && arg == "<") {
                 count++;
                 j = argno;
             }
@@ -111,17 +110,17 @@ int InitialzeRedir(int* conf, char** args, int size) {
         input(args[0]);
         if (argno == 4) {
             args[0] = args[2];
-            args[1] = NULL;
+            //args[1] = nullptr;
         } else {
             int k = 0;
             //cout << "moving" << endl;
-            while (args[k + 2] != NULL && k < argno) {
+            while (!args[k + 2].empty() && k < argno) {
                 //cout << "moved: " << args[k + 2] << "--into--" << args[k] << endl;
-                strcpy(args[k], args[k + 2]);
+                args[k] = args[k + 2];
                 //args[k] = args[k + 2];
                 k++;
             }
-            args[k - 2] = NULL;
+            //args[k - 2] = nullptr;
         }
     }
 
@@ -136,8 +135,8 @@ int InitialzeRedir(int* conf, char** args, int size) {
         int count = 0;
         int j = 0;
         int argno = 0;
-        for (int i = 0; i < size; i++) {
-            if (args[i] != NULL && strlen(args[i]) == len && strncmp(args[i], cmp, len) == 0) {
+        for (auto arg : args) {
+            if (!arg.empty() && arg.size() == len && arg == cmp) {
                 count++;
                 j = argno;
             }
@@ -152,75 +151,72 @@ int InitialzeRedir(int* conf, char** args, int size) {
             return -5;
         }
         if (conf[1] == 1)
-            truncOut(args[argno - 2]);
+            truncOut(args[argno - 2].c_str());
         else
             append(args[argno - 2]);
-        args[argno - 3] = NULL;
+        //args[argno - 3] = nullptr;
     }
+    return 0;
 }
 
-char** initPipes(int* conf, vector<string> argV, char** args) {
+vector<string> initPipes(vector<string> argV) {
+    //start piping
+    int pipeCount = 0;
+    cout << "starting pipe identification" << endl;
+    vector<vector<string>> splitArgs;
     int i = 0;
-
-    if (conf[3] == 1) {
-        //start piping
-        int pipeCount = 0;
-        char* args2[16][1024];
-        int pos = 0;
-        int i = -1;
-        for (int i = 0; args[i] != NULL && i < 16; i++) {
-            if (strncmp(args[pos], "|", 1) == 0) {
-                args2[pipeCount][pos] = NULL;
-                pipeCount++;
-                pos = 0;
-                continue;
-            }
-            args2[pipeCount][pos] = args[i];
-            pos++;
+    vector<string> temp;
+    for (auto arg : argV) {
+        if (arg == "|") {
+            splitArgs.push_back(temp);
+            temp.clear();
+            pipeCount++;
+        } else {
+            temp.push_back(argV[i]);
         }
-        //REFERENCE - CPS1012 - Redirection and Pipes (Sys Prog) Part 2 by Keith Bugeja
-
-        int fd[pipeCount * 2],
-            *currFD = fd,
-            *prevFD = NULL;
-
-        pid_t callerPID = getpid();
-
-        for (int part = 0; part < pipeCount + 1; part++) {
-            prevFD = currFD - 2;
-
-            if (part < pipeCount)
-                pipe(currFD);
-
-            cout << "forking: " << part << " by pid " << getpid() << endl;
-            pid_t PipepPid = fork();
-
-            if (PipepPid == -1) {
-                perror("Pipe fork");
-                return args;
-            } else if (PipepPid == 0) {
-                int cnt = 0;
-                for (cnt = 0; args2[part][cnt] != NULL && cnt < pipeCount + 1; cnt++) {
-                    args[cnt] = args2[part][cnt];
-                }
-                args[cnt] = NULL;
-
-                if (part < pipeCount) {
-                    cout << "dup out" << part << endl;
-                    close(currFD[0]);  // not needed since nothing will be passing to it;
-                    dup2(currFD[1], STDOUT_FILENO);
-                    close(currFD[1]);  // not needed since is redirected to stdout
-                }
-
-                if (part > 0) {
-                    cout << "dup in" << part << endl;
-                    close(prevFD[1]);
-                    dup2(prevFD[0], STDIN_FILENO);
-                    close(prevFD[0]);
-                }
-                currFD += 2;
-            }
-        }
-        return 0;
+        i++;
     }
+    splitArgs.push_back(temp);
+
+    //var creation
+    int fd[pipeCount * 2],
+        *currFD = fd,
+        *prevFD = NULL;
+
+    for (int part = 0; part < pipeCount + 1; part++) {
+        prevFD = currFD - 2;
+
+        if (part < pipeCount)
+            pipe(currFD);
+
+        pid_t PipepPid = fork();
+
+        if (PipepPid == -1) {
+            perror("Pipe fork");
+            return {{"-5"}};
+        } else if (PipepPid == 0) {
+
+            int cnt = 0;
+
+            argV.clear();
+            for (auto arg : splitArgs[part]) {
+                argV.push_back(arg);
+                cnt++;
+            }
+
+            if (part < pipeCount) {
+                close(currFD[0]);  // not needed since nothing will be passing to it;
+                dup2(currFD[1], STDOUT_FILENO);
+                close(currFD[1]);  // not needed since is redirected to stdout
+            }
+            if (part > 0) {
+                close(prevFD[1]);
+                dup2(prevFD[0], STDIN_FILENO);
+                close(prevFD[0]);
+            }
+            return argV;
+        }
+        currFD += 2;
+    }
+    return {"100"};
 }
