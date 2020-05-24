@@ -82,8 +82,8 @@ int InitialzeRedir(int* conf, vector<string>& args) {
         int argno = 0;
 
         for (auto arg : args) {
-            if (args.empty() &&
-                args.size() == 1 && arg == "<") {
+            if (!arg.empty() &&
+                arg.length() == 1 && arg == "<") {
                 count++;
                 j = argno;
             }
@@ -97,6 +97,7 @@ int InitialzeRedir(int* conf, vector<string>& args) {
 
         if (j != 1) {
             cout << "Input specifier position invalid! Aborting..." << endl;
+            cout << "expected 1: got:"<<j << endl;
             return -5;
         }
         if (argno < 3) {
@@ -108,20 +109,7 @@ int InitialzeRedir(int* conf, vector<string>& args) {
         //cout << "zrgno" <<argno<< endl;
 
         input(args[0]);
-        if (argno == 4) {
-            args[0] = args[2];
-            //args[1] = nullptr;
-        } else {
-            int k = 0;
-            //cout << "moving" << endl;
-            while (!args[k + 2].empty() && k < argno) {
-                //cout << "moved: " << args[k + 2] << "--into--" << args[k] << endl;
-                args[k] = args[k + 2];
-                //args[k] = args[k + 2];
-                k++;
-            }
-            //args[k - 2] = nullptr;
-        }
+        args.erase(args.begin(),args.begin()+j+1);
     }
 
     if (conf[0] == 1 || conf[1] == 1) {
@@ -135,6 +123,7 @@ int InitialzeRedir(int* conf, vector<string>& args) {
         int count = 0;
         int j = 0;
         int argno = 0;
+
         for (auto arg : args) {
             if (!arg.empty() && arg.size() == len && arg == cmp) {
                 count++;
@@ -146,20 +135,22 @@ int InitialzeRedir(int* conf, vector<string>& args) {
             cout << "Multiple input specifiers found! Aborting..." << endl;
             return -5;
         }
-        if (j != argno - 3) {
+        if (j != argno - 2) {
             cout << "Output specifier position invalid! Aborting..." << endl;
             return -5;
         }
+//after checking the position, we should remove the > filename from the args
+        args.erase(args.begin()+j, args.end());
         if (conf[1] == 1)
-            truncOut(args[argno - 2].c_str());
+            truncOut(args[argno - 1]);
         else
-            append(args[argno - 2]);
+            append(args[argno - 1]);
         //args[argno - 3] = nullptr;
     }
     return 0;
 }
 
-vector<string> initPipes(vector<string> argV) {
+vector<string> initPipes(vector<string> argV, vector<pid_t> &toWait) {
     //start piping
     int pipeCount = 0;
     cout << "starting pipe identification" << endl;
@@ -182,20 +173,19 @@ vector<string> initPipes(vector<string> argV) {
     int fd[pipeCount * 2],
         *currFD = fd,
         *prevFD = NULL;
-
+    pid_t PipepPid;
     for (int part = 0; part < pipeCount + 1; part++) {
         prevFD = currFD - 2;
 
         if (part < pipeCount)
             pipe(currFD);
 
-        pid_t PipepPid = fork();
+        PipepPid = fork();
 
         if (PipepPid == -1) {
             perror("Pipe fork");
             return {{"-5"}};
         } else if (PipepPid == 0) {
-
             int cnt = 0;
 
             argV.clear();
@@ -215,8 +205,14 @@ vector<string> initPipes(vector<string> argV) {
                 close(prevFD[0]);
             }
             return argV;
+        }else
+        {
+            toWait.push_back(PipepPid);
         }
+        
         currFD += 2;
     }
+    //waits for the toWait function to be incremented by all children before retutning, this ensures that all children are waited for later
+    //as a fail safe this has a max wait of 2 seconds! (example in case the fork fails)
     return {"100"};
 }

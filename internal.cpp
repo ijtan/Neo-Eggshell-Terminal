@@ -102,7 +102,7 @@ int set(vector<string> args) {
         }
     }
     char *env = (char*) calloc (var.size() + val.size()+10,sizeof(char));
-    sprintf(env, "%s=%s", var.c_str(), val.c_str());
+    snprintf(env,var.size() + val.size()+10, "%s=%s", var.c_str(), val.c_str());
 
     internalVar newVar = {var,env, val};
     internalVars.emplace_back(newVar);
@@ -110,6 +110,19 @@ int set(vector<string> args) {
     return 0;
 //
 }
+
+int better_set(string variable,string value) {
+    size_t size = variable.size() + value.size()+10;
+    char *env = (char*) calloc (size, sizeof(char));
+    snprintf(env,size, "%s=%s", variable.c_str(), value.c_str());
+
+    internalVar newVar = {variable,env, value};
+    internalVars.emplace_back(newVar);
+    putenv(env); //replace with Assign
+    return 0;
+//
+}
+
 
 void unset(vector<string> args) {
     if (args.size() == 1) {

@@ -5,7 +5,7 @@ vector<proc> StpProcs;
 
 int runExt(vector<string> &argVector, int *conf) {
     int waitOpt = 0;
-
+    vector<pid_t> toWait;
     //char **args = (char**)calloc(argVector.size() + 1, sizeof(char));
     // int i = 0;
     // cout << "initial strncpy" << endl;
@@ -26,8 +26,8 @@ int runExt(vector<string> &argVector, int *conf) {
     pid_t mainPID = getpid();
     if (conf[3] == 1) {
         cout << "pipe init" << endl;
-        cout << "main pid: " << mainPID<<endl;
-        auto feedback = initPipes(argVector);
+        cout << "main pid: " << mainPID << endl;
+        auto feedback = initPipes(argVector, toWait);
         if (getpid() != mainPID) {
             if (feedback[0].compare("-5") == 0) {
                 return -5;
@@ -38,6 +38,8 @@ int runExt(vector<string> &argVector, int *conf) {
 
             if (conf[0] == 1 || conf[1] == 1 || conf[2] == 1) {
                 int redir = InitialzeRedir(conf, argVector);
+                if(redir!=0)
+                    return redir;
             }
 
             if (internalHandler(argVector[0], argVector) == 0) {
@@ -57,8 +59,9 @@ int runExt(vector<string> &argVector, int *conf) {
             int code = execvp(args[0], args);
             if (code == -1) {
                 perror("Execution");
-                cerr<<"its was: "<<args[0]<<"\n\n"<<endl;
-                for(int j = 0; j< i;j++)
+                cerr << "its was: " << args[0] << "\n\n"
+                     << endl;
+                for (int j = 0; j < i; j++)
                     free(args[j]);
                 return -5;
             }
@@ -95,25 +98,27 @@ int runExt(vector<string> &argVector, int *conf) {
             int code = execvp(args[0], args);
             if (code == -1) {
                 perror("Execution");
-                cout<<"np its was: "<<args[0]<<endl;
-                for(int j = 0; j< i;j++)
+                cout << "np its was: " << args[0] << endl;
+                for (int j = 0; j < i; j++)
                     free(args[j]);
                 return -5;
             }
+        } else {
+            int status;
+            waitpid(pid, &status, waitOpt);
+            if (waitOpt == 0)
+            return statusChecker(status, pid, argVector[0]);
         }
     }
 
     //main should do this
     int status;
-    pid_t wpid;
-    cout << "waiting :" << getpid() << " should be same as:" << mainPID << endl;
-    sleep(5);
-    while ((wpid = wait(&status)) > 0) {
-        if (waitOpt == 0)
-            return statusChecker(status, wpid, argVector[0]);
-        else
-            return 0;
-    }
+    sleep(1.5);
+    // for (auto p : toWait) {
+    //     cout<<"Waiting for:"<<p<<endl;
+    //     waitpid(p, &status, waitOpt);
+    // }
+    return 0;
 }
 
 // void vec2ptr(char **args, vector<string> &innie) {
@@ -129,11 +134,8 @@ int statusChecker(int status, pid_t pid, string name) {
         return -1;
     }
     if (WIFEXITED(status)) {
-        char envStr[sizeof(WEXITSTATUS(status)) + 10];
-        sprintf(envStr, "EXITCODE=%d", (WEXITSTATUS(status)));
-        vector<string> env;
-        env.emplace_back(envStr);
-        set(env);
+        string str = to_string( WEXITSTATUS(status));
+        better_set("EXITCODE",str);
         return 0;
     }
     return 0;
