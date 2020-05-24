@@ -159,7 +159,7 @@ int InitialzeRedir(int* conf, char** args, int size) {
     }
 }
 
-char* initPipes(int* conf, vector<string> argV, char** args) {
+char** initPipes(int* conf, vector<string> argV, char** args) {
     int i = 0;
 
     if (conf[3] == 1) {
