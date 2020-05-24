@@ -36,15 +36,16 @@ int runExt(vector<string> &argVector, int *conf) {
         int pipeCount = 0;
         char *args2[16][1024];
         int pos = 0;
-        for (int i = 0; args[i] != NULL && i < 16; i++) {
+        int i = -1;
+        for(int i = 0;args[i] != NULL && i<16; i++) {
             if (strncmp(args[pos], "|", 1) == 0) {
-                pipeCount++;
                 cout<<"pipe foudn"<<endl;
                 args2[pipeCount][pos] = NULL;
+                pipeCount++;
                 pos=0;
                 continue;
             }
-            args2[pipeCount][pos] = args[pos];
+            args2[pipeCount][pos]= args[i];
             cout<<"new args2: "<<args2[pipeCount][pos]<<endl;
             pos++;
         }
@@ -58,33 +59,38 @@ int runExt(vector<string> &argVector, int *conf) {
 
         cout<<"pipe count is:"<<pipeCount<<endl;
         pipeCount=0;
+        pid_t callerPID = getpid();
         for (int part = 0; part < pipeCount + 1; part++) {
+                cout<<"starting part"<<part<<endl;
+
             prevFD = currFD - 2;
 
             if (part < pipeCount)
                 pipe(currFD);
 
-
-            cout << "forking" << endl;
+            cout<<"forking: "<<part<<endl;
             pid_t PipepPid = fork();
+
             if (PipepPid == -1) {
                 perror("Pipe fork");
                 return -5;
-            } else if (PipepPid == 0) {
+            } else if(pid>0)
+                continue;
+            else if (PipepPid == 0) {
+                cout << "created: "<<getpid()<<" in part: "<<part << endl;
 
                 cout << "got forked: "<<getpid()<<" by: "<<getppid() << endl;
 
 
                 cout << "starting copying" << endl;
-                for (int cnt = 0; args2[cnt - 1] != NULL && cnt > pipeCount + 1; cnt++) {
+                args[part] = {0};
+                for (int cnt = 0; args2[part][cnt] != NULL && cnt < pipeCount + 1; cnt++) {
                     cout << "copying" << endl;
-                    cout << args[cnt] << endl;
-                    cout << "=    " << endl;
-                    cout << args2[part][cnt] << endl;
-
+                    cout << args[cnt] << "=" << args2[part][cnt] << endl;
                     strcpy(args[cnt], args2[part][cnt]);
+                    cout << "next is:"<< args2[part][cnt+1] << endl;
                 }
-                cout << "done copying" << endl;
+                
 
 
                 if (part < pipeCount) {
@@ -100,27 +106,27 @@ int runExt(vector<string> &argVector, int *conf) {
                     close(prevFD[0]);
                 }
                 currFD += 2;
-
+                break;
             }
         }
 
-
-
-        ////always return -5 since all executions follow from this one
-        // return -5;
+        if (pid == 0) {
         cout << "pipes done" << endl;
+        cout<<"my args: ("<<getpid()<<"):"<<endl;
+        for(auto arg:args)
+            cout<<"-"<<arg<<"\n"<<endl;
+        }
+
+
     }
 
     if (pid == 0) {
-
         if (conf[2] == 1) {
             int count = 0;
             int j = 0;
             int argno = 0;
 
-            for (
-                auto arg
-                    :args) {
+            for (auto arg:args) {
                 if (arg != NULL &&
                     strlen(arg)
                     == 1 &&
@@ -159,12 +165,12 @@ int runExt(vector<string> &argVector, int *conf) {
                 args[1] = NULL;
             } else {
                 int k = 0;
-//cout << "moving" << endl;
+            //cout << "moving" << endl;
                 while (args[k + 2] != NULL && k < argno) {
-//cout << "moved: " << args[k + 2] << "--into--" << args[k] << endl;
+            //cout << "moved: " << args[k + 2] << "--into--" << args[k] << endl;
                     strcpy(args[k], args[k + 2]
                     );
-//args[k] = args[k + 2];
+            //args[k] = args[k + 2];
                     k++;
                 }
                 args[k - 2] = NULL;
@@ -177,8 +183,7 @@ int runExt(vector<string> &argVector, int *conf) {
             char cmp[5] = ">>";
             int len = 2;
             if (conf[1] == 1) {
-                strcpy(cmp,
-                       ">");
+                strcpy(cmp,">");
                 len = 1;
             }
 
@@ -186,14 +191,8 @@ int runExt(vector<string> &argVector, int *conf) {
             int count = 0;
             int j = 0;
             int argno = 0;
-            for (
-                auto arg
-                    :args) {
-                if (arg != NULL &&
-                    strlen(arg)
-                    ==
-                    len && strncmp(arg, cmp, len)
-                           == 0) {
+            for (auto arg:args) {
+                if (arg != NULL && strlen(arg)==len && strncmp(arg, cmp, len)== 0) {
                     count++;
                     j = argno;
                 }
@@ -225,8 +224,7 @@ int runExt(vector<string> &argVector, int *conf) {
             if (a == NULL)
                 break;
             string tmp(a);
-            argsVec.
-                    push_back(tmp);
+            argsVec.push_back(tmp);
         }
 
         cout << "checking if internals " << endl;

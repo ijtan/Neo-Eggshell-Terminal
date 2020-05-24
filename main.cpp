@@ -42,11 +42,17 @@ void lineReadInit() {
         int pl = (parseLine(copy2, args));
         linenoiseFree(line);
         args.clear();
+
+        pid_t callerID = getppid();
         if (pl == -5)
             _exit(-5);
-        if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL) {
-            initVars(env);
+        if(getppid()!=callerID){
+            cout<<"Unkilled fork detected, aborting child: ("<<getppid()<<"!="<<callerID<<')'<<endl;
+            _exit(EXIT_FAILURE);
         }
+        if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL) 
+            initVars(env);
+        
     }
 }
 
