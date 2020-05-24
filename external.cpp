@@ -35,16 +35,18 @@ int runExt(vector<string> &argVector, int *conf) {
         //start piping
         int pipeCount = 0;
         char *args2[16][1024];
-        for (int pos = 0; args[pos] != NULL && pos < 16; pos++) {
+        int pos = 0;
+        for (int i = 0; args[i] != NULL && i < 16; i++) {
             if (strncmp(args[pos], "|", 1) == 0) {
                 pipeCount++;
                 cout<<"pipe foudn"<<endl;
-                args2[pipeCount][i] = NULL;
-
+                args2[pipeCount][pos] = NULL;
+                pos=0;
                 continue;
             }
-            args2[pipeCount][i] = args[pos];
-            cout<<"new args2: "<<args2[pipeCount][i]<<endl;
+            args2[pipeCount][pos] = args[pos];
+            cout<<"new args2: "<<args2[pipeCount][pos]<<endl;
+            pos++;
         }
         //REFERENCE - CPS1012 - Redirection and Pipes (Sys Prog) Part 2 by Keith Bugeja
 
