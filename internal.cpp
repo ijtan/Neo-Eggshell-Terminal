@@ -1,5 +1,5 @@
 #include "internal.h"
-#include <memory>
+
 
 using namespace std;
 extern vector<proc> StpProcs;
@@ -12,7 +12,7 @@ struct internalVar {
 };
 vector<internalVar> internalVars;
 
-int internalHandler(string command, vector<string> argsV, int exec = 1) {
+int internalHandler(string command, vector<string> argsV) {
     //will be used to check if the command is internal
     internalCommands.emplace_back("echo");
     internalCommands.emplace_back("showenv");
@@ -166,7 +166,7 @@ void sourceStart(vector<string> args){
         puts("1 arguments expected: filename");
         return;
     }
-    sourceRun(args[1]);
+    BetterSourceRun(args[1]);
 }
 void freeVars(){
     for(const auto& var:internalVars){

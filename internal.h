@@ -17,9 +17,10 @@
 #include "signalHandler.h"
 #include "redirection.h"
 #include "externalStpProcs.h"
+#include <memory>
 
 using namespace std;
-int internalHandler(string command, vector<string>argsV);
+int internalHandler(string command, vector<string> argsV);
 void echo(vector<string>args);
 int set(vector<string> args);
 int better_set(string variable,string value);

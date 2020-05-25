@@ -43,38 +43,40 @@ int input(string filename) {
     return openRed(STDIN_FILENO, filename.c_str(), O_RDONLY, S_IRUSR);
 }
 
-void sourceRun(string filename) {
+void BetterSourceRun(string filename) {
     ifstream sourceRead(filename);
     if (!sourceRead.is_open())
         cout << "Failed to open!" << endl;
     cout << "reading" << endl;
-    char ch;
-    ch = sourceRead.get();
+
     vector<string> args;
 
-    char* command = (char*)calloc(10000, sizeof(char));
-    int i = 0;
+    string line;
+    string copy;
+    char lineC[512];
+    char copyC[512];
+    while (sourceRead.good() && getline(sourceRead, line)) {
+        if (line[0] == '/' && line[1] == '/')
+            continue;
 
-    while (ch != EOF) {
-        if (ch != '\n')
-            command[i] = ch;
-        else {
-            command[i] = '\0';
-            char copy[sizeof(command) + 10000] = "";
-            strncpy(copy, command, sizeof(copy));
-            if (tokenize(command, copy, args) == -1) {
-                continue;
-            };
-            reParse(command, args);
+        
+        strncpy(lineC, line.c_str(), 512);
+        strncpy(copyC, line.c_str(), 512);
+        if (tokenize(lineC, copyC, args) == -1) {
+            continue;
+        };
+        if (line.find(filename) == string::npos || line.find("source") == string::npos) {
+            cout << "reparsing: " << line << " by: " << getpid() << endl;
+            reParse(line, args);
             args.clear();
-            memset(command, '\0', strlen(command) * sizeof(char));  // seems to reset the command thingy
-            i = -1;
+        } else {
+            cerr << "\nSource referring to the same filaneme was found! Skipping to avoid Loop!\n"
+                 << endl;
+            continue;
         }
-
-        i++;
-        ch = sourceRead.get();
     }
-    free(command);
+    if (sourceRead.bad())
+        perror("error while reading file");
     sourceRead.close();
 }
 
@@ -100,7 +102,7 @@ int InitialzeRedir(vector<int> conf, vector<string>& args) {
 
         if (j != 1) {
             cout << "Input specifier position invalid! Aborting..." << endl;
-            cout << "expected 1: got:"<<j << endl;
+            cout << "expected 1: got:" << j << endl;
             return -5;
         }
         if (argno < 3) {
@@ -112,7 +114,7 @@ int InitialzeRedir(vector<int> conf, vector<string>& args) {
         //cout << "zrgno" <<argno<< endl;
 
         input(args[0]);
-        args.erase(args.begin(),args.begin()+j+1);
+        args.erase(args.begin(), args.begin() + j + 1);
     }
 
     if (conf[0] == 1 || conf[1] == 1) {
@@ -142,8 +144,8 @@ int InitialzeRedir(vector<int> conf, vector<string>& args) {
             cout << "Output specifier position invalid! Aborting..." << endl;
             return -5;
         }
-//after checking the position, we should remove the > filename from the args
-        args.erase(args.begin()+j, args.end());
+        //after checking the position, we should remove the > filename from the args
+        args.erase(args.begin() + j, args.end());
         if (conf[1] == 1)
             truncOut(args[argno - 1]);
         else
@@ -153,7 +155,7 @@ int InitialzeRedir(vector<int> conf, vector<string>& args) {
     return 0;
 }
 
-vector<string> initPipes(vector<string> argV, vector<pid_t> &toWait) {
+vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
     //start piping
     int pipeCount = 0;
     cout << "starting pipe identification" << endl;
@@ -208,11 +210,10 @@ vector<string> initPipes(vector<string> argV, vector<pid_t> &toWait) {
                 close(prevFD[0]);
             }
             return argV;
-        }else
-        {
+        } else {
             toWait.push_back(PipepPid);
         }
-        
+
         currFD += 2;
     }
     //waits for the toWait function to be incremented by all children before retutning, this ensures that all children are waited for later
@@ -220,8 +221,8 @@ vector<string> initPipes(vector<string> argV, vector<pid_t> &toWait) {
     return {"100"};
 }
 
-void flagger(string line, vector<int>&RedirectConfig){
-    RedirectConfig[0]=RedirectConfig[1]=RedirectConfig[2]=0;
+void flagger(string line, vector<int>& RedirectConfig) {
+    RedirectConfig[0] = RedirectConfig[1] = RedirectConfig[2] = 0;
     if (line.find(">>") != string::npos)
         RedirectConfig[0] = 1;
     else if (line.find('>') != string::npos) {
