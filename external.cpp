@@ -6,22 +6,9 @@ vector<proc> StpProcs;
 int Executer(vector<string> &argVector, vector<int>conf) {
     int waitOpt = 0;
     vector<pid_t> toWait;
-    //char **args = (char**)calloc(argVector.size() + 1, sizeof(char));
-    // int i = 0;
-    // cout << "initial strncpy" << endl;
-    // for(auto arg:argVector){
-    //     cout << ">"<<arg << endl;
-    //     strncpy(args[i], arg.c_str(), sizeof(args[i]));
-    //     i++;
-    // }
     if (conf[4] == 1)
         waitOpt = WNOHANG;
 
-    // pid_t pid = fork();
-    // if (pid == -1) {
-    //     perror("fork");
-    //     return -5;
-    //}
     signal(SIGINT, sigHandler);
     pid_t mainPID = getpid();
     if (conf[3] == 1) {
