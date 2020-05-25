@@ -3,12 +3,12 @@
 using namespace std;
 vector<proc> StpProcs;
 
-int Executer(vector<string> &argVector, vector<int>conf) {
+int Executer(vector<string> &argVector, vector<int> conf) {
     int waitOpt = 0;
     vector<pid_t> toWait;
     if (conf[4] == 1)
         waitOpt = WNOHANG;
-
+    pid_t toSkip = -10;
     signal(SIGINT, sigHandler);
     pid_t mainPID = getpid();
     if (conf[3] == 1) {
@@ -23,12 +23,10 @@ int Executer(vector<string> &argVector, vector<int>conf) {
                 argVector = feedback;
             }
             string line;
-            //we need to update the flags since 
-            for(auto arg:argVector)
+            //we need to update the flags since
+            for (auto arg : argVector)
                 line.append(arg);
-            flagger(line, conf);    
-
-
+            flagger(line, conf);
             if (conf[0] == 1 || conf[1] == 1 || conf[2] == 1) {
                 int redir = InitialzeRedir(conf, argVector);
                 if (redir != 0)
@@ -48,7 +46,8 @@ int Executer(vector<string> &argVector, vector<int>conf) {
                 i++;
             }
             args[i] = NULL;
-
+            cerr << "\n  exectuing" << getpid() << "\n"
+                 << endl;
             int code = execvp(args[0], args);
             if (code == -1) {
                 perror("Execution");
@@ -57,6 +56,18 @@ int Executer(vector<string> &argVector, vector<int>conf) {
                 for (int j = 0; j < i; j++)
                     free(args[j]);
                 return -5;
+            }
+            cerr << "\n lived through the pipe execution 8) \n"
+                 << endl;
+            return -5;  //killing the damn thing
+        } else {
+            //this happens once returning from pipes and its the main
+            cerr << "\n\nMAIN RETURNED WITH: " << stoi(feedback[0]) << "\n\n"
+                 << endl;
+            toSkip = stoi(feedback[0]);
+            for(int i = 0 ;i < 10 ; i++){
+                cout<<"fd check:"<<fcntl(toSkip, F_GETFD)<<endl;
+                sleep(1);
             }
         }
 
@@ -85,7 +96,14 @@ int Executer(vector<string> &argVector, vector<int>conf) {
                 i++;
             }
             args[i] = NULL;
+
             int code = execvp(args[0], args);
+            if (pid == 0) {
+                cerr << "\n lived through the execution 8) \n"
+                     << endl;
+                return -5;  //killing the thing
+            }
+
             if (code == -1) {
                 perror("Execution");
                 cout << "np its was: " << args[0] << endl;
@@ -93,24 +111,11 @@ int Executer(vector<string> &argVector, vector<int>conf) {
                     free(args[j]);
                 return -5;
             }
-        } else {
-            int status;
-            waitpid(pid, &status, waitOpt);
-            if (waitOpt == 0)
-                return statusChecker(status, pid, argVector[0]);
         }
     }
-
     //main should do this
-    int status;
-    sleep(1.5);
-    // for (auto p : toWait) {
-    //     cout<<"Waiting for:"<<p<<endl;
-    //     waitpid(p, &status, waitOpt);
-    // }
     return 0;
 }
-
 
 int statusChecker(int status, pid_t pid, string name) {
     if (WIFSIGNALED(status)) {

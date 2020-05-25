@@ -7,8 +7,13 @@
 #include <cstring>
 #include <vector>
 #include <iostream>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <fstream>
+#include <iostream>
 #include "external.h"
 #include "reparse.h"
+
 void pipeTester();
 
 using namespace std;

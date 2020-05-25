@@ -1,10 +1,5 @@
 #include "redirection.h"
 
-#include <fcntl.h>
-
-#include <fstream>
-#include <iostream>
-
 using namespace std;
 //REFERENCE: explanation videos
 int openRed(int fd, const char* path, int flg, mode_t md) {
@@ -29,16 +24,19 @@ int openRed(int fd, const char* path, int flg, mode_t md) {
 }
 
 int truncOut(string filename) {
-    fsync(STDOUT_FILENO);
-    return openRed(STDOUT_FILENO, filename.c_str(), O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+    return openRed(STDOUT_FILENO, filename.c_str(), O_SYNC | O_CLOEXEC | O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 }
 
 int append(string filename) {
-    fsync(STDOUT_FILENO);
     return openRed(STDOUT_FILENO, filename.c_str(), O_RDWR | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 }
 
 int input(string filename) {
+    struct stat buffer;
+    if (stat(filename.c_str(), &buffer) != 0) {
+        cerr << "\nfile not found, Aborting...\n";
+        return -1;
+    };
     fsync(STDIN_FILENO);
     return openRed(STDIN_FILENO, filename.c_str(), O_RDONLY, S_IRUSR);
 }
@@ -59,7 +57,6 @@ void BetterSourceRun(string filename) {
         if (line[0] == '/' && line[1] == '/')
             continue;
 
-        
         strncpy(lineC, line.c_str(), 512);
         strncpy(copyC, line.c_str(), 512);
         if (tokenize(lineC, copyC, args) == -1) {
@@ -99,12 +96,6 @@ int InitialzeRedir(vector<int> conf, vector<string>& args) {
             cout << "Multiple input specifiers found! Aborting..." << endl;
             return -5;
         }
-
-        if (j != 1) {
-            cout << "Input specifier position invalid! Aborting..." << endl;
-            cout << "expected 1: got:" << j << endl;
-            return -5;
-        }
         if (argno < 3) {
             cout << "Command to redirect not specified" << endl;
             return -5;
@@ -113,11 +104,20 @@ int InitialzeRedir(vector<int> conf, vector<string>& args) {
         //cutting the first 2 characters
         //cout << "zrgno" <<argno<< endl;
 
-        input(args[0]);
-        args.erase(args.begin(), args.begin() + j + 1);
+        int specifierPos = j;
+        int openIN = input(args[specifierPos + 1]);
+        if (openIN == -1)
+            return -5;
+        args.erase(args.begin() + specifierPos, args.begin() + specifierPos + 2);
     }
 
     if (conf[0] == 1 || conf[1] == 1) {
+        if (conf[0] == 1 && conf[1] == 1) {
+            cerr << "\n'>' and '>>' cannot be used at the same time! ABorting...\n"
+                 << endl;
+            return -5;
+        }
+
         char cmp[5] = ">>";
         int len = 2;
         if (conf[1] == 1) {
@@ -140,17 +140,12 @@ int InitialzeRedir(vector<int> conf, vector<string>& args) {
             cout << "Multiple input specifiers found! Aborting..." << endl;
             return -5;
         }
-        if (j != argno - 2) {
-            cout << "Output specifier position invalid! Aborting..." << endl;
-            return -5;
-        }
         //after checking the position, we should remove the > filename from the args
-        args.erase(args.begin() + j, args.end());
+        args.erase(args.begin() + j, args.begin() + j + 2);
         if (conf[1] == 1)
-            truncOut(args[argno - 1]);
+            truncOut(args[j + 1]);
         else
-            append(args[argno - 1]);
-        //args[argno - 3] = nullptr;
+            append(args[j + 1]);
     }
     return 0;
 }
@@ -179,12 +174,13 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
         *currFD = fd,
         *prevFD = NULL;
     pid_t PipepPid;
+    int outFDtoClose = -10;
     for (int part = 0; part < pipeCount + 1; part++) {
         prevFD = currFD - 2;
 
         if (part < pipeCount)
             pipe(currFD);
-
+        outFDtoClose = *currFD;
         PipepPid = fork();
 
         if (PipepPid == -1) {
@@ -209,16 +205,17 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
                 dup2(prevFD[0], STDIN_FILENO);
                 close(prevFD[0]);
             }
+            cerr << "\n  returning from redir:" << getpid() << "\n"
+                 << endl;
             return argV;
         } else {
             toWait.push_back(PipepPid);
         }
-
         currFD += 2;
     }
     //waits for the toWait function to be incremented by all children before retutning, this ensures that all children are waited for later
     //as a fail safe this has a max wait of 2 seconds! (example in case the fork fails)
-    return {"100"};
+    return {to_string(outFDtoClose)};
 }
 
 void flagger(string line, vector<int>& RedirectConfig) {
