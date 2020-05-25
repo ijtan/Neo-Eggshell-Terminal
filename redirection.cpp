@@ -274,6 +274,7 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
             }
         } else if(PipepPid>0){ //THIS is handled by tge main
             close(currFD[1]);
+            cout<<getpid()<<endl;
             int status;
             waitpid(PipepPid, &status, 0);
             if(WIFEXITED(status)){
