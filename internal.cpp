@@ -119,7 +119,7 @@ void better_unset(string variable) {
   int i = 0;
   for (auto var : internalVars) {
     if (var.name == variable) {
-        cout<<"erasing: "<<(internalVars[i]).name<<endl;
+      cout << "erasing: " << (internalVars[i]).name << endl;
       free(var.str);
       internalVars.erase(internalVars.begin() + i);
       break;
@@ -134,17 +134,20 @@ void changeDirs(vector<string> args) {
     return;
   }
   if (chdir(args[1].c_str()) == 0) {
-    better_set("CWD", args[1]);
+    char buf[512] = "";
+    getcwd(buf, sizeof(buf));
+    string CW(buf);
+    better_set("CWD", CW);
     return;
   }
   perror("cd");
 }
-void sourceStart(vector<string> args) {
+int sourceStart(vector<string> args) {
   if (args.size() != 2) {
     puts("1 arguments expected: filename");
-    return;
+    return -5;
   }
-  BetterSourceRun(args[1]);
+  return BetterSourceRun(args[1]);
 }
 void freeVars() {
   for (const auto& var : internalVars) {

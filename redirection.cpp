@@ -41,7 +41,7 @@ int input(string filename) {
     return openRed(STDIN_FILENO, filename.c_str(), O_RDONLY, S_IRUSR);
 }
 
-void BetterSourceRun(string filename) {
+int BetterSourceRun(string filename) {
     ifstream sourceRead(filename);
     if (!sourceRead.is_open())
         cout << "Failed to open!" << endl;
@@ -64,7 +64,9 @@ void BetterSourceRun(string filename) {
         };
         if (line.find(filename) == string::npos || line.find("source") == string::npos) {
             cout << '['<<line<<']' << endl;
-            reParse(line, args);
+            if(reParse(line, args)==-5){
+                return -5;
+            }
             args.clear();
         } else {
             cerr << "\nSource referring to the same filaneme was found! Skipping to avoid Loop!\n"
@@ -153,7 +155,6 @@ int InitialzeRedir(vector<int> conf, vector<string>& args) {
 vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
     //start piping
     int pipeCount = 0;
-    cout << "starting pipe identification" << endl;
     vector<vector<string>> splitArgs;
     int i = 0;
     vector<string> temp;
@@ -274,7 +275,6 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
             }
         } else if(PipepPid>0){ //THIS is handled by tge main
             close(currFD[1]);
-            cout<<getpid()<<endl;
             int status;
             waitpid(PipepPid, &status, 0);
             if(WIFEXITED(status)){

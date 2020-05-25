@@ -20,7 +20,7 @@ using namespace std;
 int truncOut(char* filename);
 int input(char* filename);
 int append(char* filename);
-void BetterSourceRun(string filename);
+int BetterSourceRun(string filename);
 vector<string> initPipes(vector<string> argV, vector<pid_t> &toWait);
 int InitialzeRedir(vector<int> conf, vector<string>& args) ;
 void flagger(string line, vector<int>&RedirectConfig);
