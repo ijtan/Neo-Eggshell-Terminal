@@ -21,16 +21,16 @@ void sigHandler(int signum) {
     if (signum == SIGINT)
         exit(0);
     char print[255];
-    snprintf(print, sizeof(print), "Caught Signal %s\n", sys_siglist[signum]);
+    snprintf(print, sizeof(print), "Handler Caught Signal %s\n", sys_siglist[signum]);
     write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
 
-    if (signum == 18) {
+    if (signum == SIGTSTP) {
         extern vector<proc> StpProcs;
 
-        kill(StpProcs[0].pid, 18);
+        kill(StpProcs[0].pid, SIGTSTP);
         StpProcs.erase(StpProcs.begin());
     }
-    if (kill(getpid(), SIGINT) == 0) {
+    if (kill(getpid(), SIGKILL) == 0) {
         snprintf(print, sizeof(print), "Killed process successfully!");
         write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
     } else {

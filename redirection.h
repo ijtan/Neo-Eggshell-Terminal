@@ -17,7 +17,6 @@
 void pipeTester();
 
 using namespace std;
-void reSig(int signum);
 int truncOut(char* filename);
 int input(char* filename);
 int append(char* filename);

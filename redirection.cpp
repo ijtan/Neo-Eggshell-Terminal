@@ -169,30 +169,36 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
     }
     splitArgs.push_back(temp);
 
+
     //var creation
     int fd[pipeCount * 2],
         *currFD = fd,
         *prevFD = NULL;
     pid_t PipepPid;
-    int outFDtoClose = -10;
+
+
+
     for (int part = 0; part < pipeCount + 1; part++) {
         prevFD = currFD - 2;
 
         if (part < pipeCount)
             pipe(currFD);
-        outFDtoClose = *currFD;
+
         PipepPid = fork();
         int status = 0;
-        signal(SIGUSR1,reSig);
-
 
         if (PipepPid == -1) {
             perror("Pipe fork");
-            return {{"-5"}};
+            _exit(EXIT_FAILURE);
+
+
+
         } else if (PipepPid == 0) {
             int cnt = 0;
 
+            //pipe creation
             argV.clear();
+
             for (auto arg : splitArgs[part]) {
                 argV.push_back(arg);
                 cnt++;
@@ -208,25 +214,78 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
                 dup2(prevFD[0], STDIN_FILENO);
                 close(prevFD[0]);
             }
-            cerr << "\n  returning from redir:" << getpid() << "\n"
-                 << endl;
-            return argV;
-        } else {
-            toWait.push_back(PipepPid);
+
+            //checking which type of command the newly chopped command is (internal \ redirect \ external)
+
+            string line;
+            vector<int> conf(5);
+            for (auto arg : argV)
+                line.append(arg);
+
+            //re creation of line used for checking rediractions flags
+            flagger(line, conf);  //flagging of new pipe-cut line (invidiual exec rather than all pipes)
+            if (conf[0] == 1 || conf[1] == 1 || conf[2] == 1) {
+                int redir = InitialzeRedir(conf, argV);
+                if (redir != 0)
+                    _exit(EXIT_FAILURE);
+            }
+
+            //checks if the exec is an internal command -> if so it is executed and the process returns;
+            if (internalHandler(argV[0], argV) == 0) {
+                //checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
+                _exit(EXIT_SUCCESS);
+            }
+
+            //IF the child makes it here it means that it must be externally executed -> conversion from vector to char * array here
+            //converting vector into char* array since exec doesnt read vector
+
+            //cerr<<"made it before recopying!"<<endl;
+            char* args[argV.size()+1];
+            int i = 0;
+            for (auto arg : argV) {
+                args[i] = strdup(arg.c_str());
+                i++;
+            }
+            //cerr<<"made it' now nulling!!"<<endl;
+            args[i] = NULL;
+            //cerr<<"made it before recopying!"<<endl;
+
+            //cerr<<"made it till exec!"<<endl;
+            //ready for external execution
+            int code = execvp(args[0], args);
+            cerr<<"IMPOSSIBLE!!! made it PAST the exec!"<<endl;
+            //this message should not be reached by the child if commands was good and no errors.
+            if (code == -1) {  //making sure so
+                perror("Execution");
+                cerr << "its was: " << args[0] << "\n\n"
+                     << endl;
+                // for (int j = 0; j < i; j++)  //we need to free args since the child was not wiped by execv
+                //     free(args[j]);
+                _exit(EXIT_FAILURE);
+            }
+        } else if(PipepPid>0){ //THIS is handled by tge main
+            int status;
+            cout<<"started waiting for part: "<<part<<endl;
+            //sleep(2);
+            waitpid(PipepPid, &status, 0);
+            cout<<"waiting done for part: "<<part<<endl;
+            if(WIFEXITED(status)){
+                cerr<<"EXITED NORMALLY"<<endl;
+            }
+            if(WIFSTOPPED(status)){
+                cerr<<"STOPPED"<<endl;
+            }if(WIFSIGNALED(status)){
+                cerr<<PipepPid<<"<-PID: SIGNALED: "<<WTERMSIG(status)<<" :"<<sys_siglist[WTERMSIG(status)]<<"\n"<<endl;
+            }
+            currFD += 2;
+            continue;
         }
-        currFD += 2;
+        // increment for next iteration
+        cerr<<"UHH IM HERE!?"<<endl;
     }
     //waits for the toWait function to be incremented by all children before retutning, this ensures that all children are waited for later
     //as a fail safe this has a max wait of 2 seconds! (example in case the fork fails)
-    return {to_string(PipepPid)};
-}
-
-void reSig(int signum){
-    if(signum == SIGUSR1){
-        char msg[255];
-        sprintf(msg, "\nRecieved USR SIG! I AM: %d\n",getpid());
-        write(STDERR_FILENO, msg,sizeof(msg) );
-    }
+    return {"100"};
 }
 
 void flagger(string line, vector<int>& RedirectConfig) {
