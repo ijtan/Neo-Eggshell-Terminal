@@ -19,8 +19,7 @@ struct proc {
     pid_t pid;
     string name;
 };
-
-int runExt(vector<string> &argVector, int *conf);
+int Executer(vector<string> &argVector, vector<int>conf);
 int statusChecker(int status, pid_t pid, string name);
 
 class external;

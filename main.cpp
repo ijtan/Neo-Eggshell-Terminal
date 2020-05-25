@@ -28,7 +28,7 @@ void lineReadInit() {
     initVars(env);
     //start linenoise loop
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
-
+        flush(cout);
         linenoiseHistoryAdd(line);
         char copy[sizeof(line)];
         strcpy(copy, line);

@@ -75,7 +75,7 @@ void sourceRun(string filename) {
     sourceRead.close();
 }
 
-int InitialzeRedir(int* conf, vector<string>& args) {
+int InitialzeRedir(vector<int> conf, vector<string>& args) {
     if (conf[2] == 1) {
         int count = 0;
         int j = 0;
@@ -215,4 +215,18 @@ vector<string> initPipes(vector<string> argV, vector<pid_t> &toWait) {
     //waits for the toWait function to be incremented by all children before retutning, this ensures that all children are waited for later
     //as a fail safe this has a max wait of 2 seconds! (example in case the fork fails)
     return {"100"};
+}
+
+void flagger(string line, vector<int>&RedirectConfig){
+    RedirectConfig[0]=RedirectConfig[1]=RedirectConfig[2]=0;
+    if (line.find(">>") != string::npos)
+        RedirectConfig[0] = 1;
+    else if (line.find('>') != string::npos) {
+        // redirect out
+        RedirectConfig[1] = 1;
+    }
+    if (line.find('<') != string::npos) {
+        // redirect in
+        RedirectConfig[2] = 1;
+    }
 }

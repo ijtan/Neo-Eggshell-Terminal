@@ -3,7 +3,7 @@
 using namespace std;
 vector<proc> StpProcs;
 
-int runExt(vector<string> &argVector, int *conf) {
+int Executer(vector<string> &argVector, vector<int>conf) {
     int waitOpt = 0;
     vector<pid_t> toWait;
     //char **args = (char**)calloc(argVector.size() + 1, sizeof(char));
@@ -35,10 +35,16 @@ int runExt(vector<string> &argVector, int *conf) {
                 argVector.clear();
                 argVector = feedback;
             }
+            string line;
+            //we need to update the flags since 
+            for(auto arg:argVector)
+                line.append(arg);
+            flagger(line, conf);    
+
 
             if (conf[0] == 1 || conf[1] == 1 || conf[2] == 1) {
                 int redir = InitialzeRedir(conf, argVector);
-                if(redir!=0)
+                if (redir != 0)
                     return redir;
             }
 
@@ -88,13 +94,10 @@ int runExt(vector<string> &argVector, int *conf) {
             char *args[argVector.size()];
             int i = 0;
             for (auto arg : argVector) {
-                cout << i << ":is now: " << (char *)arg.c_str() << endl;
                 args[i] = strdup(arg.c_str());
                 i++;
             }
             args[i] = NULL;
-            cout << "execing :" << args[0] << "\n"
-                 << endl;
             int code = execvp(args[0], args);
             if (code == -1) {
                 perror("Execution");
@@ -107,13 +110,13 @@ int runExt(vector<string> &argVector, int *conf) {
             int status;
             waitpid(pid, &status, waitOpt);
             if (waitOpt == 0)
-            return statusChecker(status, pid, argVector[0]);
+                return statusChecker(status, pid, argVector[0]);
         }
     }
 
     //main should do this
     int status;
-    sleep(1.5);
+    sleep(3);
     // for (auto p : toWait) {
     //     cout<<"Waiting for:"<<p<<endl;
     //     waitpid(p, &status, waitOpt);
@@ -134,8 +137,8 @@ int statusChecker(int status, pid_t pid, string name) {
         return -1;
     }
     if (WIFEXITED(status)) {
-        string str = to_string( WEXITSTATUS(status));
-        better_set("EXITCODE",str);
+        string str = to_string(WEXITSTATUS(status));
+        better_set("EXITCODE", str);
         return 0;
     }
     return 0;

@@ -23,7 +23,7 @@ int tokenize(char *line, char *copy, vector<string> &args) {
 }
 
 int parseLine(string line, vector<string> input) {
-    int RedirectConfig[5] = {0};
+    vector<int>RedirectConfig(5);
     //0: >>
     //1: >
     //2: <
@@ -36,18 +36,10 @@ int parseLine(string line, vector<string> input) {
                 return 0;
         }
     }
-    if (line.find(">>") != string::npos)
-        RedirectConfig[0] = 1;
-    else if (line.find('>') != string::npos) {
-        // redirect out
-        cout << "> detected" << endl;
-        RedirectConfig[1] = 1;
-    }
-    if (line.find('<') != string::npos) {
-        // redirect in
-        cout << "< detected" << endl;
-        RedirectConfig[2] = 1;
-    }
+
+    flagger(line, RedirectConfig);
+
+
     if (line.find('&') != string::npos) {
         // background running
         if (input[input.size() - 1] == "&") {
@@ -141,7 +133,7 @@ int parseLine(string line, vector<string> input) {
         cout << "pipe detected" << endl;
         RedirectConfig[3] = 1;
     }
-    return runExt(input, RedirectConfig);
+    return Executer(input, RedirectConfig);
 
 }
 
