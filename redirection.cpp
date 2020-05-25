@@ -182,6 +182,9 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
             pipe(currFD);
         outFDtoClose = *currFD;
         PipepPid = fork();
+        int status = 0;
+        signal(SIGUSR1,reSig);
+
 
         if (PipepPid == -1) {
             perror("Pipe fork");
@@ -215,7 +218,15 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
     }
     //waits for the toWait function to be incremented by all children before retutning, this ensures that all children are waited for later
     //as a fail safe this has a max wait of 2 seconds! (example in case the fork fails)
-    return {to_string(outFDtoClose)};
+    return {to_string(PipepPid)};
+}
+
+void reSig(int signum){
+    if(signum == SIGUSR1){
+        char msg[255];
+        sprintf(msg, "\nRecieved USR SIG! I AM: %d\n",getpid());
+        write(STDERR_FILENO, msg,sizeof(msg) );
+    }
 }
 
 void flagger(string line, vector<int>& RedirectConfig) {

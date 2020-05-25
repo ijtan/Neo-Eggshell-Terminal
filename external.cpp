@@ -65,6 +65,7 @@ int Executer(vector<string> &argVector, vector<int> conf) {
             cerr << "\n\nMAIN RETURNED WITH: " << stoi(feedback[0]) << "\n\n"
                  << endl;
             toSkip = stoi(feedback[0]);
+            kill(toSkip,SIGUSR1);
             for(int i = 0 ;i < 10 ; i++){
                 cout<<"fd check:"<<fcntl(toSkip, F_GETFD)<<endl;
                 sleep(1);
@@ -98,12 +99,6 @@ int Executer(vector<string> &argVector, vector<int> conf) {
             args[i] = NULL;
 
             int code = execvp(args[0], args);
-            if (pid == 0) {
-                cerr << "\n lived through the execution 8) \n"
-                     << endl;
-                return -5;  //killing the thing
-            }
-
             if (code == -1) {
                 perror("Execution");
                 cout << "np its was: " << args[0] << endl;
