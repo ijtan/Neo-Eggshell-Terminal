@@ -103,7 +103,7 @@ int Executer(vector<string> &argVector, vector<int>conf) {
 
     //main should do this
     int status;
-    sleep(3);
+    sleep(1.5);
     // for (auto p : toWait) {
     //     cout<<"Waiting for:"<<p<<endl;
     //     waitpid(p, &status, waitOpt);
@@ -111,9 +111,6 @@ int Executer(vector<string> &argVector, vector<int>conf) {
     return 0;
 }
 
-// void vec2ptr(char **args, vector<string> &innie) {
-
-// }
 
 int statusChecker(int status, pid_t pid, string name) {
     if (WIFSIGNALED(status)) {

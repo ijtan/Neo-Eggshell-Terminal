@@ -12,7 +12,7 @@ struct internalVar {
 };
 vector<internalVar> internalVars;
 
-int internalHandler(string command, vector<string> argsV) {
+int internalHandler(string command, vector<string> argsV, int exec = 1) {
     //will be used to check if the command is internal
     internalCommands.emplace_back("echo");
     internalCommands.emplace_back("showenv");
