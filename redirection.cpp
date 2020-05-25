@@ -215,11 +215,13 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
                 close(currFD[0]);  // not needed since nothing will be passing to it;
                 dup2(currFD[1], STDOUT_FILENO);
                 close(currFD[1]);  // not needed since is redirected to stdout
+
             }
             if (part > 0) {
                 close(prevFD[1]);
                 dup2(prevFD[0], STDIN_FILENO);
                 close(prevFD[0]);
+
             }
 
             //checking which type of command the newly chopped command is (internal \ redirect \ external)
@@ -242,12 +244,8 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
             if (intern = internalHandler(argV[0], argV) == 0) {
                 //checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
                 _exit(EXIT_SUCCESS);
-            }else if (intern==1)
-            {
-                return {"noCHILD"};
             }
             
-
             //IF the child makes it here it means that it must be externally executed -> conversion from vector to char * array here
             //converting vector into char* array since exec doesnt read vector
 
@@ -265,7 +263,6 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
             //cerr<<"made it till exec!"<<endl;
             //ready for external execution
             int code = execvp(args[0], args);
-            cerr<<"IMPOSSIBLE!!! made it PAST the exec!"<<endl;
             //this message should not be reached by the child if commands was good and no errors.
             if (code == -1) {  //making sure so
                 perror("Execution");
@@ -276,11 +273,9 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
                 _exit(EXIT_FAILURE);
             }
         } else if(PipepPid>0){ //THIS is handled by tge main
+            close(currFD[1]);
             int status;
-            cout<<"started waiting for part: "<<part<<endl;
-            sleep(2);
-            waitpid(PipepPid, &status, WNOHANG);
-            cout<<"waiting done for part: "<<part<<endl;
+            waitpid(PipepPid, &status, 0);
             if(WIFEXITED(status)){
                 cerr<<"EXITED NORMALLY"<<endl;
             }
