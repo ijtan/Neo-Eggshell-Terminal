@@ -81,7 +81,6 @@ int Executer(vector<string> &argVector, vector<int>conf) {
         } else if (pid == 0) {
             if (conf[0] == 1 || conf[1] == 1 || conf[2] == 1) {
                 cout << "redir init enters" << endl;
-                sleep(3);
                 int redir = InitialzeRedir(conf, argVector);
                 if (redir != 0) {
                     return -5;
