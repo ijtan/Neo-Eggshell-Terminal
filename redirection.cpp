@@ -63,7 +63,7 @@ void BetterSourceRun(string filename) {
             continue;
         };
         if (line.find(filename) == string::npos || line.find("source") == string::npos) {
-            cout << "reparsing: " << line << " by: " << getpid() << endl;
+            cout << '['<<line<<']' << endl;
             reParse(line, args);
             args.clear();
         } else {
