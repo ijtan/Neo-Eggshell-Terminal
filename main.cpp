@@ -16,13 +16,10 @@ void exitRoutine() {
     freeVars();
     args.clear();
 }
-
+vector<string> env;
 void lineReadInit() {
-
-
     atexit(exitRoutine);
 
-    vector<string> env;
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
     initVars(env);

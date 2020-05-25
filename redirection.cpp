@@ -169,6 +169,13 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
     }
     splitArgs.push_back(temp);
 
+    for(auto chunk:splitArgs){
+        int intern = internalChecker(chunk[0]);
+        if(intern == 1){
+            cout<<"Cannot Pipe One or more internal commands specified. Aborting..."<<endl;
+            return {"99"};
+        }
+    }
 
     //var creation
     int fd[pipeCount * 2],
@@ -231,10 +238,15 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
             }
 
             //checks if the exec is an internal command -> if so it is executed and the process returns;
-            if (internalHandler(argV[0], argV) == 0) {
+            int intern;
+            if (intern = internalHandler(argV[0], argV) == 0) {
                 //checks if the internalHandler matched; meaning that an internal command was run and we do not need further execution
                 _exit(EXIT_SUCCESS);
+            }else if (intern==1)
+            {
+                return {"noCHILD"};
             }
+            
 
             //IF the child makes it here it means that it must be externally executed -> conversion from vector to char * array here
             //converting vector into char* array since exec doesnt read vector
@@ -266,8 +278,8 @@ vector<string> initPipes(vector<string> argV, vector<pid_t>& toWait) {
         } else if(PipepPid>0){ //THIS is handled by tge main
             int status;
             cout<<"started waiting for part: "<<part<<endl;
-            //sleep(2);
-            waitpid(PipepPid, &status, 0);
+            sleep(2);
+            waitpid(PipepPid, &status, WNOHANG);
             cout<<"waiting done for part: "<<part<<endl;
             if(WIFEXITED(status)){
                 cerr<<"EXITED NORMALLY"<<endl;

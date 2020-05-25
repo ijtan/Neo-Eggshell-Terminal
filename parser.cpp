@@ -32,9 +32,9 @@ int parseLine(string line, vector<string> input) {
 
     if (line.find('=') != string::npos) {
         if (input.size() == 1) {
-            if (set(input) == 0)
-                return 0;
+            better_set(line.substr(0,line.find('=')),line.substr(line.find('=')+1,line.size()) );
         }
+        return 0;
     }
 
     flagger(line, RedirectConfig);
