@@ -6,10 +6,11 @@ vector<proc> StpProcs;
 int Executer(vector<string>& argVector, vector<int> conf) {
   int waitOpt = 0;
   vector<pid_t> toWait;
+  
   if (conf[4] == 1)
     waitOpt = WNOHANG;
-  pid_t toSkip = -10;
-  // signal(SIGINT, sigHandler);
+
+
   pid_t mainPID = getpid();
   if (conf[3] == 1) {
     auto feedback = initPipes(argVector, toWait);
@@ -67,13 +68,6 @@ int Executer(vector<string>& argVector, vector<int> conf) {
       waitpid(pid, &status, 0);
     }
   }
-  // main should do this
-  // int status;
-  // for (auto w : toWait) {
-  //     cout<<"Main waiting for: "<<w<<endl;
-  //     waitpid(w, &status, WNOHANG);
-  //     statusChecker(status, w, "change me to real prog name :)");
-  // }
   return 0;
 }
 
