@@ -18,5 +18,7 @@ struct proc2 {
 };
 
 vector<proc2> getStpProcs();
+proc2 getCurrProc();
+void pushProc(proc2 prc);
 #endif //NEOEGGSHELL_EXTERNALSTPPROCS_H
 

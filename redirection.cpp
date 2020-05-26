@@ -22,7 +22,6 @@ int openRed(int fd, const char *path, int flg, mode_t md) {
     else
         return fd;
 }
-
 int truncOut(string filename) {
     return openRed(STDOUT_FILENO, filename.c_str(),
                    O_SYNC | O_CLOEXEC | O_RDWR | O_CREAT | O_TRUNC,
@@ -87,6 +86,7 @@ int BetterSourceRun(string filename) {
 }
 
 int InitialzeRedir(vector<int> conf, vector<string> &args) {
+
     if (conf[2] == 1) {
     
 
@@ -108,25 +108,19 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
             return -5;
         }
         if (count > 1) {
-            cout << "Multiple input specifiers found! Aborting..." << endl;
+            cerr << "Multiple input specifiers found! Aborting..." << endl;
             return -5;
         }
         if (argno < 3) {
-            cout << "Command to redirect not specified" << endl;
+            cerr << "Command to redirect not specified" << endl;
             return -5;
-        }
-
-        for(auto arg:args){
-          cout<<arg<<endl;
         }
 
         int specifierPos = j;
         int openIN = input(args[specifierPos + 1]);
         if (openIN == -1)
             return -5;
-        cerr << "done redirect" << endl;
         args.erase(args.begin() + specifierPos, args.begin() + specifierPos + 2);
-        cerr<< "cutted" << endl;
     }
 
     char cmp[] = ">>";
@@ -148,12 +142,13 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
         argno++;
     }
     if (count > 1) {
-        cout << "Multiple input specifiers found! Aborting..." << endl;
+        cerr << "Multiple input specifiers found! Aborting..." << endl;
         return -5;
     }
     // after checking the position, we should remove the > filename from the
     // args
 
+    cerr<<"outputting: to file: "<<args[j + 1]<<endl;
     if (conf[1] == 1)
         truncOut(args[j + 1]);
     else

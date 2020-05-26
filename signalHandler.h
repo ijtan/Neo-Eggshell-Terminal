@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <cstring>
 #include "external.h"
-#include "externalStpProcs.h"
-void sigHandler(int signum);
+
+void neoSigHand(int signum);
+sig_t sigHandInstaller(int signum);
+void resumeStopped();
 #endif //NEOEGGSHELL_SIGNALHANDLER_H

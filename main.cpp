@@ -58,7 +58,9 @@ using namespace std;
 
 
 int main(int argc, char *argv[]) {
-    signal(SIGINT, sigHandler);
+    //signal(SIGINT, neoSigHand);
+    auto sigoldINT = sigHandInstaller(SIGINT);
+    auto sigoldTSTP = sigHandInstaller(SIGTSTP);
     cout << "Welcome to EggShell!" << endl;
     //init vars
     lineReadInit();
