@@ -25,6 +25,7 @@ void lineReadInit() {
 
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
+    //string base = argv_str.substr(0, argv_str.find_last_of("/"));
     // linenoiseHistoryAdd(HistoryFileName);
     // cout<<"remove history save!"<<endl;
     initVars(env);
