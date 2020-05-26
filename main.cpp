@@ -25,6 +25,8 @@ void lineReadInit() {
 
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
+    linenoiseHistoryAdd(HistoryFileName);
+    cout<<"remove history save!"<<endl;
     initVars(env);
     //start linenoise loop
    

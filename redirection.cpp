@@ -223,7 +223,7 @@ vector<PostPipes> initPipes(vector<string> argV)
     }
 
     // pipe creation
-    int fd[pipeCount * 2], *currFD = fd, *prevFD = NULL;
+    int fd[(pipeCount + 1) * 2], *currFD = fd, *prevFD = NULL;
     pid_t PipePid;
 
     for (int part = 0; part < pipeCount + 1; part++)
@@ -253,33 +253,41 @@ vector<PostPipes> initPipes(vector<string> argV)
                 argV.push_back(arg);
                 cnt++;
             }
-
-            if (part < pipeCount)
-            {
-                close(currFD[0]); // not needed since nothing will be passing to it;
-                dup2(currFD[1], STDOUT_FILENO);
-                close(currFD[1]); // not needed since is redirected to stdout
-            }
             if (part > 0)
             {
                 close(prevFD[1]);
                 dup2(prevFD[0], STDIN_FILENO);
                 close(prevFD[0]);
             }
+            if (part < pipeCount)
+            {
+                close(currFD[0]); // not needed since nothing will be passing to it;
+                dup2(currFD[1], STDOUT_FILENO);
+                close(currFD[1]); // not needed since is redirected to stdout
+            }
+
             PP.returnCode = 0;
             PP.newArgV = argV;
             return {PP};
         }
         else
         {
-            close(currFD[1]);
-            currFD += 2;
+
             PP.PID = PipePid;
             PP.returnCode = 100;
             PP.PipeCount = pipeCount;
             PP.newArgV = argV;
 
             RET.push_back(PP);
+            cerr << ("here1") << endl;
+
+            cerr << ("here2") << endl;
+            if (part < pipeCount)
+            {
+                close(currFD[1]);
+                currFD += 2;
+            }
+            cerr << ("here3") << endl;
         }
     }
 
