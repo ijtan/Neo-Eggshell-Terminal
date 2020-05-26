@@ -21,7 +21,14 @@ int truncOut(char* filename);
 int input(char* filename);
 int append(char* filename);
 int BetterSourceRun(string filename);
-vector<string> initPipes(vector<string> argV, vector<pid_t> &toWait);
+
+struct PostPipes{
+  int returnCode;
+  int PipeCount;
+  vector<string> newArgV;
+  pid_t PID;
+};
+vector<PostPipes>  initPipes(vector<string> argV);
 int InitialzeRedir(vector<int> conf, vector<string>& args) ;
 void flagger(string line, vector<int>&RedirectConfig);
 #endif //NEOEGGSHELL_REDIRECTION_H

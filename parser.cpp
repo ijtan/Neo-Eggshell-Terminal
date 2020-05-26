@@ -161,7 +161,6 @@ int parseLine(string line, vector<string> input) {
   }
   if (line.find('|') != string::npos) {
     // pipe
-    cout << "pipe detected" << endl;
     RedirectConfig[3] = 1;
   }
   return Executer(input, RedirectConfig);
