@@ -6,12 +6,15 @@
 #include "signalHandler.h"
 
 #define MAX_HISTORY 25
+#define HistoryFileName "LineHistory"
 //extern char**environ;
 
 char *line;
 vector<string> args;
 void exitRoutine() {
     cout<<"Goodbye!"<<endl;
+
+    
     free(line);
     freeVars();
     args.clear();
@@ -24,6 +27,7 @@ void lineReadInit() {
     linenoiseHistorySetMaxLen(MAX_HISTORY);
     initVars(env);
     //start linenoise loop
+   
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
         flush(cout);
         linenoiseHistoryAdd(line);
@@ -62,12 +66,8 @@ int main(int argc, char *argv[]) {
     auto sigoldINT = sigHandInstaller(SIGINT);
     auto sigoldTSTP = sigHandInstaller(SIGTSTP);
     cout << "Welcome to EggShell!" << endl;
-    //init vars
+    linenoiseHistoryLoad(HistoryFileName);
     lineReadInit();
-
-    // from documentation:
-//    int linenoiseHistorySave(const char *filename);
-//    int linenoiseHistoryLoad(const char *filename);
 
     return 0;
 }

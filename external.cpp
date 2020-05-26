@@ -5,6 +5,10 @@ vector<proc> StpProcs;
 proc2 waitingProc;
 int Executer(vector<string> &argVector, vector<int> conf)
 {
+    string line;
+    for (auto arg : argVector)
+        line.append(arg);
+
     int waitOpt = 0;
     if (conf[4] == 1)
         waitOpt = WNOHANG;
@@ -21,12 +25,13 @@ int Executer(vector<string> &argVector, vector<int> conf)
         internalHandlerNoCHild(argVector[0], argVector);
         return 0;
     }
-    string line;
+
     pid_t mainPID = getpid();
     vector<PostPipes> feedback;
     PostPipes internalFeedBack;
     if (conf[3] == 1)
     {
+        cout << "entered pipes" << endl;
         feedback = initPipes(argVector);
         if (feedback[0].returnCode == 99)
             return 0;
@@ -36,8 +41,11 @@ int Executer(vector<string> &argVector, vector<int> conf)
             argVector = feedback[0].newArgV;
 
             // re creation of line used for checking rediractions flags
+            line.clear();
             for (auto arg : argVector)
                 line.append(arg);
+            flagger(line, conf);
+            conf[3] = 1;
         }
     }
 
@@ -46,22 +54,26 @@ int Executer(vector<string> &argVector, vector<int> conf)
         // main should be here if no piping ->  since yet we have no forks and no
         // internal commands we fork so only the child is redirected / executed and the main class simply waits
         int pid = fork();
+        flagger(line, conf);
         if (pid == -1)
             perror("redirection fork");
-        if (getpid() == mainPID) //would mean it sthe pare
+        if (getpid() == mainPID)
+        { //main should to this
             internalFeedBack.newArgV = argVector;
-        internalFeedBack.PID = pid;
-        feedback.push_back(internalFeedBack);
+            internalFeedBack.PID = pid;
+            feedback.push_back(internalFeedBack);
+        }
     }
-    flagger(line, conf);
+
     // flagging of new pipe-cut line (invidiual exec
+
     if ((getpid() != mainPID) && (conf[0] == 1 || conf[1] == 1 || conf[2] == 1))
     {
-        cerr << "I am " << argVector[0] << " and i made it in redir" << endl;
         // making sure unset and cd are not used in redirects! this would cuase
         // the action to be done child side only!
-        if (InitialzeRedir(conf, argVector) != 0)
-            _exit(EXIT_FAILURE);
+        if (InitialzeRedir(conf, argVector) != 0){
+            cerr<<"File redirection Failed!"<<endl;
+            _exit(EXIT_FAILURE);}
     }
 
     if (getpid() != mainPID)

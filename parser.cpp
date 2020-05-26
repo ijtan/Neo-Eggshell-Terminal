@@ -42,6 +42,7 @@ int parseLine(string line, vector<string> input) {
   }
 
   flagger(line, RedirectConfig);
+  
 
   if (line.find('&') != string::npos) {
     // background running
@@ -153,10 +154,6 @@ int parseLine(string line, vector<string> input) {
   if (line.find('$') != string::npos) {
     // if var exists replace the word with the value and return value
     input = parseVars(input);
-  }
-  if (line.find('|') != string::npos) {
-    // pipe
-    RedirectConfig[3] = 1;
   }
   return Executer(input, RedirectConfig);
 }

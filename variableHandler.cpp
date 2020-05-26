@@ -42,12 +42,10 @@ void initVars(vector<string> &env) {
         string promp(prmpt);
         better_set("PROMPT", promp);
     }
-    if (getenv("SHELL") == NULL) {
         char buf[255] = "";
         readlink("/proc/self/exe", buf, sizeof(buf));
         string bf(buf);
         better_set("SHELL", bf);
-    }
 
     if (getenv("CWD") == NULL) {
         char buf[512] = "";
