@@ -110,9 +110,7 @@ int Executer(vector<string> &argVector, vector<int> conf)
         {
             waitingProc.name = currProc.newArgV[0];
             waitingProc.pid = currProc.PID;
-            cerr<<("here4")<<endl;
             waitpid(currProc.PID, &status, waitOpt);
-            cerr<<("here5")<<endl;
             //cout<<"Done Waiting for:"<<currProc.PID<<endl;
             if (waitOpt != WNOHANG)
                 statusChecker(status, currProc.PID, currProc.newArgV[0]);

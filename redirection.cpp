@@ -279,15 +279,12 @@ vector<PostPipes> initPipes(vector<string> argV)
             PP.newArgV = argV;
 
             RET.push_back(PP);
-            cerr << ("here1") << endl;
 
-            cerr << ("here2") << endl;
             if (part < pipeCount)
             {
                 close(currFD[1]);
                 currFD += 2;
             }
-            cerr << ("here3") << endl;
         }
     }
 

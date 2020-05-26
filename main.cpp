@@ -25,8 +25,8 @@ void lineReadInit() {
 
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
-    linenoiseHistoryAdd(HistoryFileName);
-    cout<<"remove history save!"<<endl;
+    // linenoiseHistoryAdd(HistoryFileName);
+    // cout<<"remove history save!"<<endl;
     initVars(env);
     //start linenoise loop
    
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     auto sigoldINT = sigHandInstaller(SIGINT);
     auto sigoldTSTP = sigHandInstaller(SIGTSTP);
     cout << "Welcome to EggShell!" << endl;
-    linenoiseHistoryLoad(HistoryFileName);
+    // linenoiseHistoryLoad(HistoryFileName);
     lineReadInit();
 
     return 0;
