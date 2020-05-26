@@ -3,9 +3,8 @@
 using namespace std;
 extern vector<proc> StpProcs;
 
-vector<string> internalCommands = {"echo", "showenv", "listproc", "source",
-                                   "exit"};
-vector<string> internalCommandsParentOnly = {"unset", "cd", "bg"};
+vector<string> internalCommands = {"echo", "showenv", "listproc", "source"};
+vector<string> internalCommandsParentOnly = {"unset", "cd", "bg", "exit"};
 
 struct internalVar
 {
@@ -51,6 +50,9 @@ int internalHandlerNoCHild(string command, vector<string> argsV)
       case 2:
         resumeStopped();
         return 0;
+
+      case 3:
+        exit(EXIT_SUCCESS);
       }
     }
   }
@@ -87,12 +89,7 @@ int internalHandler(string command, vector<string> argsV)
       case 3:
         sourceStart(argsV);
         return 0;
-      case 4:
-        pid_t parentID = getppid();
-        kill(parentID, SIGINT);
-        return 0;
       }
-      return 1;
     }
   }
   return 1;
