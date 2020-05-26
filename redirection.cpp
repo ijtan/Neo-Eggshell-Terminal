@@ -119,14 +119,14 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
         for(auto arg:args){
           cout<<arg<<endl;
         }
-        cout<<"pos: "<<j<<endl;
-        cout<<"argpos: "<<args[j+1]<<endl;
 
         int specifierPos = j;
         int openIN = input(args[specifierPos + 1]);
         if (openIN == -1)
             return -5;
+        cerr << "done redirect" << endl;
         args.erase(args.begin() + specifierPos, args.begin() + specifierPos + 2);
+        cerr<< "cutted" << endl;
     }
 
     char cmp[] = ">>";
@@ -134,7 +134,7 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
     if (conf[1] == 1) {
         strcpy(cmp, ">");
         len = 1;
-    }
+    
 
     int count = 0;
     int j = 0;
@@ -159,7 +159,7 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
     else
         append(args[j + 1]);
     args.erase(args.begin() + j, args.begin() + j + 2);
-
+    }
     return 0;
 }
 

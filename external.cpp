@@ -18,6 +18,7 @@ int Executer(vector<string>& argVector, vector<int> conf) {
 
     pid_t mainPID = getpid();
     vector<PostPipes> feedback;
+    PostPipes internalFeedBack;
         if (conf[3] == 1) {
         feedback = initPipes(argVector);
         if (feedback[0].returnCode == 99)
@@ -42,8 +43,10 @@ int Executer(vector<string>& argVector, vector<int> conf) {
         int pid = fork();
         if (pid == -1)
             perror("redirection fork");
-        if (getpid() == mainPID)  //would mean it sthe parent
-            feedback.push_back({0, 1, argVector, pid});
+        if (getpid() == mainPID)  //would mean it sthe pare
+            internalFeedBack.newArgV = argVector;
+            internalFeedBack.PID = pid;
+            feedback.push_back(internalFeedBack);
         }
 
         if ((getpid() != mainPID) && (conf[0] == 1 || conf[1] == 1 || conf[2] == 1)) {
