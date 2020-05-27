@@ -101,7 +101,7 @@ int Executor(vector<string> &argVector, vector<int> conf)
         if (code == -1)
         {
             perror("Execution");
-            cout << "Command was: " << args[0] << endl;
+            cerr << "Command was: " << args[0] << endl;
             for (int j = 0; j < i; j++)
                 free(args[j]);
             _exit(EXIT_FAILURE);
