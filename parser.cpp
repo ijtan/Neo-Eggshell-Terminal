@@ -155,7 +155,7 @@ int parseLine(string line, vector<string> input) {
     // if var exists replace the word with the value and return value
     input = parseVars(input);
   }
-  return Executer(input, RedirectConfig);
+  return Executor(input, RedirectConfig);
 }
 
 int reParse(string line, vector<string>& input) {

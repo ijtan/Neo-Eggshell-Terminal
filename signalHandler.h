@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <cstring>
-#include "external.h"
+#include "Executor.h"
 
 void neoSigHand(int signum);
 sig_t sigHandInstaller(int signum);

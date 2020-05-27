@@ -1,10 +1,11 @@
-#include "external.h"
+#include "Executor.h"
 
 using namespace std;
 vector<proc> StpProcs;
 proc2 waitingProc;
-int Executer(vector<string> &argVector, vector<int> conf)
-{
+int Executor(vector<string> &argVector, vector<int> conf)
+{   
+    int failed = 0;
     string line;
     for (auto arg : argVector)
         line.append(arg);
@@ -33,7 +34,7 @@ int Executer(vector<string> &argVector, vector<int> conf)
     {
         cout << "entered pipes" << endl;
         feedback = initPipes(argVector);
-        if (feedback[0].returnCode == 99)
+        if (feedback[0].returnCode != 0)
             return 0;
         if (getpid() != mainPID)
         {
@@ -52,7 +53,11 @@ int Executer(vector<string> &argVector, vector<int> conf)
     if (getpid() == mainPID && conf[3] == 0)
     { //redir no pipes
         // main should be here if no piping ->  since yet we have no forks and no
-        // internal commands we fork so only the child is redirected / executed and the main class simply waits
+        // internal commands. we fork here so only the child is redirected / executed and the main class, adds the pid to the list of pids to wait for, then simply moves on.
+        if(argVector.size()<3){
+            cerr<<"Not enough arguments provided for redirection. Aborting..."<<endl;
+            return 0;
+        }
         int pid = fork();
         flagger(line, conf);
         if (pid == -1)

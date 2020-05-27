@@ -208,18 +208,24 @@ vector<PostPipes> initPipes(vector<string> argV)
         }
         i++;
     }
-    splitArgs.push_back(temp);
+    if(!temp.empty())
+        splitArgs.push_back(temp);
 
     for (auto chunk : splitArgs)
     {
         int intern = internalChecker(chunk[0]);
         if (intern == 1)
         {
-            cout << "Cannot Pipe One or more internal commands specified. Aborting..."
+            cerr << "Cannot Pipe One or more internal commands specified. Aborting..."
                  << endl;
             PP.returnCode = 99;
             return {PP};
         }
+    }
+    if(splitArgs.size()!=pipeCount+1){
+        cerr<<"Invalid number of commands / pipes. Aborting..."<<endl;
+        PP.returnCode = -5;
+            return {PP};
     }
 
     // pipe creation
@@ -274,7 +280,7 @@ vector<PostPipes> initPipes(vector<string> argV)
         {
 
             PP.PID = PipePid;
-            PP.returnCode = 100;
+            PP.returnCode = 0;
             PP.PipeCount = pipeCount;
             PP.newArgV = argV;
 
