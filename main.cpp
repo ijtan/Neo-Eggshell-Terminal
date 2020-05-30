@@ -11,15 +11,18 @@
 
 char *line;
 vector<string> args;
-void exitRoutine() {
-    cout<<"Goodbye!"<<endl;
 
-    
+void exitRoutine() {
+    cout << "Goodbye!" << endl;
+
+
     free(line);
     freeVars();
     args.clear();
 }
+
 vector<string> env;
+
 void lineReadInit() {
     atexit(exitRoutine);
 
@@ -30,7 +33,7 @@ void lineReadInit() {
     // cout<<"remove history save!"<<endl;
     initVars(env);
     //start linenoise loop
-   
+
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
         flush(cout);
         linenoiseHistoryAdd(line);
@@ -50,13 +53,13 @@ void lineReadInit() {
         pid_t callerID = getppid();
         if (pl == -5)
             _exit(-5);
-        if(getppid()!=callerID){
-            cout<<"Unkilled fork detected, aborting child: ("<<getppid()<<"!="<<callerID<<')'<<endl;
+        if (getppid() != callerID) {
+            cout << "Unkilled fork detected, aborting child: (" << getppid() << "!=" << callerID << ')' << endl;
             _exit(EXIT_FAILURE);
         }
-        if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL) 
+        if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL)
             initVars(env);
-        
+
     }
 }
 

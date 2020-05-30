@@ -42,22 +42,21 @@ void initVars(vector<string> &env) {
         string promp(prmpt);
         better_set("PROMPT", promp);
     }
-        char buf[255] = "";
-        readlink("/proc/self/exe", buf, sizeof(buf));
-        string bf(buf);
-        better_set("SHELL", bf);
+    char buf[255] = "";
+    readlink("/proc/self/exe", buf, sizeof(buf));
+    string bf(buf);
+    better_set("SHELL", bf);
 
     if (getenv("CWD") == NULL) {
         char buf[512] = "";
-        getcwd(buf,sizeof(buf));
+        getcwd(buf, sizeof(buf));
         string CW(buf);
-        better_set("CWD",CW);
+        better_set("CWD", CW);
     }
 
     if (getenv("TERMINAL") == NULL) {
-        char trmnl[255];
-        if (isatty(STDIN_FILENO)) {
-            better_set("TERMINAL",ttyname(STDIN_FILENO));
-        }
+        if (isatty(STDIN_FILENO))
+            better_set("TERMINAL", ttyname(STDIN_FILENO));
+
     }
 }
