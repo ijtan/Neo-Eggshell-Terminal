@@ -1,6 +1,7 @@
-#include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
+
 #include "ext/linenoise.h"
 #include "parser.h"
 #include "signalHandler.h"
@@ -14,7 +15,6 @@ vector<string> args;
 
 void exitRoutine() {
     cout << "Goodbye!" << endl;
-
 
     free(line);
     freeVars();
@@ -39,9 +39,10 @@ void lineReadInit() {
         linenoiseHistoryAdd(line);
         char copy[sizeof(line)];
         strcpy(copy, line);
-        if (tokenize(line, copy, args) == -1) { continue; };
+        if (tokenize(line, copy, args) == -1) {
+            continue;
+        };
         //string copy(line);
-
 
         //call function which runs externals commands
         char copy2[sizeof(line)];
@@ -59,13 +60,10 @@ void lineReadInit() {
         }
         if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL)
             initVars(env);
-
     }
 }
 
-
 using namespace std;
-
 
 int main(int argc, char *argv[]) {
     //signal(SIGINT, neoSigHand);

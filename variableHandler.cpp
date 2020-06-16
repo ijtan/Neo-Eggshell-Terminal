@@ -57,6 +57,5 @@ void initVars(vector<string> &env) {
     if (getenv("TERMINAL") == NULL) {
         if (isatty(STDIN_FILENO))
             better_set("TERMINAL", ttyname(STDIN_FILENO));
-
     }
 }

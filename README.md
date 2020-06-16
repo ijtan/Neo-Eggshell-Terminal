@@ -15,4 +15,5 @@ To execute simply Run neoEggshell from cmake-build-debug.
 - unset.\
 - MYVAR=MYVALUE (for setting environment variables).\
 - showenv\
+- listproc\
 ```
