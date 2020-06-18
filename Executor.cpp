@@ -16,12 +16,10 @@ int Executor(vector<string> &argVector, vector<int> conf) {
     else
         waitOpt = WUNTRACED;
 
-    if ((internalChecker(argVector[0]) == 1) && (conf[0] == 1 || conf[1] == 1 || conf[2] ==
-                                                                                 1)) { //if command is ParentOnly but there are redirects -> abort (pipe checks itself)
-        cout << "One or more internal commands entered are non relocatable. Aborting..." << endl;
+    if ((internalChecker(argVector[0]) == 1) && (conf[0] == 1 || conf[1] == 1 || conf[2] == 1)) {  //if command is ParentOnly but there are redirects -> abort (pipe checks itself)
+        cout << "One or more internal commands entered are non rediractable. Aborting..." << endl;
         return 0;
-    } else if ((internalChecker(argVector[0]) == 1) && !(conf[0] == 1 || conf[1] == 1 || conf[2] == 1 || conf[3] ==
-                                                                                                         1)) { //could simply check for (conf[1..3]==0) same thing.
+    } else if ((internalChecker(argVector[0]) == 1) && !(conf[0] == 1 || conf[1] == 1 || conf[2] == 1 || conf[3] == 1)) {  //could simply check for (conf[1..3]==0) same thing.
         internalHandlerNoCHild(argVector[0], argVector);
         return 0;
     }
@@ -47,14 +45,14 @@ int Executor(vector<string> &argVector, vector<int> conf) {
         }
     }
 
-    if (getpid() == mainPID && conf[3] == 0) { //redir no pipes
+    if (getpid() == mainPID && conf[3] == 0) {  //redir no pipes
         // main should be here if no piping ->  since yet we have no forks and no
         // internal commands. we fork here so only the child is redirected / executed and the main class, adds the pid to the list of pids to wait for, then simply moves on.
         int pid = fork();
         flagger(line, conf);
         if (pid == -1)
             perror("fork");
-        if (getpid() == mainPID) { //main should to this
+        if (getpid() == mainPID) {  //main should to this
             internalFeedBack.newArgV = argVector;
             internalFeedBack.PID = pid;
             feedback.push_back(internalFeedBack);
