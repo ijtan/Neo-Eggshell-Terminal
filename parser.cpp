@@ -45,7 +45,7 @@ int parseLine(string line, vector<string> input)
         //check if arg becomes empty after remova meaning the user left space before ';'
         //^or just check if length = 1 before removal
 
-        //reparse
+        //reparse //// nooo not reparse just call self -> true recursion
     }
     flagger(line, RedirectConfig);
 
