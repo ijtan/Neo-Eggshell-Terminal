@@ -89,7 +89,7 @@ int Executor(vector<string> &argVector, vector<int> conf) {
         int code = execvp(args[0], args);
         if (code == -1) {
             perror("Execution");
-            cerr << "Command was: " << args[0] << endl;
+            cerr << "Error encountered when trying to execute '" << args[0] << "'." << endl;
             for (int j = 0; j < i; j++)
                 free(args[j]);
             _exit(EXIT_FAILURE);
