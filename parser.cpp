@@ -80,7 +80,9 @@ int parseLine(string line, vector<string> input) {
 
     if (line.find('"') != string::npos) {
         // quotes for combining args
-        stringCombiner(input, line);
+        if (better_String_Combiner(input, line) == -1) {
+            return 0;
+        };
         cout << "afta" << endl;
         int ccount = 0;
         for (auto n : input) {
@@ -116,9 +118,7 @@ int parseLine(string line, vector<string> input) {
 int reParse(string line, vector<string> &input) {
     return parseLine(move(line), move(input));
 }
-
-void stringCombiner(vector<string> &input, string &line) {
-    // counting to see if odd or even number of ""
+int better_String_Combiner(vector<string> &input, string &line) {  // counting to see if odd or even number of ""
     int i = 0, count = 0;
     for (const auto &arg : input) {
         if (arg.find('\"') != string::npos)
@@ -153,63 +153,73 @@ void stringCombiner(vector<string> &input, string &line) {
                 count++;
             more.push_back(buf);  // add current char to vector
         }
-        cout << endl;
         // add more to the input list, this will be
         // handled and removed later in the function
         input.push_back(more);
         line.append(more);  // apennd the newly added characters to the line
     }
-    // some logic which puts the content between the "" in a single args element
-    // rathe than seperated by ' ' as theyw ere before
-    while (count > 0) {
-        int startArg, endArg;
-        startArg = endArg = -1;
-        int i = 0;
-        // checking each argument to see if ti starts with a "
-        for (auto arg : input) {
-            if (arg.find('\"') != string::npos) {
-                startArg = i;
+
+    for (int i = 0; i < count / 2; ++i) {
+        int startArg, startPos, endArg, endPos;
+        startArg = startPos = endArg = endPos = -1;
+
+        for (int j = 0; j < input.size(); j++) {
+            if (input[j].find('\"') != string::npos) {
+                startArg = j;
+                startPos = input[j].find('\"');
                 break;
             }
-            i++;
         }
-        int j = 0;
-        // checking each argument to see if to end with a " -> posA and posB would
-        // be the limits of the new arg since a is starting " and B is closing "
-        for (auto arg : input) {
-            if (arg.find('\"') != string::npos && j != startArg) {
+        for (int j = 0; j < input.size(); j++) {
+            if (input[j].find('\"') != string::npos) {
+                int found = 0;
+                if (startArg == j) {
+                    for (endPos = startPos + 1; endPos < input[j].length(); endPos++)
+                        if (input[j][endPos] == '\"') {
+                            found = 1;
+                            break;
+                        }
+                    if (found == 0)
+                        continue;
+
+                } else
+                    endPos = input[j].find('\"');
                 endArg = j;
                 break;
             }
-            j++;
         }
-        string newStr = "";
-        if (startArg != -1 && endArg != -1 &&
-            startArg <= endArg) {                                                      // checks that positions found are valid
-            input[startArg] = input[startArg].substr(input[startArg].find('\"') + 1);  // removes the starting "
-            input[endArg].erase(input[endArg].find('\"'), 1);                          // removes the end "
-
-            // append all elements from input[], starting from the to one string,
-            // which will be a new one whole argument with all 'subargs'
-            for (int i = startArg; i <= endArg && input[i].find('\"') == string::npos; i++) {
-                newStr.append(input[i]);
-
-                if ((input[i].find(' ') ==
-                     string::npos) &&
-                    i < endArg)  // this chekc if the input has any spaces, if it
-                    // doesnt, it would mean that it was given as
-                    // original arg and not added. (ex: called [mkdir
-                    // "file A"]);  since tokenization splits by space
-                    // we would get [mkdir]["file][A"] -> when appended
-                    // [mkdir fileA] -> gets rid of space -> we add it
-                    // back here
-                    newStr.append(" ");  //
+        if (startArg > endArg || startArg == -1 || endArg == -1) {
+            cerr << "Could not Parse Quotes. Aborting..." << endl;
+            return -1;
+        }
+        string combinedArg;
+        if (startArg != endArg) {
+            if (input[startArg].length() != 1 || startPos != 0) {
+                combinedArg.append(input[startArg].substr(startPos + 1));
+                combinedArg.append(" ");
             }
-            // remove the args which have been converted
-            input.erase(input.begin() + startArg, input.begin() + endArg + 1);
-            input.insert(input.begin() + startArg, newStr);
-            count -= 2;
-        } else
-            break;
+            for (int j = startArg + 1; j < endArg; j++) {
+                combinedArg.append(input[j]);
+                combinedArg.append(" ");
+            }
+            if (input[endArg].length() != 1 || endPos != 0)
+                combinedArg.append(input[endArg].substr(0, endPos));
+        } else {
+            string betweenQuotes = input[endArg].substr(startPos + 1, endPos - startPos - 1);
+            if (betweenQuotes.length() != 0)
+                combinedArg.append(betweenQuotes);
+        }
+
+        if (!input[startArg].substr(0, startPos).empty()) {
+            input.insert(input.begin() + startArg, input[startArg].substr(0, startPos));
+            startArg++;
+            endArg++;
+        }
+        if (!input[endArg].substr(endPos + 1).empty()) {
+            input.insert(input.begin() + endArg + 1, input[endArg].substr(endPos + 1));
+        }
+        input.erase(input.begin() + startArg, input.begin() + endArg + 1);
+        input.insert(input.begin() + startArg, combinedArg);
     }
+    return 0;
 }

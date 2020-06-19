@@ -20,5 +20,5 @@
 using namespace std;
 int parseLine(string line, vector<string> input);
 int tokenize(char *line, char *copy, vector<string> &args);
-void stringCombiner(vector<string> &input, string &line);
+int better_String_Combiner(vector<string> &input, string &line);
 #endif  //NEOEGGSHELL_PARSER_H
