@@ -41,19 +41,19 @@ int parseLine(string line, vector<string> input) {
         int argPos = 0;
 
         for (auto arg : input) {
-            if (arg.find(';') != string::npos) {  //find which arg has the semicolon
+            if (arg.find(';') != string::npos) 
+    {  //find which arg has the semicolon
                 int postArgPos = argPos;
                 cout << "find: " << arg.find(';') << endl;
                 cout << "len: " << arg.length() << endl;
                 cout << "c1: " << (arg.length() != 1) << endl;
                 cout << "c2: " << (arg.length() != arg.find(';') + 1) << endl;
-                if (arg.length() != 1 && arg.length() != arg.find(';'))
+                if (arg.length() != 1 && arg.length() != arg.find(';')+1)
                     newArgVec.push_back(arg.substr(arg.find(';') + 1));  //add text post-semicolon
                 postArgPos++;
 
                 for (; postArgPos < input.size(); postArgPos++) {  //add all other args
                     newArgVec.push_back(input[postArgPos]);
-                    cout << "reparsing: " << input[postArgPos] << endl;
                 }
 
                 if (argPos != 0)
@@ -70,16 +70,6 @@ int parseLine(string line, vector<string> input) {
         //remove ; from the found arg from argvec
         //check if arg becomes empty after remova meaning the user left space before ';'
         //^or just check if length = 1 before removal
-
-        cout << "currently in new args" << endl;
-        for (auto arg : newArgVec) {
-            cout << arg << endl;
-        }
-        cout << "currently in old args" << endl;
-        for (auto arg : input) {
-            cout << arg << endl;
-        }
-        cout << "---" << endl;
 
         parseLine(newLine, newArgVec);
     }
