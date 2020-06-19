@@ -1,24 +1,24 @@
 #ifndef NEOEGGSHELL_INTERNAL_H
 #define NEOEGGSHELL_INTERNAL_H
 
-
-#include <iostream>
-#include <cstdio>
-#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
+
+#include <cstdio>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
-#include "variableHandler.h"
-#include "signalHandler.h"
+
 #include "redirection.h"
-#include "externalStpProcs.h"
-#include <memory>
+#include "signalHandler.h"
+#include "variableHandler.h"
 
 using namespace std;
 int internalHandler(string command, vector<string> argsV);
-void echo(vector<string>args);
-int better_set(string variable,string value);
+void echo(vector<string> args);
+int better_set(string variable, string value);
 void better_unset(string variable);
 void changeDirs(vector<string> args);
 int sourceStart(vector<string> args);
@@ -29,5 +29,4 @@ void printVarVec();
 
 class internal;
 
-
-#endif //NEOEGGSHELL_INTERNAL_H
+#endif  //NEOEGGSHELL_INTERNAL_H

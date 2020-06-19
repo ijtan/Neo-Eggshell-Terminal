@@ -9,15 +9,15 @@ void neoSigHand(int signum) {
 
     if (signum == SIGTSTP) {
         memset(&print[0], 0, sizeof(print));
-        snprintf(print, sizeof(print), "Stopping Process: (%s:%d)\n", getCurrProc().name.c_str(), getCurrProc().pid);
+        snprintf(print, sizeof(print), "Stopping Process: (%s:%d)\n", waitingProcName.c_str(), waitingProcPid);
         write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
-        kill(getCurrProc().pid, SIGTSTP);
-        pushProc(proc2{getCurrProc().pid, getCurrProc().name});
+        kill(waitingProcPid, SIGTSTP);
+        StoppedProcs.emplace_back(waitingProcPid, waitingProcName);
     } else if (signum == SIGINT) {
-        snprintf(print, sizeof(print), "Interrupting Process: (%s:%d)\n", getCurrProc().name.c_str(),
-                 getCurrProc().pid);
+        snprintf(print, sizeof(print), "Interrupting Process: (%s:%d)\n", waitingProcName.c_str(),
+                 waitingProcPid);
         write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
-        kill(getCurrProc().pid, SIGINT);
+        kill(waitingProcPid, SIGINT);
     }
 }
 
@@ -31,14 +31,13 @@ sig_t sigHandInstaller(int signum) {
 }
 
 void resumeStopped() {
-    auto procs = getStpProcs();
-    if (procs.size() == 0) {
+    if (StoppedProcs.size() == 0) {
         cout << "No Processed to Resume!" << endl;
         return;
     }
-    int result = kill(procs[0].pid, SIGCONT);
+    int result = kill(StoppedProcs[0].pid, SIGCONT);
     if (result == 0) {
-        cout << "Process Resumed! (" << procs[0].name << ':' << procs[0].pid << ')' << endl;
-        nextStpProcs();
+        cout << "Process Resumed! (" << StoppedProcs[0].name << ':' << StoppedProcs[0].pid << ')' << endl;
+        StoppedProcs.erase(StoppedProcs.begin());
     }
 }

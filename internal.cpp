@@ -1,7 +1,6 @@
 #include "internal.h"
 
 using namespace std;
-extern vector<proc> StpProcs;
 
 vector<string> internalCommands = {"echo", "showenv", "listproc", "source"};
 vector<string> internalCommandsParentOnly = {"unset", "cd", "bg", "exit"};
@@ -56,7 +55,7 @@ int internalHandler(string command, vector<string> argsV) {
 
     for (auto &internalCommand : internalCommands) {
         if (internalCommand == command) {
-            switch (&internalCommand - &internalCommands[0]) { // basicaly indexof
+            switch (&internalCommand - &internalCommands[0]) {  // basicaly indexof
                 // TODO MAKE THIS AN ENUM
                 case 0:
                     echo(argsV);
@@ -65,11 +64,11 @@ int internalHandler(string command, vector<string> argsV) {
                     printVars();
                     return 0;
                 case 2:
-                    if (StpProcs.empty())
+                    if (StoppedProcs.empty())
                         cout << "No Suspended Processes" << endl;
                     else {
                         cout << "Listing All suspended Processes" << endl;
-                        for (const auto &pr : StpProcs)
+                        for (const auto &pr : StoppedProcs)
                             cout << pr.name << "\t\t" << pr.pid << endl;
                     }
                     return 0;
@@ -101,12 +100,12 @@ int better_set(string variable, string value) {
     }
 
     size_t size = variable.size() + value.size() + 10;
-    char *env = (char *) calloc(size, sizeof(char));
+    char *env = (char *)calloc(size, sizeof(char));
     snprintf(env, size, "%s=%s", variable.c_str(), value.c_str());
 
     internalVar newVar = {variable, env, value};
     internalVars.emplace_back(newVar);
-    putenv(env); // replace with Assign
+    putenv(env);  // replace with Assign
     return 0;
 }
 

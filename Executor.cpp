@@ -1,8 +1,7 @@
 #include "Executor.h"
 
+#include "signalHandler.h"
 using namespace std;
-vector<proc> StpProcs;
-proc2 waitingProc;
 
 int Executor(vector<string> &argVector, vector<int> conf) {
     int failed = 0;
@@ -98,8 +97,8 @@ int Executor(vector<string> &argVector, vector<int> conf) {
         int status;
         int i = 0;
         for (auto currProc : feedback) {
-            waitingProc.name = currProc.newArgV[0];
-            waitingProc.pid = currProc.PID;
+            waitingProcName = currProc.newArgV[0];
+            waitingProcPid = currProc.PID;
             waitpid(currProc.PID, &status, waitOpt);
             //cout<<"Done Waiting for:"<<currProc.PID<<endl;
             if (waitOpt != WNOHANG)
@@ -123,25 +122,4 @@ int statusChecker(int status, pid_t pid, string name) {
         return 0;
     }
     return 0;
-}
-
-vector<proc2> getStpProcs() {
-    vector<proc2> procs2;
-    for (auto prc : StpProcs) {
-        proc2 tmp{prc.pid, prc.name};
-        procs2.push_back(tmp);
-    }
-    return procs2;
-}
-
-void nextStpProcs() {
-    StpProcs.erase(StpProcs.begin());
-}
-
-proc2 getCurrProc() {
-    return waitingProc;
-}
-
-void pushProc(proc2 prc) {
-    StpProcs.push_back(proc{prc.pid, prc.name});
 }

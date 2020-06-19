@@ -4,14 +4,28 @@
 
 #ifndef NEOEGGSHELL_SIGNALHANDLER_H
 #define NEOEGGSHELL_SIGNALHANDLER_H
-#include <csignal>
-#include <cstdio>
-#include <cstdlib>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
+
+#include <cstdio>
 #include <cstring>
-#include "Executor.h"
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+struct proc {
+    pid_t pid;
+    string name;
+};
+
+string waitingProcName;
+pid_t waitingProcPid;
+
+vector<proc> StoppedProcs;
 
 void neoSigHand(int signum);
 sig_t sigHandInstaller(int signum);
 void resumeStopped();
-#endif //NEOEGGSHELL_SIGNALHANDLER_H
+#endif  //NEOEGGSHELL_SIGNALHANDLER_H
