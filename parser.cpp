@@ -41,23 +41,16 @@ int parseLine(string line, vector<string> input) {
         int argPos = 0;
 
         for (auto arg : input) {
-            if (arg.find(';') != string::npos) 
-    {  //find which arg has the semicolon
+            if (arg.find(';') != string::npos) {  //find which arg has the semicolon
                 int postArgPos = argPos;
-                cout << "find: " << arg.find(';') << endl;
-                cout << "len: " << arg.length() << endl;
-                cout << "c1: " << (arg.length() != 1) << endl;
-                cout << "c2: " << (arg.length() != arg.find(';') + 1) << endl;
-                if (arg.length() != 1 && arg.length() != arg.find(';')+1)
+                if (arg.length() != 1 && arg.length() != arg.find(';') + 1)
                     newArgVec.push_back(arg.substr(arg.find(';') + 1));  //add text post-semicolon
                 postArgPos++;
 
                 for (; postArgPos < input.size(); postArgPos++) {  //add all other args
                     newArgVec.push_back(input[postArgPos]);
                 }
-
-                if (argPos != 0)
-                    input.erase(input.begin() + argPos, input.end());  //remove post-colon-contining-arg args
+                input.erase(input.begin() + argPos, input.end());  //remove post-colon-contining-arg args
 
                 input.push_back(arg.substr(0, (arg.find(';'))));  //else do some magic to copy text pre-colon
                                                                   //if arg is simply a semicolon, skip it!
@@ -70,7 +63,22 @@ int parseLine(string line, vector<string> input) {
         //remove ; from the found arg from argvec
         //check if arg becomes empty after remova meaning the user left space before ';'
         //^or just check if length = 1 before removal
-
+        if (newArgVec.empty() || input.empty()) {
+            cerr << "Bad Semicolon formation found, Aborting..." << endl;
+            return 0;
+        }
+        for (auto arg : newArgVec) {
+            if (arg.length() == 0) {
+                cerr << "Bad Semicolon formation found, Aborting..." << endl;
+                return 0;
+            }
+        }
+        for (auto arg : input) {
+            if (arg.length() == 0) {
+                cerr << "Bad Semicolon formation found, Aborting..." << endl;
+                return 0;
+            }
+        }
         parseLine(newLine, newArgVec);
     }
     flagger(line, RedirectConfig);
