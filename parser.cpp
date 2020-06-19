@@ -34,40 +34,38 @@ int parseLine(string line, vector<string> input) {
     // 4: & -> background run
 
     if (line.find(';') != string::npos) {
-        string newLine = line.substr(line.find(';') + 1);  //create new string without the first command
-        line = line.substr(0, (line.find(';')));           //make command for current execution without others
+        string newLine = line.substr(0, line.find_last_of(';'));  //create new string without the first command
+        line = line.substr(line.find_last_of(';') + 1);           //make command for current execution without others
 
-        vector<string> newArgVec;
-        int argPos = 0;
+        vector<string> preArgs;
 
-        for (auto arg : input) {
+        for (int argPos = input.size() - 1; argPos >= 0; --argPos) {
+            string arg = input[argPos];
             if (arg.find(';') != string::npos) {  //find which arg has the semicolon
-                int postArgPos = argPos;
-                if (arg.length() != 1 && arg.length() != arg.find(';') + 1)
-                    newArgVec.push_back(arg.substr(arg.find(';') + 1));  //add text post-semicolon
-                postArgPos++;
 
-                for (; postArgPos < input.size(); postArgPos++) {  //add all other args
-                    newArgVec.push_back(input[postArgPos]);
-                }
-                input.erase(input.begin() + argPos, input.end());  //remove post-colon-contining-arg args
+                for (int cnt = 0; cnt < argPos; ++cnt)  //add all other args
+                    preArgs.push_back(input[cnt]);
 
-                input.push_back(arg.substr(0, (arg.find(';'))));  //else do some magic to copy text pre-colon
-                                                                  //if arg is simply a semicolon, skip it!
+                if ((arg.substr(0, arg.find_last_of(';'))).length() != 0)     //&& arg.length() != arg.find(';') + 1)       //if arg is simply a semicolon or semicolon is at the end skip it!
+                    preArgs.push_back(arg.substr(0, arg.find_last_of(';')));  //add text post-semicolon
+
+                if ((arg.substr(arg.find_last_of(';') + 1)).length() != 0)
+                    input.insert(input.begin() + argPos + 1, arg.substr(arg.find_last_of(';') + 1));  //else do some magic to copy text pre-colon
+                input.erase(input.begin(), input.begin() + argPos + 1);                               //remove post-colon-contining-arg args
+
                 break;
             }
-            argPos++;
         }
         //line erase from - until pos of ';'
         //argVec erase until the pos of command containing;
         //remove ; from the found arg from argvec
         //check if arg becomes empty after remova meaning the user left space before ';'
         //^or just check if length = 1 before removal
-        if (newArgVec.empty() || input.empty()) {
+        if (preArgs.empty() || input.empty()) {
             cerr << "Bad Semicolon formation found, Aborting..." << endl;
             return 0;
         }
-        for (auto arg : newArgVec) {
+        for (auto arg : preArgs) {
             if (arg.length() == 0) {
                 cerr << "Bad Semicolon formation found, Aborting..." << endl;
                 return 0;
@@ -79,7 +77,8 @@ int parseLine(string line, vector<string> input) {
                 return 0;
             }
         }
-        parseLine(newLine, newArgVec);
+
+        parseLine(newLine, preArgs);
     }
     flagger(line, RedirectConfig);
 
