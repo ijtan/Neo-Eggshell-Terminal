@@ -142,12 +142,11 @@ void changeDirs(vector<string> args) {
     perror("cd");
 }
 
-int sourceStart(vector<string> args) {
-    if (args.size() != 2) {
+void sourceStart(vector<string> args) {
+    if (args.size() != 2)
         puts("1 arguments expected: filename");
-        return -5;
-    }
-    return BetterSourceRun(args[1]);
+    else
+        BetterSourceRun(args[1]);
 }
 
 void freeVars() {

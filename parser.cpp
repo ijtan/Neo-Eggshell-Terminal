@@ -1,5 +1,4 @@
 #include "parser.h"
-
 #include "reparse.h"
 
 // given input, this class will determine some attributes of input such as
@@ -9,14 +8,15 @@ using namespace std;
 #define MAX_ARGS 100
 
 
-
-int parseLine(string line, vector<string> input) {
-    vector<int> RedirectConfig(5);
-    // 0: >>
+// 0: >>
     // 1: >
     // 2: <
     // 3: |
     // 4: & -> background run
+
+int parseLine(string line, vector<string> input) {
+    vector<int> RedirectConfig(5);
+    
 
     if (line.find(';') != string::npos) {
         if(multiCommands(line,input)==-1)

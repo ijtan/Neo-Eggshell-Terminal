@@ -7,7 +7,7 @@
 #include "signalHandler.h"
 
 #define MAX_HISTORY 25
-#define HistoryFileName "LineHistory"
+#define HistoryFileName "LineHistory.txt"
 
 char *line;
 vector<string> args;
@@ -23,14 +23,13 @@ void exitRoutine() {
 vector<string> env;
 
 void lineReadInit() {
-    atexit(exitRoutine);
 
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
     initVars(env);
 
     string shell(getenv("SHELL"));
-    shell.append("History.txt");
+    shell.append(HistoryFileName);
     linenoiseHistoryLoad(shell.c_str());
     pid_t callerID = getppid();
     //start linenoise loop
@@ -39,40 +38,42 @@ void lineReadInit() {
         linenoiseHistoryAdd(line);
         linenoiseHistorySave(shell.c_str());
 
+        // prepare for tokenization
         char copy[sizeof(line)];
         strcpy(copy, line);
         if (tokenize(line, copy, args) == -1) {
             continue;
         };
-        //string copy(line);
 
-        //call function which runs externals commands
+        //prepare to start parsin which runs externals commands
         char copy2[sizeof(line)];
         strcpy(copy2, line);
         int pl = (parseLine(copy2, args));
-        linenoiseFree(line);
+         //function's job done,command has been hadnled; prepare for next command
         args.clear();
 
-        
-        if (pl == -5)
-            _exit(-5);
         if (getppid() != callerID) {
             cout << "Unkilled fork detected, aborting child: (" << getppid() << "!=" << callerID << ')' << endl;
             _exit(EXIT_FAILURE);
         }
+        
         if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL)
             initVars(env);
+
+        linenoiseFree(line);
     }
 }
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
-    //signal(SIGINT, neoSigHand);
+    atexit(exitRoutine);
     auto sigoldINT = sigHandInstaller(SIGINT);
     auto sigoldTSTP = sigHandInstaller(SIGTSTP);
+
     cout << "Welcome to EggShell!" << endl;
+    
     lineReadInit();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

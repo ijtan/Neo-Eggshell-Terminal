@@ -49,7 +49,7 @@ int BetterSourceRun(string filename) {
     ifstream sourceRead(filename);
     if (!sourceRead.is_open()) {
         cout << "Failed to open!" << endl;
-        return -5;
+        _exit(EXIT_FAILURE);
     }
     cout << "reading" << endl;
 
@@ -73,9 +73,7 @@ int BetterSourceRun(string filename) {
         if (line.find(filename) == string::npos ||
             line.find("source") == string::npos) {
             cout << '[' << line << ']' << endl;
-            if (reParse(line, args) == -5) {
-                return -5;
-            }
+            reParse(line, args);
             args.clear();
         } else {
             cerr << "\nSource referring to the same filaneme was found! Skipping to "
@@ -108,15 +106,15 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
         if (conf[0] == 1 && conf[1] == 1) {
             cerr << "\n'>' and '>>' cannot be used at the same time! ABorting...\n"
                  << endl;
-            return -5;
+            _exit(EXIT_FAILURE);
         }
         if (count > 1) {
             cerr << "Multiple input specifiers found! Aborting..." << endl;
-            return -5;
+            _exit(EXIT_FAILURE);
         }
         if (argno < 3) {
             cerr << "Command to redirect not specified" << endl;
-            return -5;
+            _exit(EXIT_FAILURE);
         }
 
         int specifierPos = j;
@@ -145,7 +143,7 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
         }
         if (count > 1) {
             cerr << "Multiple input specifiers found! Aborting..." << endl;
-            return -5;
+            _exit(EXIT_FAILURE);
         }
         // after checking the position, we should remove the > filename from the
         // args
