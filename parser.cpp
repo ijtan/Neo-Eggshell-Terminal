@@ -39,13 +39,45 @@ int parseLine(string line, vector<string> input)
 
     if (line.find(';') != string::npos)
     {
+        
+        string newLine = line.substr(line.find(';')+1); //create new string without the first command
+        line = line.substr(0,(line.find(';')));       //make command for current execution without others
+
+        vector<string> newArgVec;
+        int argPos = 0;
+
+        for(auto arg:input){
+            if(arg.find(';') != string::npos){ //find which arg has the semicolon
+                int postArgPos = argPos;
+                if(arg.length()!=1||arg.find(';')==arg.size()) 
+                    newArgVec.push_back(arg.substr(arg.find(';')+1));   //add text post-semicolon
+                postArgPos++;
+
+                for(;postArgPos<input.size();postArgPos++){                 //add all other args
+                            newArgVec.push_back(input[postArgPos]);
+                            cout<<"reparsing: "<<input[postArgPos]<<endl;}
+                cout<<"currently in new args"<<endl;
+                for(auto arg:newArgVec){
+                    cout<<arg<<endl;
+                }
+
+                if(argPos!=0)
+                input.erase(input.begin()+argPos-1);                  //remove post-colon-contining-arg args
+                  
+                    input.push_back(arg.substr(0,(arg.find(';'))));//else do some magic to copy text pre-colon
+                       //if arg is simply a semicolon, skip it!                         
+                    break;
+                
+                   
+            }
+            argPos++;
+        }
         //line erase from - until pos of ';'
         //argVec erase until the pos of command containing;
         //remove ; from the found arg from argvec
         //check if arg becomes empty after remova meaning the user left space before ';'
         //^or just check if length = 1 before removal
-
-        //reparse //// nooo not reparse just call self -> true recursion
+        parseLine(newLine,newArgVec);
     }
     flagger(line, RedirectConfig);
 

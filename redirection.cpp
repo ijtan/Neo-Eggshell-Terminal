@@ -87,6 +87,7 @@ int BetterSourceRun(string filename) {
     if (sourceRead.bad())
         perror("error while reading file");
     sourceRead.close();
+    return 0;
 }
 
 int InitialzeRedir(vector<int> conf, vector<string> &args) {
