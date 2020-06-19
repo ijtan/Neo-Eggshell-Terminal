@@ -30,7 +30,10 @@ int parseLine(string line, vector<string> input) {
             return 0;
         };
     }
-
+    if (line.find('$') != string::npos) {
+        // if var exists replace the word with the value and return value
+        parseVars(input, line);
+    }
     if (line.find('=') != string::npos) {
         if (input.size() == 1) {
             better_set(line.substr(0, line.find('=')),
@@ -38,10 +41,7 @@ int parseLine(string line, vector<string> input) {
         }
         return 0;
     }
-    if (line.find('$') != string::npos) {
-        // if var exists replace the word with the value and return value
-        parseVars(input);
-    }
+    
     if (line.find('&') != string::npos) {
         // background running
         if (input[input.size() - 1] == "&") {

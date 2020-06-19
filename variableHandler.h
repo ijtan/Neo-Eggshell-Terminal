@@ -19,7 +19,7 @@
 
 void printVars();
 using namespace std;
-void parseVars(vector<string> &input);
+void parseVars(vector<string> &input, string &line);
 void initVars(vector<string> &env);
 //void stringCombiner(vector<string> &input, string &line);
 class variableHandler {
