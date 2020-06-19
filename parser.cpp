@@ -56,11 +56,7 @@ int parseLine(string line, vector<string> input) {
                 break;
             }
         }
-        //line erase from - until pos of ';'
-        //argVec erase until the pos of command containing;
-        //remove ; from the found arg from argvec
-        //check if arg becomes empty after remova meaning the user left space before ';'
-        //^or just check if length = 1 before removal
+
         if (preArgs.empty() || input.empty()) {
             cerr << "Bad Semicolon formation found, Aborting..." << endl;
             return 0;
