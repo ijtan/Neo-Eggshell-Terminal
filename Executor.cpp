@@ -5,11 +5,8 @@ pid_t waitingProcPid;
 vector<proc> StoppedProcs;
 using namespace std;
 
-int Executor(vector<string> &argVector, vector<int> conf) {
+int Executor(vector<string> &argVector,string &line, vector<int> conf) {
     int failed = 0;
-    string line;
-    for (auto arg : argVector)
-        line.append(arg);
 
     int waitOpt = 0;
     if (conf[4] == 1)
@@ -113,7 +110,7 @@ int Executor(vector<string> &argVector, vector<int> conf) {
 
 int statusChecker(int status, pid_t pid, string name) {
     if (WIFSIGNALED(status)) {
-        cout << "Signal Code " << WTERMSIG(status) << ":"
+        cout << "Process Has Ended with a Signal!\nSignal Code " << WTERMSIG(status) << ":"
              << sys_siglist[WTERMSIG(status)] << endl;
 
         return -1;

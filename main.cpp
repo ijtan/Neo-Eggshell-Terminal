@@ -8,7 +8,6 @@
 
 #define MAX_HISTORY 25
 #define HistoryFileName "LineHistory"
-//extern char**environ;
 
 char *line;
 vector<string> args;
@@ -28,15 +27,18 @@ void lineReadInit() {
 
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
-    //string base = argv_str.substr(0, argv_str.find_last_of("/"));
-    // linenoiseHistoryAdd(HistoryFileName);
-    // cout<<"remove history save!"<<endl;
     initVars(env);
+
+    string shell(getenv("SHELL"));
+    shell.append("History.txt");
+    linenoiseHistoryLoad(shell.c_str());
+    pid_t callerID = getppid();
     //start linenoise loop
 
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
-        flush(cout);
         linenoiseHistoryAdd(line);
+        linenoiseHistorySave(shell.c_str());
+
         char copy[sizeof(line)];
         strcpy(copy, line);
         if (tokenize(line, copy, args) == -1) {
@@ -51,7 +53,7 @@ void lineReadInit() {
         linenoiseFree(line);
         args.clear();
 
-        pid_t callerID = getppid();
+        
         if (pl == -5)
             _exit(-5);
         if (getppid() != callerID) {
@@ -70,7 +72,6 @@ int main(int argc, char *argv[]) {
     auto sigoldINT = sigHandInstaller(SIGINT);
     auto sigoldTSTP = sigHandInstaller(SIGTSTP);
     cout << "Welcome to EggShell!" << endl;
-    // linenoiseHistoryLoad(HistoryFileName);
     lineReadInit();
 
     return 0;

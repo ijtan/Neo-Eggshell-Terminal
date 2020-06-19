@@ -21,7 +21,7 @@ struct proc {
     string name;
     pid_t pid;
 };
-int Executor(vector<string> &argVector, vector<int> conf);
+int Executor(vector<string> &argVector,string &line, vector<int> conf);
 int statusChecker(int status, pid_t pid, string name);
 
 #endif  //NEOEGGSHELL_EXTERNAL_H

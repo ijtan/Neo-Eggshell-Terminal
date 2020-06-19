@@ -34,7 +34,7 @@ sig_t sigHandInstaller(int signum) {
 
 void resumeStopped() {
     if(getFirstProc().pid == -1){
-        cout << "No Processed to Resume!" << endl;
+        cout << "No Processes to Resume!" << endl;
         return;
     }
     int result = kill(getFirstProc().pid, SIGCONT);

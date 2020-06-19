@@ -51,7 +51,7 @@ int parseLine(string line, vector<string> input) {
     }
 
     //execute
-    return Executor(input, RedirectConfig);
+    return Executor(input,line, RedirectConfig);
 }
 
 int reParse(string line, vector<string> &input) {
