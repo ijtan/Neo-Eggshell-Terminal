@@ -64,11 +64,11 @@ int internalHandler(string command, vector<string> argsV) {
                     printVars();
                     return 0;
                 case 2:
-                    if (StoppedProcs.empty())
+                    if (getFirstProc().pid == -1)
                         cout << "No Suspended Processes" << endl;
                     else {
                         cout << "Listing All suspended Processes" << endl;
-                        for (const auto &pr : StoppedProcs)
+                        for (const auto pr : getProcVec())
                             cout << pr.name << "\t\t" << pr.pid << endl;
                     }
                     return 0;

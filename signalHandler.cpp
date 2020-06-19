@@ -1,4 +1,6 @@
 #include "signalHandler.h"
+
+
 //this class will be dedicated for trapping SIG faults which might occur throughout the runtime
 using namespace std;
 
@@ -9,15 +11,15 @@ void neoSigHand(int signum) {
 
     if (signum == SIGTSTP) {
         memset(&print[0], 0, sizeof(print));
-        snprintf(print, sizeof(print), "Stopping Process: (%s:%d)\n", waitingProcName.c_str(), waitingProcPid);
+        snprintf(print, sizeof(print), "Stopping Process: (%s:%d)\n", getWaitingProc().name.c_str(), getWaitingProc().pid);
         write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
-        kill(waitingProcPid, SIGTSTP);
-        StoppedProcs.emplace_back(waitingProcPid, waitingProcName);
+        kill(getWaitingProc().pid, SIGTSTP);
+        addProc(getWaitingProc().name, getWaitingProc().pid);
     } else if (signum == SIGINT) {
-        snprintf(print, sizeof(print), "Interrupting Process: (%s:%d)\n", waitingProcName.c_str(),
-                 waitingProcPid);
+        snprintf(print, sizeof(print), "Interrupting Process: (%s:%d)\n", getWaitingProc().name.c_str(),
+                 getWaitingProc().pid);
         write(STDOUT_FILENO, print, strnlen(print, sizeof(print)));
-        kill(waitingProcPid, SIGINT);
+        kill(getWaitingProc().pid, SIGINT);
     }
 }
 
@@ -31,13 +33,13 @@ sig_t sigHandInstaller(int signum) {
 }
 
 void resumeStopped() {
-    if (StoppedProcs.size() == 0) {
+    if(getFirstProc().pid == -1){
         cout << "No Processed to Resume!" << endl;
         return;
     }
-    int result = kill(StoppedProcs[0].pid, SIGCONT);
+    int result = kill(getFirstProc().pid, SIGCONT);
     if (result == 0) {
-        cout << "Process Resumed! (" << StoppedProcs[0].name << ':' << StoppedProcs[0].pid << ')' << endl;
-        StoppedProcs.erase(StoppedProcs.begin());
+        cout << "Process Resumed! (" << getFirstProc().name << ':' << getFirstProc().pid << ')' << endl;
+        incrementProcs();
     }
 }

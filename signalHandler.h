@@ -13,17 +13,10 @@
 #include <iostream>
 #include <vector>
 
+#include "StoppedHelper.h"
+
 using namespace std;
 
-struct proc {
-    pid_t pid;
-    string name;
-};
-
-string waitingProcName;
-pid_t waitingProcPid;
-
-vector<proc> StoppedProcs;
 
 void neoSigHand(int signum);
 sig_t sigHandInstaller(int signum);

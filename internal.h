@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "redirection.h"
-#include "signalHandler.h"
+#include "StoppedHelper.h"
 #include "variableHandler.h"
 
 using namespace std;

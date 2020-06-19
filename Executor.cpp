@@ -1,6 +1,8 @@
 #include "Executor.h"
-
-#include "signalHandler.h"
+#include "StoppedHelper.h"
+string waitingProcName;
+pid_t waitingProcPid;
+vector<proc> StoppedProcs;
 using namespace std;
 
 int Executor(vector<string> &argVector, vector<int> conf) {
@@ -122,4 +124,28 @@ int statusChecker(int status, pid_t pid, string name) {
         return 0;
     }
     return 0;
+}
+
+proccess getFirstProc(){
+    if(StoppedProcs.empty())
+    return {"empty",-1};
+    return {StoppedProcs[0].name,StoppedProcs[0].pid};
+}
+void incrementProcs(){
+    StoppedProcs.erase(StoppedProcs.begin());
+}
+void addProc(string name, pid_t pid){
+    proc p;p.name=name;p.pid=pid;
+    StoppedProcs.push_back(p);
+}
+
+proccess getWaitingProc(){
+    return {waitingProcName,waitingProcPid};
+}
+
+vector<proccess> getProcVec(){
+    vector<proccess> ret;
+    for(auto procc:StoppedProcs)
+        ret.push_back({procc.name,procc.pid});
+        return ret;
 }
