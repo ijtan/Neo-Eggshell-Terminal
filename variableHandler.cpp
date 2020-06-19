@@ -8,9 +8,9 @@ void printVars() {
     }
 }
 
-vector<string> parseVars(vector<string> inputVector) {
+void parseVars(vector<string> &input) {
     int i = 0;
-    for (auto in : inputVector) {
+    for (auto in : input) {
         if (in.find('$') == string::npos) {
             i++;
             continue;
@@ -18,7 +18,7 @@ vector<string> parseVars(vector<string> inputVector) {
         if (in.find('$') > 0) {
             if (in[in.find('$') - 1] == '\\') {
                 string escaped = in.erase(in.find('$') - 1, 1);
-                inputVector[i] = escaped;
+                input[i] = escaped;
                 i++;
                 continue;
             }
@@ -27,12 +27,11 @@ vector<string> parseVars(vector<string> inputVector) {
         if (getenv(envName.c_str()) != NULL) {
             string newEnv = in.substr(0, in.find('$'));
             newEnv.append(getenv(envName.c_str()));
-            inputVector[i] = newEnv;
+            input[i] = newEnv;
         } else
             cout << "The environment for variable '" << envName.c_str() << "' was not found!" << endl;
         i++;
     }
-    return inputVector;
 }
 
 void initVars(vector<string> &env) {

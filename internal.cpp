@@ -105,7 +105,7 @@ int better_set(string variable, string value) {
 
     internalVar newVar = {variable, env, value};
     internalVars.emplace_back(newVar);
-    putenv(env);  // replace with Assign
+    putenv(env);
     return 0;
 }
 

@@ -260,17 +260,17 @@ vector<PostPipes> initPipes(vector<string> argV) {
 
 void flagger(string line, vector<int> &RedirectConfig) {
     RedirectConfig[0] = RedirectConfig[1] = RedirectConfig[2] = RedirectConfig[3] = 0;
-    if (line.find(">>") != string::npos)
+    if (line.find(" >> ") != string::npos)
         RedirectConfig[0] = 1;
-    else if (line.find('>') != string::npos) {
+    else if (line.find(" > ") != string::npos) {
         // redirect out
         RedirectConfig[1] = 1;
     }
-    if (line.find('<') != string::npos) {
+    if (line.find(" < ") != string::npos) {
         // redirect in
         RedirectConfig[2] = 1;
     }
-    if (line.find('|') != string::npos) {
+    if (line.find(" | ") != string::npos) {
         // redirect in
         RedirectConfig[3] = 1;
     }
