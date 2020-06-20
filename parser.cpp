@@ -1,4 +1,5 @@
 #include "parser.h"
+
 #include "reparse.h"
 
 // given input, this class will determine some attributes of input such as
@@ -7,19 +8,17 @@
 using namespace std;
 #define MAX_ARGS 100
 
-
 // 0: >>
-    // 1: >
-    // 2: <
-    // 3: |
-    // 4: & -> background run
+// 1: >
+// 2: <
+// 3: |
+// 4: & -> background run
 
 int parseLine(string line, vector<string> input) {
     vector<int> RedirectConfig(5);
-    
 
     if (line.find(';') != string::npos) {
-        if(multiCommands(line,input)==-1)
+        if (multiCommands(line, input) == -1)
             return 0;
     }
     flagger(line, RedirectConfig);
@@ -41,17 +40,18 @@ int parseLine(string line, vector<string> input) {
         }
         return 0;
     }
-    
+
     if (line.find('&') != string::npos) {
         // background running
-        if (input[input.size() - 1] == "&") {
+        if (input[input.size() - 1] == "&" && input[input.size() - 1].find('&') != string::npos) {
             input.erase(input.end());
+            line.erase(line.find('&'));
             RedirectConfig[4] = 1;
         }
     }
 
     //execute
-    return Executor(input,line, RedirectConfig);
+    return Executor(input, line, RedirectConfig);
 }
 
 int reParse(string line, vector<string> &input) {
@@ -83,7 +83,7 @@ int better_String_Combiner(vector<string> &input, string &line) {  // counting t
     }
     // would mean that we could not find the ""
     if (count == 0) {
-        cerr << "\" error" << endl;
+        cerr << "Quote handling error" << endl;
     }
     string more;  // this string will hold newly inputted characters, will be
     // appended to iriginal command
@@ -178,46 +178,46 @@ int better_String_Combiner(vector<string> &input, string &line) {  // counting t
     }
     return 0;
 }
-int multiCommands(string &line, vector<string> &input){
- string newLine = line.substr(0, line.find_last_of(';'));  //create new string without the first command
-        line = line.substr(line.find_last_of(';') + 1);           //make command for current execution without others
+int multiCommands(string &line, vector<string> &input) {
+    string newLine = line.substr(0, line.find_last_of(';'));  //create new string without the first command
+    line = line.substr(line.find_last_of(';') + 1);           //make command for current execution without others
 
-        vector<string> preArgs;
+    vector<string> preArgs;
 
-        for (int argPos = input.size() - 1; argPos >= 0; --argPos) {
-            string arg = input[argPos];
-            if (arg.find(';') != string::npos) {  //find which arg has the semicolon
+    for (int argPos = input.size() - 1; argPos >= 0; --argPos) {
+        string arg = input[argPos];
+        if (arg.find(';') != string::npos) {  //find which arg has the semicolon
 
-                for (int cnt = 0; cnt < argPos; ++cnt)  //add all other args
-                    preArgs.push_back(input[cnt]);
+            for (int cnt = 0; cnt < argPos; ++cnt)  //add all other args
+                preArgs.push_back(input[cnt]);
 
-                if ((arg.substr(0, arg.find_last_of(';'))).length() != 0)     //&& arg.length() != arg.find(';') + 1)       //if arg is simply a semicolon or semicolon is at the end skip it!
-                    preArgs.push_back(arg.substr(0, arg.find_last_of(';')));  //add text post-semicolon
+            if ((arg.substr(0, arg.find_last_of(';'))).length() != 0)     //&& arg.length() != arg.find(';') + 1)       //if arg is simply a semicolon or semicolon is at the end skip it!
+                preArgs.push_back(arg.substr(0, arg.find_last_of(';')));  //add text post-semicolon
 
-                if ((arg.substr(arg.find_last_of(';') + 1)).length() != 0)
-                    input.insert(input.begin() + argPos + 1, arg.substr(arg.find_last_of(';') + 1));  //else do some magic to copy text pre-colon
-                input.erase(input.begin(), input.begin() + argPos + 1);                               //remove post-colon-contining-arg args
+            if ((arg.substr(arg.find_last_of(';') + 1)).length() != 0)
+                input.insert(input.begin() + argPos + 1, arg.substr(arg.find_last_of(';') + 1));  //else do some magic to copy text pre-colon
+            input.erase(input.begin(), input.begin() + argPos + 1);                               //remove post-colon-contining-arg args
 
-                break;
-            }
+            break;
         }
+    }
 
-        if (preArgs.empty() || input.empty()) {
+    if (preArgs.empty() || input.empty()) {
+        cerr << "Bad Semicolon formation found, Aborting..." << endl;
+        return -1;
+    }
+    for (auto arg : preArgs) {
+        if (arg.length() == 0) {
             cerr << "Bad Semicolon formation found, Aborting..." << endl;
             return -1;
         }
-        for (auto arg : preArgs) {
-            if (arg.length() == 0) {
-                cerr << "Bad Semicolon formation found, Aborting..." << endl;
-                return -1;
-            }
+    }
+    for (auto arg : input) {
+        if (arg.length() == 0) {
+            cerr << "Bad Semicolon formation found, Aborting..." << endl;
+            return -1;
         }
-        for (auto arg : input) {
-            if (arg.length() == 0) {
-                cerr << "Bad Semicolon formation found, Aborting..." << endl;
-                return -1;
-            }
-        }
-        parseLine(newLine, preArgs);
-        return 0;
+    }
+    parseLine(newLine, preArgs);
+    return 0;
 }

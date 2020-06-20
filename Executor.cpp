@@ -1,11 +1,12 @@
 #include "Executor.h"
+
 #include "StoppedHelper.h"
 string waitingProcName;
 pid_t waitingProcPid;
 vector<proc> StoppedProcs;
 using namespace std;
 
-int Executor(vector<string> &argVector,string &line, vector<int> conf) {
+int Executor(vector<string> &argVector, string &line, vector<int> conf) {
     int failed = 0;
 
     int waitOpt = 0;
@@ -25,8 +26,9 @@ int Executor(vector<string> &argVector,string &line, vector<int> conf) {
     pid_t mainPID = getpid();
     vector<PostPipes> feedback;
     PostPipes internalFeedBack;
+
     if (conf[3] == 1) {
-        cout << "entered pipes" << endl;
+        //Here we will intialize piping
         feedback = initPipes(argVector);
         if (feedback[0].returnCode != 0)
             return 0;
@@ -124,27 +126,29 @@ int statusChecker(int status, pid_t pid, string name) {
     return 0;
 }
 
-proccess getFirstProc(){
-    if(StoppedProcs.empty())
-    return {"empty",-1};
-    return {StoppedProcs[0].name,StoppedProcs[0].pid};
+proccess getFirstProc() {
+    if (StoppedProcs.empty())
+        return {"empty", -1};
+    return {StoppedProcs[0].name, StoppedProcs[0].pid};
 }
-void incrementProcs(){
-    if(!StoppedProcs.empty())
-    StoppedProcs.erase(StoppedProcs.begin());
+void incrementProcs() {
+    if (!StoppedProcs.empty())
+        StoppedProcs.erase(StoppedProcs.begin());
 }
-void addProc(string name, pid_t pid){
-    proc p;p.name=name;p.pid=pid;
+void addProc(string name, pid_t pid) {
+    proc p;
+    p.name = name;
+    p.pid = pid;
     StoppedProcs.push_back(p);
 }
 
-proccess getWaitingProc(){
-    return {waitingProcName,waitingProcPid};
+proccess getWaitingProc() {
+    return {waitingProcName, waitingProcPid};
 }
 
-vector<proccess> getProcVec(){
+vector<proccess> getProcVec() {
     vector<proccess> ret;
-    for(auto procc:StoppedProcs)
-        ret.push_back({procc.name,procc.pid});
+    for (auto procc : StoppedProcs)
+        ret.push_back({procc.name, procc.pid});
     return ret;
 }
