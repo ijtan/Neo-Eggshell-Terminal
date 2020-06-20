@@ -17,8 +17,9 @@
 
 using namespace std;
 
+void sigHandInstaller(int signum);
+void sigTSTPHandle(int signum);
+void sigIntHandle(int signum);
 
-void neoSigHand(int signum);
-sig_t sigHandInstaller(int signum);
 void resumeStopped();
 #endif  //NEOEGGSHELL_SIGNALHANDLER_H

@@ -104,6 +104,7 @@ int Executor(vector<string> &argVector,string &line, vector<int> conf) {
                 statusChecker(status, currProc.PID, currProc.newArgV[0]);
             i++;
         }
+        waitingProcPid = -1;
     }
     return 0;
 }
@@ -129,6 +130,7 @@ proccess getFirstProc(){
     return {StoppedProcs[0].name,StoppedProcs[0].pid};
 }
 void incrementProcs(){
+    if(!StoppedProcs.empty())
     StoppedProcs.erase(StoppedProcs.begin());
 }
 void addProc(string name, pid_t pid){
@@ -144,5 +146,5 @@ vector<proccess> getProcVec(){
     vector<proccess> ret;
     for(auto procc:StoppedProcs)
         ret.push_back({procc.name,procc.pid});
-        return ret;
+    return ret;
 }

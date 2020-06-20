@@ -68,8 +68,8 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
     atexit(exitRoutine);
-    auto sigoldINT = sigHandInstaller(SIGINT);
-    auto sigoldTSTP = sigHandInstaller(SIGTSTP);
+    sigHandInstaller(SIGINT);
+    sigHandInstaller(SIGTSTP);
 
     cout << "Welcome to EggShell!" << endl;
     
