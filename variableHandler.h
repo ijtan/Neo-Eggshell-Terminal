@@ -20,9 +20,9 @@
 void printVars();
 using namespace std;
 void parseVars(vector<string> &input, string &line);
-void initVars(vector<string> &env);
-//void stringCombiner(vector<string> &input, string &line);
-class variableHandler {
+void initVars();
+class variableHandler
+{
 };
 
-#endif  //NEOEGGSHELL_VARIABLEHANDLER_H
+#endif //NEOEGGSHELL_VARIABLEHANDLER_H
