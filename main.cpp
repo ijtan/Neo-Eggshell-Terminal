@@ -12,7 +12,8 @@
 char *line;
 vector<string> args;
 
-void exitRoutine() {
+void exitRoutine()
+{
     cout << "Goodbye!" << endl;
 
     free(line);
@@ -21,10 +22,11 @@ void exitRoutine() {
 
 vector<string> env;
 
-void lineReadInit() {
+void lineReadInit()
+{
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
-    initVars(env);
+    initVars();
 
     string shell(getenv("SHELL"));
     shell.append(HistoryFileName);
@@ -32,14 +34,16 @@ void lineReadInit() {
     pid_t callerID = getppid();
     //start linenoise loop
 
-    while ((line = linenoise(getenv("PROMPT"))) != NULL) {
+    while ((line = linenoise(getenv("PROMPT"))) != NULL)
+    {
         linenoiseHistoryAdd(line);
         linenoiseHistorySave(shell.c_str());
 
         // prepare for tokenization
         char copy[sizeof(line)];
         strcpy(copy, line);
-        if (tokenize(line, copy, args) == -1) {
+        if (tokenize(line, copy, args) == -1)
+        {
             continue;
         };
 
@@ -50,13 +54,14 @@ void lineReadInit() {
         //function's job done,command has been hadnled; prepare for next command
         args.clear();
 
-        if (getppid() != callerID) {
+        if (getppid() != callerID)
+        {
             cout << "Unkilled fork detected, aborting child: (" << getppid() << "!=" << callerID << ')' << endl;
             _exit(EXIT_FAILURE);
         }
 
         if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL)
-            initVars(env);
+            initVars();
 
         linenoiseFree(line);
     }
@@ -64,10 +69,12 @@ void lineReadInit() {
 
 using namespace std;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     atexit(exitRoutine);
-    sigHandInstaller(SIGINT);
+
     sigHandInstaller(SIGTSTP);
+    sigHandInstaller(SIGINT);
 
     cout << "Welcome to EggShell!" << endl;
 
