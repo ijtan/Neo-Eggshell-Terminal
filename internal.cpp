@@ -95,10 +95,6 @@ void echo(vector<string> args) {
     cout << endl;
 }
 
-int better_set(string variable, string value) {
-    setenv(variable.c_str(), value.c_str(), 1);
-}
-
 void changeDirs(vector<string> args) {
     if (args.size() != 2) {
         puts("1 arguments expected: Path");
@@ -108,7 +104,7 @@ void changeDirs(vector<string> args) {
         char buf[512] = "";
         getcwd(buf, sizeof(buf));
         string CW(buf);
-        better_set("CWD", CW);
+        setenv("CWD", CW.c_str(), 1);
         return;
     }
     perror("cd");
