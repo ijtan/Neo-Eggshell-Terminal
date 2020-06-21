@@ -17,7 +17,7 @@ void sigTSTPHandle(int signum)
     write(STDOUT_FILENO, msg, strnlen(msg, sizeof(msg)));
     pid_t pidToKill = getWaitingProc().pid;
     kill(pidToKill, SIGTSTP);
-    addProc(getWaitingProc().name, pidToKill); //here we might have a provlem if the process terminates and the Waitingproc name changes, although not dangerous, since we would simply have amismatch in the name, i think this could be done better, maybe locking it ?
+    //addProc(getWaitingProc().name, pidToKill); //here we might have a provlem if the process terminates and the Waitingproc name changes, although not dangerous, since we would simply have amismatch in the name, i think this could be done better, maybe locking it ?
 }
 
 void sigHandInstaller(int signum)
