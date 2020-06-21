@@ -45,7 +45,12 @@ int input(string filename) {
     return openRed(STDIN_FILENO, filename.c_str(), O_RDONLY, S_IRUSR);
 }
 
-int BetterSourceRun(string filename) {
+void BetterSourceRun(vector<string> argsV) {
+    if (argsV.size() != 2) {
+        puts("1 arguments expected: filename");
+        _exit(EXIT_FAILURE);
+    }
+    string filename = argsV[1];
     ifstream sourceRead(filename);
     if (!sourceRead.is_open()) {
         cout << "Failed to open!" << endl;
@@ -85,13 +90,11 @@ int BetterSourceRun(string filename) {
     if (sourceRead.bad())
         perror("error while reading file");
     sourceRead.close();
-    return 0;
 }
 
 int InitialzeRedir(vector<int> conf, vector<string> &args) {
     int result;
     if (conf[2] == 1) {
-
         int count = 0;
         int j = 0;
         int argno = 0;
@@ -161,9 +164,9 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
     return 0;
 }
 
-vector<PostPipes> initPipes(vector<string> argV) {
-    PostPipes PP;
-    vector<PostPipes> RET;
+vector<needWaits> initPipes(vector<string> argV) {
+    needWaits PP;
+    vector<needWaits> RET;
     // start piping
     int pipeCount = 0;
     vector<vector<string>> splitArgs;
@@ -229,16 +232,15 @@ vector<PostPipes> initPipes(vector<string> argV) {
                 close(prevFD[0]);
             }
             if (part < pipeCount) {
-                close(currFD[0]); // not needed since nothing will be passing to it;
+                close(currFD[0]);  // not needed since nothing will be passing to it;
                 dup2(currFD[1], STDOUT_FILENO);
-                close(currFD[1]); // not needed since is redirected to stdout
+                close(currFD[1]);  // not needed since is redirected to stdout
             }
 
             PP.returnCode = 0;
             PP.newArgV = argV;
             return {PP};
         } else {
-
             PP.PID = PipePid;
             PP.returnCode = 0;
             PP.PipeCount = pipeCount;

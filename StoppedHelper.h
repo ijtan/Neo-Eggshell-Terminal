@@ -11,15 +11,15 @@
 #include <vector>
 using namespace std;
 
-struct proccess {
+struct process {
     string name;
     pid_t pid;
 };
 
-proccess getFirstProc();
+process getFirstProc();
 void incrementProcs();
 void addProc(string name, pid_t pid);
-proccess getWaitingProc();
-vector<proccess> getProcVec();
+process getWaitingProc();
+vector<process> getProcVec();
 
 #endif  //NEOEGGSHELL_EXTERNALSTPPROCS_H

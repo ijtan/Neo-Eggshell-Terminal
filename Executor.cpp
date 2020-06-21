@@ -2,7 +2,7 @@
 
 #include "StoppedHelper.h"
 string waitingProcName;
-pid_t waitingProcPid;
+pid_t waitingProcPid = -1;
 vector<proc> StoppedProcs;
 using namespace std;
 
@@ -24,8 +24,8 @@ int Executor(vector<string> &argVector, string &line, vector<int> conf) {
     }
 
     pid_t mainPID = getpid();
-    vector<PostPipes> feedback;
-    PostPipes internalFeedBack;
+    vector<needWaits> feedback;
+    needWaits internalFeedBack;
 
     if (conf[3] == 1) {
         //Here we will intialize piping
@@ -38,13 +38,16 @@ int Executor(vector<string> &argVector, string &line, vector<int> conf) {
 
             // re creation of line used for checking rediractions flags
             line.clear();
-            for (auto arg : argVector)
+            for (auto arg : argVector) {
                 line.append(arg);
+                line.append(" ");
+            }
             flagger(line, conf);
             conf[3] = 1;
         }
     }
 
+    //
     if (getpid() == mainPID && conf[3] == 0) {  //redir no pipes
         // main should be here if no piping ->  since yet we have no forks and no
         // internal commands. we fork here so only the child is redirected / executed and the main class, adds the pid to the list of pids to wait for, then simply moves on.
@@ -120,13 +123,13 @@ int statusChecker(int status, pid_t pid, string name) {
     }
     if (WIFEXITED(status)) {
         string str = to_string(WEXITSTATUS(status));
-        better_set("EXITCODE", str);
+        setenv("EXITCODE", str.c_str(), 1);
         return 0;
     }
     return 0;
 }
 
-proccess getFirstProc() {
+process getFirstProc() {
     if (StoppedProcs.empty())
         return {"empty", -1};
     return {StoppedProcs[0].name, StoppedProcs[0].pid};
@@ -141,13 +144,11 @@ void addProc(string name, pid_t pid) {
     p.pid = pid;
     StoppedProcs.push_back(p);
 }
-
-proccess getWaitingProc() {
+process getWaitingProc() {
     return {waitingProcName, waitingProcPid};
 }
-
-vector<proccess> getProcVec() {
-    vector<proccess> ret;
+vector<process> getProcVec() {
+    vector<process> ret;
     for (auto procc : StoppedProcs)
         ret.push_back({procc.name, procc.pid});
     return ret;

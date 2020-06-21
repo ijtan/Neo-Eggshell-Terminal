@@ -5,14 +5,6 @@ using namespace std;
 vector<string> internalCommands = {"echo", "showenv", "listproc", "source"};
 vector<string> internalCommandsParentOnly = {"unset", "cd", "bg", "exit"};
 
-struct internalVar {
-    string name;
-    char *str;
-    string value;
-};
-
-vector<internalVar> internalVars;
-
 int internalChecker(string command) {
     for (auto childOK : internalCommands) {
         if (command == childOK)
@@ -31,9 +23,9 @@ int internalHandlerNoCHild(string command, vector<string> argsV) {
             switch (&cmd - &internalCommandsParentOnly[0]) {
                 case 0:
                     if (argsV.size() == 2)
-                        better_unset(argsV[1]);
+                        unsetenv(argsV[1].c_str());
                     else
-                        cout << "Invalid argument size!" << endl;
+                        cerr << "Invalid argument size!" << endl;
                     return 0;
                 case 1:
                     changeDirs(argsV);
@@ -44,6 +36,9 @@ int internalHandlerNoCHild(string command, vector<string> argsV) {
 
                 case 3:
                     exit(EXIT_SUCCESS);
+                default:
+                    cerr << "Internal Command handling error!" << endl;
+                    return -1;
             }
         }
     }
@@ -53,9 +48,9 @@ int internalHandlerNoCHild(string command, vector<string> argsV) {
 int internalHandler(string command, vector<string> argsV) {
     // will be used to check if the command is internal
 
-    for (auto &internalCommand : internalCommands) {
-        if (internalCommand == command) {
-            switch (&internalCommand - &internalCommands[0]) {  // basicaly indexof
+    for (auto &intCMD : internalCommands) {
+        if (intCMD == command) {
+            switch (&intCMD - &internalCommands[0]) {  // basicaly indexof
                 // TODO MAKE THIS AN ENUM
                 case 0:
                     echo(argsV);
@@ -64,21 +59,28 @@ int internalHandler(string command, vector<string> argsV) {
                     printVars();
                     return 0;
                 case 2:
-                    if (getFirstProc().pid == -1)
-                        cout << "No Suspended Processes" << endl;
-                    else {
-                        cout << "Listing All suspended Processes" << endl;
-                        for (const auto pr : getProcVec())
-                            cout << pr.name << "\t\t" << pr.pid << endl;
-                    }
+                    listProc();
                     return 0;
                 case 3:
-                    sourceStart(argsV);
+                    BetterSourceRun(argsV);
                     return 0;
+                default:
+                    cerr << "Internal Command handling error!" << endl;
+                    return -1;
             }
         }
     }
     return 1;
+}
+
+void listProc() {
+    if (getFirstProc().pid == -1)
+        cerr << "No Suspended Processes" << endl;
+    else {
+        cout << "Listing All suspended Processes" << endl;
+        for (const auto pr : getProcVec())
+            cout << pr.name << "\t\t" << pr.pid << endl;
+    }
 }
 
 void echo(vector<string> args) {
@@ -94,37 +96,7 @@ void echo(vector<string> args) {
 }
 
 int better_set(string variable, string value) {
-    for (auto var : internalVars) {
-        if (var.str == variable)
-            better_unset(variable);
-    }
-
-    size_t size = variable.size() + value.size() + 10;
-    char *env = (char *)calloc(size, sizeof(char));
-    snprintf(env, size, "%s=%s", variable.c_str(), value.c_str());
-
-    internalVar newVar = {variable, env, value};
-    internalVars.emplace_back(newVar);
-    putenv(env);
-    return 0;
-}
-
-void better_unset(string variable) {
-    if (getenv(variable.c_str()) == NULL) {
-        puts("Not Found!");
-        return;
-    }
-    unsetenv(variable.c_str());
-    int i = 0;
-    for (auto var : internalVars) {
-        if (var.name == variable) {
-            cout << "erasing: " << (internalVars[i]).name << endl;
-            free(var.str);
-            internalVars.erase(internalVars.begin() + i);
-            break;
-        }
-        i++;
-    }
+    setenv(variable.c_str(), value.c_str(), 1);
 }
 
 void changeDirs(vector<string> args) {
@@ -140,26 +112,4 @@ void changeDirs(vector<string> args) {
         return;
     }
     perror("cd");
-}
-
-void sourceStart(vector<string> args) {
-    if (args.size() != 2)
-        puts("1 arguments expected: filename");
-    else
-        BetterSourceRun(args[1]);
-}
-
-void freeVars() {
-    for (const auto &var : internalVars) {
-        free(var.str);
-    }
-    internalVars.clear();
-}
-
-void printVarVec() {
-    cout << "VARVEC" << endl;
-    for (const auto &var : internalVars) {
-        cout << "Name: " << var.name << "; ptr: " << var.str
-             << "; ptr&: " << &var.str << "; val:" << var.value << endl;
-    }
 }

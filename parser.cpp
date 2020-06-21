@@ -35,8 +35,8 @@ int parseLine(string line, vector<string> input) {
     }
     if (line.find('=') != string::npos) {
         if (input.size() == 1) {
-            better_set(line.substr(0, line.find('=')),
-                       line.substr(line.find('=') + 1, line.size()));
+            setenv(line.substr(0, line.find('=')).c_str(),
+                   line.substr(line.find('=') + 1).c_str(), 1);
         }
         return 0;
     }
@@ -176,6 +176,11 @@ int better_String_Combiner(vector<string> &input, string &line) {  // counting t
         input.erase(input.begin() + startArg, input.begin() + endArg + 1);
         input.insert(input.begin() + startArg, combinedArg);
     }
+    line.clear();
+    for (auto arg : input) {
+        line.append(arg);
+        line.append(" ");
+    }
     return 0;
 }
 int multiCommands(string &line, vector<string> &input) {
@@ -201,7 +206,6 @@ int multiCommands(string &line, vector<string> &input) {
             break;
         }
     }
-
     if (preArgs.empty() || input.empty()) {
         cerr << "Bad Semicolon formation found, Aborting..." << endl;
         return -1;

@@ -31,11 +31,11 @@ void parseVars(vector<string> &input, string &line) {
 
             int pos = line.find('$');
             int j;
-            for(j = pos;j<line.length();j++)
-                if(line[j]==' ')
+            for (j = pos; j < line.length(); j++)
+                if (line[j] == ' ')
                     break;
-            
-            line.erase(pos,j);
+
+            line.erase(pos, j);
             line.insert(pos, getenv(envName.c_str()));
         } else
             cout << "The environment for variable '" << envName.c_str() << "' was not found!" << endl;
@@ -48,22 +48,22 @@ void initVars(vector<string> &env) {
         char prmpt[255];
         sprintf(prmpt, "%s@eggshell> ", getenv("USER"));
         string promp(prmpt);
-        better_set("PROMPT", promp);
+        setenv("PROMPT", promp.c_str(), 1);
     }
     char buf[255] = "";
     readlink("/proc/self/exe", buf, sizeof(buf));
     string bf(buf);
-    better_set("SHELL", bf);
+    setenv("SHELL", bf.c_str(), 1);
 
     if (getenv("CWD") == NULL) {
         char buf[512] = "";
         getcwd(buf, sizeof(buf));
         string CW(buf);
-        better_set("CWD", CW);
+        setenv("CWD", CW.c_str(), 1);
     }
 
     if (getenv("TERMINAL") == NULL) {
         if (isatty(STDIN_FILENO))
-            better_set("TERMINAL", ttyname(STDIN_FILENO));
+            setenv("TERMINAL", ttyname(STDIN_FILENO), 1);
     }
 }

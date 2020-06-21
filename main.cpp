@@ -16,14 +16,12 @@ void exitRoutine() {
     cout << "Goodbye!" << endl;
 
     free(line);
-    freeVars();
     args.clear();
 }
 
 vector<string> env;
 
 void lineReadInit() {
-
     //init linenoise
     linenoiseHistorySetMaxLen(MAX_HISTORY);
     initVars(env);
@@ -49,14 +47,14 @@ void lineReadInit() {
         char copy2[sizeof(line)];
         strcpy(copy2, line);
         int pl = (parseLine(copy2, args));
-         //function's job done,command has been hadnled; prepare for next command
+        //function's job done,command has been hadnled; prepare for next command
         args.clear();
 
         if (getppid() != callerID) {
             cout << "Unkilled fork detected, aborting child: (" << getppid() << "!=" << callerID << ')' << endl;
             _exit(EXIT_FAILURE);
         }
-        
+
         if (getenv("PROMPT") == NULL or getenv("SHELL") == NULL)
             initVars(env);
 
@@ -72,7 +70,7 @@ int main(int argc, char *argv[]) {
     sigHandInstaller(SIGTSTP);
 
     cout << "Welcome to EggShell!" << endl;
-    
+
     lineReadInit();
 
     return EXIT_SUCCESS;
