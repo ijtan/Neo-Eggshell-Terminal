@@ -13,6 +13,8 @@ To execute simply Run neoEggshell from the /build/ folder
 
 ## Internal Commands
 
+## TODO: split into features / additions (Reidrects piping etc)
+
 ```
 - echo
 - unset <variable name>
@@ -24,4 +26,6 @@ To execute simply Run neoEggshell from the /build/ folder
 - source <filename>                 (Read and parse commands line by line from text file)
 - bg
 - <command> &                       (Ampersnad after commands -> do not wait for them to finish)
+- cd <dir>
+- exit
 ```
