@@ -16,9 +16,12 @@ To execute simply Run neoEggshell from the /build/ folder
 ```
 - echo
 - unset <variable name>
-- MYVAR=MYVALUE (for setting environment variables).
+- MYVAR=MYVALUE                     (for setting environment variables).
 - showenv
-- listproc
-- <command 1> | <command 2> | ... (Piping)
-- <command> * filneame (Redirects where * = ['>'/'>>'/'<'])
+- listproc                          (Show suspended processes)
+- <command 1> | <command 2> | ...   (Piping)
+- <command> * <filneame>            (Redirects where * = ['>'/'>>'/'<'])
+- source <filename>                 (Read and parse commands line by line from text file)
+- bg
+- <command> &                       (Ampersnad after commands -> do not wait for them to finish)
 ```
