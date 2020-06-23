@@ -58,10 +58,6 @@ int Executor(vector<string> &argVector, string &line, vector<int> conf) {
         if (getpid() == mainPID) {  //main should to this
             internalFeedBack.newArgV = argVector;
             internalFeedBack.PID = pid;
-            if (waitOpt != WNOHANG)
-                internalFeedBack.wait = true;
-            else
-                internalFeedBack.wait = false;
             feedback.push_back(internalFeedBack);
         }
     }
@@ -108,12 +104,13 @@ int Executor(vector<string> &argVector, string &line, vector<int> conf) {
             waitingProcName = currProc.newArgV[0];
             waitingProcPid = currProc.PID;
             waitpid(currProc.PID, &status, waitOpt);
-            //cout<<"Done Waiting for:"<<currProc.PID<<endl;
-            statusChecker(status, currProc.PID, currProc.newArgV[0]);
+            if (waitOpt != WNOHANG)
+                statusChecker(status, currProc.PID, currProc.newArgV[0]);
             i++;
         }
         waitingProcPid = -1;
     }
+
     return 0;
 }
 

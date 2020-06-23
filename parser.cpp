@@ -44,7 +44,7 @@ int parseLine(string line, vector<string> input) {
     if (line.find('&') != string::npos) {
         // background running
         if (input[input.size() - 1] == "&" && input[input.size() - 1].find('&') != string::npos) {
-            input.erase(input.end);
+            input.erase(input.end());
             line.erase(line.find('&'));
             RedirectConfig[4] = 1;
         }
