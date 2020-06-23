@@ -17,6 +17,11 @@ void sigTSTPHandle(int signum) {
     kill(pidToKill, SIGTSTP);
     //addProc(getWaitingProc().name, pidToKill); //here we might have a provlem if the process terminates and the Waitingproc name changes, although not dangerous, since we would simply have amismatch in the name, i think this could be done better, maybe locking it ?
 }
+void sigChiHandle(int signum) {
+    const char msg[] = "Handler Caught SIGCHLD\n";
+    write(STDOUT_FILENO, msg, strnlen(msg, sizeof(msg)));
+    wait(NULL);
+}
 
 void sigHandInstaller(int signum) {
     sig_t prevHand = SIG_ERR;

@@ -20,6 +20,6 @@ using namespace std;
 void sigHandInstaller(int signum);
 void sigTSTPHandle(int signum);
 void sigIntHandle(int signum);
-
+void sigChiHandle (int signum);
 void resumeStopped();
 #endif  //NEOEGGSHELL_SIGNALHANDLER_H
