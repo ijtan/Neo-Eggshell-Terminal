@@ -19,6 +19,8 @@ void sigTSTPHandle(int signum)
     kill(pidToKill, SIGTSTP);
     //addProc(getWaitingProc().name, pidToKill); //here we might have a provlem if the process terminates and the Waitingproc name changes, although not dangerous, since we would simply have amismatch in the name, i think this could be done better, maybe locking it ?
 }
+void sigChiHandle (int signum){
+    wait(NULL);}
 
 void sigHandInstaller(int signum)
 {
@@ -27,6 +29,8 @@ void sigHandInstaller(int signum)
         prevHand = signal(signum, sigTSTPHandle);
     if (signum == SIGINT)
         prevHand = signal(signum, sigIntHandle);
+    if(signum == SIGCHLD)
+        prevHand = signal(signum,sigChiHandle);
     if (prevHand == SIG_ERR) //async doesnt matter here since the installation happens on prgram start and before anything else
         cout << "ERROR Could not install Handler! (" << sys_siglist[signum] << ")" << endl;
 }

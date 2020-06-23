@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
 
     sigHandInstaller(SIGTSTP);
     sigHandInstaller(SIGINT);
+    sigHandInstaller(SIGCHLD);
 
     cout << "Welcome to EggShell!" << endl;
 

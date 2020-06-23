@@ -67,7 +67,8 @@ int Executor(vector<string> &argVector, string &line, vector<int> conf)
         { //main should to this
             internalFeedBack.newArgV = argVector;
             internalFeedBack.PID = pid;
-            feedback.push_back(internalFeedBack);
+            if (waitOpt != WNOHANG)
+                feedback.push_back(internalFeedBack);
         }
     }
 
