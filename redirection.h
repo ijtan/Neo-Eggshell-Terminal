@@ -28,6 +28,7 @@ struct needWaits {
     int PipeCount;
     vector<string> newArgV;
     pid_t PID;
+    bool wait;
 };
 vector<needWaits> initPipes(vector<string> argV);
 int InitialzeRedir(vector<int> conf, vector<string>& args);

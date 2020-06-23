@@ -17,7 +17,7 @@ using namespace std;
 #include "signalHandler.h"
 
 struct proc {
-    string name;
+     string name;
     pid_t pid;
 };
 int Executor(vector<string> &argVector, string &line, vector<int> conf);
