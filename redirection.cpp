@@ -41,7 +41,6 @@ int input(string filename) {
         cerr << "\nfile not found, Aborting...\n";
         return -1;
     };
-    fsync(STDIN_FILENO);
     return openRed(STDIN_FILENO, filename.c_str(), O_RDONLY, S_IRUSR);
 }
 
@@ -56,7 +55,6 @@ void BetterSourceRun(vector<string> argsV) {
         cout << "Failed to open!" << endl;
         _exit(EXIT_FAILURE);
     }
-    cout << "reading" << endl;
 
     vector<string> args;
 
@@ -72,9 +70,9 @@ void BetterSourceRun(vector<string> argsV) {
         sleep(1);
         strncpy(lineC, line.c_str(), 512);
         strncpy(copyC, line.c_str(), 512);
-        if (tokenize(lineC, copyC, args) == -1) {
+        if (tokenize(lineC, copyC, args) == -1)
             continue;
-        };
+
         if (line.find(filename) == string::npos ||
             line.find("source") == string::npos) {
             cout << '[' << line << ']' << endl;
@@ -106,17 +104,12 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
             }
             argno++;
         }
-        if (conf[0] == 1 && conf[1] == 1) {
-            cerr << "\n'>' and '>>' cannot be used at the same time! ABorting...\n"
-                 << endl;
-            _exit(EXIT_FAILURE);
-        }
-        if (count > 1) {
+        if (count != 1) {
             cerr << "Multiple input specifiers found! Aborting..." << endl;
             _exit(EXIT_FAILURE);
         }
         if (argno < 3) {
-            cerr << "Command to redirect not specified" << endl;
+            cerr << "Missing argument for redirect! Aborting..." << endl;
             _exit(EXIT_FAILURE);
         }
 
@@ -127,6 +120,12 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
             return openIN;
     }
     if (conf[0] == 1 || conf[1] == 1) {
+        if (conf[0] == 1 && conf[1] == 1) {
+            cerr << "\n'>' and '>>' cannot be used at the same time! Aborting...\n"
+                 << endl;
+            _exit(EXIT_FAILURE);
+        }
+
         char cmp[] = ">>";
         int len = 2;
         if (conf[1] == 1) {
@@ -144,14 +143,18 @@ int InitialzeRedir(vector<int> conf, vector<string> &args) {
             }
             argno++;
         }
-        if (count > 1) {
+        if (count != 1) {
             cerr << "Multiple input specifiers found! Aborting..." << endl;
+            _exit(EXIT_FAILURE);
+        }
+        if (argno < 3) {
+            cerr << "Missing argument for redirect! Aborting..." << endl;
             _exit(EXIT_FAILURE);
         }
         // after checking the position, we should remove the > filename from the
         // args
 
-        cerr << "outputting: to file: " << args[j + 1] << endl;
+        cerr << "Outputting to file: " << args[j + 1] << endl;
 
         if (conf[1] == 1)
             result = truncOut(args[j + 1]);
@@ -177,9 +180,9 @@ vector<needWaits> initPipes(vector<string> argV) {
             splitArgs.push_back(temp);
             temp.clear();
             pipeCount++;
-        } else {
+        } else
             temp.push_back(argV[i]);
-        }
+
         i++;
     }
     if (!temp.empty())
