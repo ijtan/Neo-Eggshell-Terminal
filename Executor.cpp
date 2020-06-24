@@ -126,11 +126,11 @@ int statusChecker(int status, pid_t pid, string name) {
         addProc(getWaitingProc().name, getWaitingProc().pid);  //here we might have a provlem if the process terminates and the Waitingproc name changes, although not dangerous, since we would simply have amismatch in the name, i think this could be done better, maybe locking it ?
         return 0;
     }
-    if (WIFEXITED(status)) {
-        string str = to_string(WEXITSTATUS(status));
-        setenv("EXITCODE", str.c_str(), 1);
-        return 0;
-    }
+
+    string str = to_string(WEXITSTATUS(status));
+    setenv("EXITCODE", str.c_str(), 1);
+    return 0;
+
     return 0;
 }
 

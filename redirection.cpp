@@ -46,7 +46,7 @@ int input(string filename) {
 
 void BetterSourceRun(vector<string> argsV) {
     if (argsV.size() != 2) {
-        puts("1 arguments expected: filename");
+        puts("1 argument expected: filename");
         _exit(EXIT_FAILURE);
     }
     string filename = argsV[1];

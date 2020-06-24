@@ -31,7 +31,6 @@ void lineReadInit() {
     linenoiseHistoryLoad(shell.c_str());
     pid_t callerID = getppid();
     //start linenoise loop
-
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
         linenoiseHistoryAdd(line);
         linenoiseHistorySave(shell.c_str());

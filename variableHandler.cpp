@@ -2,25 +2,18 @@
 
 using namespace std;
 
-void printVars()
-{
-    for (char **env = environ; *env != NULL; env++)
-    {
+void printVars() {
+    for (char **env = environ; *env != NULL; env++) {
         cout << *env << endl;
     }
 }
 
-void parseVars(vector<string> &input, string &line)
-{
+void parseVars(vector<string> &input, string &line) {
     int i = 0;
-    for (auto in : input)
-    {
-        if (in.find('$') != string::npos)
-        {
-            if (in.find('$') > 0)
-            {
-                if (in[in.find('$') - 1] == '\\')
-                {
+    for (auto in : input) {
+        if (in.find('$') != string::npos) {
+            if (in.find('$') > 0) {
+                if (in[in.find('$') - 1] == '\\') {
                     string escaped = in.erase(in.find('$') - 1, 1);
                     input[i] = escaped;
                     i++;
@@ -28,8 +21,7 @@ void parseVars(vector<string> &input, string &line)
                 }
             }
             string envName = in.substr(in.find('$') + 1);
-            if (getenv(envName.c_str()) != NULL)
-            {
+            if (getenv(envName.c_str()) != NULL) {
                 string newEnv = in.substr(0, in.find('$'));
                 newEnv.append(getenv(envName.c_str()));
                 input[i] = newEnv;
@@ -42,18 +34,15 @@ void parseVars(vector<string> &input, string &line)
 
                 line.erase(pos, j - pos);
                 line.insert(pos, getenv(envName.c_str()));
-            }
-            else
+            } else
                 cout << "The environment for variable '" << envName.c_str() << "' was not found!" << endl;
         }
         i++;
     }
 }
 
-void initVars()
-{
-    if (getenv("PROMPT") == NULL)
-    {
+void initVars() {
+    if (getenv("PROMPT") == NULL) {
         char prmpt[255];
         sprintf(prmpt, "%s@eggshell> ", getenv("USER"));
         string promp(prmpt);
@@ -64,16 +53,14 @@ void initVars()
     string bf(buf);
     setenv("SHELL", bf.c_str(), 1);
 
-    if (getenv("CWD") == NULL)
-    {
+    if (getenv("CWD") == NULL) {
         char buf[512] = "";
         getcwd(buf, sizeof(buf));
         string CW(buf);
         setenv("CWD", CW.c_str(), 1);
     }
 
-    if (getenv("TERMINAL") == NULL)
-    {
+    if (getenv("TERMINAL") == NULL) {
         if (isatty(STDIN_FILENO))
             setenv("TERMINAL", ttyname(STDIN_FILENO), 1);
     }

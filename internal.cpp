@@ -97,7 +97,7 @@ void echo(vector<string> args) {
 
 void changeDirs(vector<string> args) {
     if (args.size() != 2) {
-        puts("1 arguments expected: Path");
+        puts("1 argument expected: Path");
         return;
     }
     if (chdir(args[1].c_str()) == 0) {
