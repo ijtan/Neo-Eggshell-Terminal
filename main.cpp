@@ -31,7 +31,6 @@ void lineReadInit() {
     linenoiseHistoryLoad(shell.c_str());
     pid_t callerID = getppid();
     //start linenoise loop
-
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
         linenoiseHistoryAdd(line);
         linenoiseHistorySave(shell.c_str());
@@ -39,9 +38,8 @@ void lineReadInit() {
         // prepare for tokenization
         char copy[sizeof(line)];
         strcpy(copy, line);
-        if (tokenize(line, copy, args) == -1) {
+        if (tokenize(line, copy, args) == -1)
             continue;
-        };
 
         //prepare to start parsin which runs externals commands
         char copy2[sizeof(line)];

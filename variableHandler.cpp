@@ -44,7 +44,7 @@ void parseVars(vector<string> &input, string &line) {
 void initVars() {
     if (getenv("PROMPT") == NULL) {
         char prmpt[255];
-        sprintf(prmpt, "\033[1;36m%s@eggshell>\033[0m", getenv("USER"));
+        sprintf(prmpt, "%s@eggshell>", getenv("USER"));
         string promp(prmpt);
         setenv("PROMPT", promp.c_str(), 1);
     }
