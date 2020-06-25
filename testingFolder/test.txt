@@ -1,0 +1,45 @@
+//Welcome message. Yes this is a comment!
+
+echo Welcome to testing!
+
+//Variable display
+echo Well $USER ,You must have had a long path: $PATH
+echo why don't you leave this terminal ($TERMINAL) and go $HOME
+echo you can go through the $CWD ,and don't forget your $SHELL
+echo You're lost !? don't worry. I'll guide through this!
+
+//Variable testing
+verjbil=awtput
+echo $verjibil
+showenv
+
+unset verjibil
+echo $verjibil
+
+enaderWan=enaderVerjibil
+
+//External commands
+ps
+ls
+mkdir "two words"
+ls
+figlet $enaderWan
+
+//Redirects
+echo Redirect me out! > redir.txt
+cat redir.txt
+echo Append me >> redir.txt
+figlet < redir.txt
+
+figlet < redir.txt > redirOut.txt
+cat redirOut.txt
+
+//pipes
+echo hello | figlet
+cat main.cpp | grep free | figlet
+
+cat < main.cpp | grep free | figlet > finalPipe.txt
+cat finalPipe.txt
+
+
+echo Now Ethan, show em how to control them signals.
