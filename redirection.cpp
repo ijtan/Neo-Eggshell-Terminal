@@ -75,6 +75,9 @@ void BetterSourceRun(vector<string> argsV) {
 
         if (line.find(filename) == string::npos ||
             line.find("source") == string::npos) {
+            cout << "\033[1;31" << '[' << line << ']' << "\033[0m"
+                 << endl;
+
             cout << '[' << line << ']' << endl;
             reParse(line, args);
             args.clear();
