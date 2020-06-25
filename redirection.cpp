@@ -67,7 +67,6 @@ void BetterSourceRun(vector<string> argsV) {
             continue;
         if (line.empty())
             continue;
-        sleep(1);
         strncpy(lineC, line.c_str(), 512);
         strncpy(copyC, line.c_str(), 512);
         if (tokenize(lineC, copyC, args) == -1)
