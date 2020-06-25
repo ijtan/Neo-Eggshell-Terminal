@@ -31,8 +31,9 @@ void lineReadInit() {
     linenoiseHistoryLoad(shell.c_str());
     pid_t callerID = getppid();
     //start linenoise loop
-
+    cout << "\033[1;31m";
     while ((line = linenoise(getenv("PROMPT"))) != NULL) {
+        cout << "\033[0m";
         linenoiseHistoryAdd(line);
         linenoiseHistorySave(shell.c_str());
 
@@ -59,6 +60,7 @@ void lineReadInit() {
             initVars();
 
         linenoiseFree(line);
+        cout << "\033[1;31m";
     }
 }
 
