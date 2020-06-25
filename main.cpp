@@ -31,9 +31,9 @@ void lineReadInit() {
     linenoiseHistoryLoad(shell.c_str());
     pid_t callerID = getppid();
     //start linenoise loop
-    cout << "\033[1;31m";
-    while ((line = linenoise(getenv("PROMPT"))) != NULL) {
-        cout << "\033[0m";
+
+    while ((line = linenoise(("\033[1;36m"+ string(getenv("PROMPT"))+"\033[0m").c_str())) != NULL) {
+       
         linenoiseHistoryAdd(line);
         linenoiseHistorySave(shell.c_str());
 
@@ -60,7 +60,6 @@ void lineReadInit() {
             initVars();
 
         linenoiseFree(line);
-        cout << "\033[1;31m";
     }
 }
 
@@ -71,8 +70,7 @@ int main(int argc, char *argv[]) {
 
     sigHandInstaller(SIGTSTP);
     sigHandInstaller(SIGINT);
-
-    cout << "Welcome to EggShell!" << endl;
+    cout << "\033[1;33m" << "Welcome to EggShell!" << "\033[0m"<<endl;
 
     lineReadInit();
 
