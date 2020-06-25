@@ -42,26 +42,19 @@ void parseVars(vector<string> &input, string &line) {
 }
 
 void initVars() {
-    if (getenv("PROMPT") == NULL) {
-        char prmpt[255];
-        sprintf(prmpt, "%s@eggshell>", getenv("USER"));
-        string promp(prmpt);
-        setenv("PROMPT", promp.c_str(), 1);
-    }
-    char buf[255] = "";
-    readlink("/proc/self/exe", buf, sizeof(buf));
-    string bf(buf);
-    setenv("SHELL", bf.c_str(), 1);
+    string user = string(getenv("USER"));
+    string promp(user + "@eggshell> ");
+    setenv("PROMPT", promp.c_str(), 1);
+    char shl[128] = "";
+    readlink("/proc/self/exe", shl, sizeof(shl));
+    string sh(shl);
+    setenv("SHELL", sh.c_str(), 1);
 
-    if (getenv("CWD") == NULL) {
-        char buf[512] = "";
-        getcwd(buf, sizeof(buf));
-        string CW(buf);
-        setenv("CWD", CW.c_str(), 1);
-    }
+    char buf[128] = "";
+    getcwd(buf, sizeof(buf));
+    string CW(buf);
+    setenv("CWD", CW.c_str(), 1);
 
-    if (getenv("TERMINAL") == NULL) {
-        if (isatty(STDIN_FILENO))
-            setenv("TERMINAL", ttyname(STDIN_FILENO), 1);
-    }
+    if (isatty(STDIN_FILENO))
+        setenv("TERMINAL", ttyname(STDIN_FILENO), 1);
 }
