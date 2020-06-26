@@ -13,10 +13,12 @@ char *line;
 vector<string> args;
 
 void exitRoutine() {
-    cout << "Goodbye!" << endl;
+    for(auto proc:getProcVec())
+        kill(proc.pid,SIGKILL);
 
     free(line);
     args.clear();
+    cout << "Goodbye!" << endl;
 }
 
 vector<string> env;

@@ -11,7 +11,7 @@ void printVars() {
 void parseVars(vector<string> &input, string &line) {
     int i = 0;
     for (auto in : input) {
-        if (in.find('$') != string::npos) {
+        if (in.find('$') != string::npos) { //if $ is present ...
             if (in.find('$') > 0) {
                 if (in[in.find('$') - 1] == '\\') {
                     string escaped = in.erase(in.find('$') - 1, 1);
