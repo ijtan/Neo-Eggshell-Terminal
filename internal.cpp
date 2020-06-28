@@ -103,8 +103,7 @@ void changeDirs(vector<string> args) {
     if (chdir(args[1].c_str()) == 0) {
         char buf[512] = "";
         getcwd(buf, sizeof(buf));
-        string CW(buf);
-        setenv("CWD", CW.c_str(), 1);
+        setenv("CWD", buf, 1);
         return;
     }
     perror("cd");
