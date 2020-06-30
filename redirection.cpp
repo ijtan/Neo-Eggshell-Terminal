@@ -81,8 +81,7 @@ void BetterSourceRun(vector<string> argsV) {
 
         if (line.find(filename) == string::npos || //this minimises the chance of getting an infinite loop with source files
             line.find("source") == string::npos) {
-            cout << "\033[1;31m" << '[' << line << ']' << "\033[0m"
-                 << endl;
+            cout << "\033[1;31m" << '[' << line << ']' << "\033[0m"<< endl;
             reParse(line, args); //call the reparse function which parses and executes everything
             args.clear(); //clear the arg vector
         } else {
