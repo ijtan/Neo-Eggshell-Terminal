@@ -3,9 +3,18 @@
 In this project I will be attempting to create a mini shell, from which I can execute external commands,
 execute internal commands, interact with environment Variables (create/retrieve).
 
-## Execution
+## Compiling
+This project uses cmake which greatly faciliattes the compilation process. 
+CMake version 3.16+
+To Compile Simply run:
+```
+cmake CMakeLists.txt
+```
 
-To execute simply Run neoEggshell from the /build/ folder
+
+## Execution
+C++ Version 20
+To execute simply Run neoEggshell from the build folder
 
 ```
 ./neoEggshell
