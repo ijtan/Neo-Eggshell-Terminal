@@ -36,6 +36,8 @@ To execute simply Run 'neoEggshell' from the build folder
 - cd <dir>
 - exit
 ```
+## Internal Commands
+External commands can be run normally by entering them in the prompt. 
 ## Features
 multiple commands can be entered in one line by using semicolons:
 ```
