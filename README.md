@@ -9,6 +9,7 @@ CMake version 3.16+\
 To Compile Simply run:
 ```
 cmake CMakeLists.txt
+make
 ```
 
 
