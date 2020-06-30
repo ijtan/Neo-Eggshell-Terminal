@@ -1,5 +1,5 @@
-#Welcome to Egg Shell!
-##Introduction
+# Welcome to Egg Shell!
+## Introduction
 In this project I will be attempting to create a mini shell, from which I can execute external commands,
 execute internal commands, interact with environment Variables (create/retrieve).
 
