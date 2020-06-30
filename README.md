@@ -13,8 +13,6 @@ To execute simply Run neoEggshell from the /build/ folder
 
 ## Internal Commands
 
-## TODO: split into features / additions (Reidrects piping etc)
-
 ```
 - echo
 - unset <variable name>
@@ -29,3 +27,27 @@ To execute simply Run neoEggshell from the /build/ folder
 - cd <dir>
 - exit
 ```
+## Features
+multiple commands can be entered in one line by using semicolons:
+```
+command1;command 2
+```
+White Space can be escaped by using Quotes
+```
+mkdir "Hello World"
+```
+
+If the entry does not contain an even number of quotes, the user is asked for more input:
+```
+mkdir "hel
+llo"
+```
+
+## Issues
+When using the ampersand '&' feature, the output does not come as expcted, and comes all over the terminal (Probably an issue with the prompt and the outputs happening simulatenously). The same prpblem occurs when using the bg command, as two outputs happen simultaneously. 
+
+The bg and '&' features also leave behind zombie processes as they are never waited for. 
+
+
+
+
